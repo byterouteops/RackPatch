@@ -1,0 +1,10 @@
+cable_id,a_rack,a_device,a_port,z_rack,z_device,z_port,cable_type,notes
+C-101,R01,GPU-01,NIC1,R01,Leaf-01,Ethernet1/1,400G DAC,Backend fabric
+C-102,R01,GPU-02,NIC1,R01,Leaf-01,Ethernet1/2,400G DAC,Backend fabric
+C-103,R01,GPU-03,NIC1,R01,Leaf-01,Ethernet1/3,400G DAC,Backend fabric
+C-104,R01,GPU-04,NIC1,R01,Leaf-01,Ethernet1/4,400G DAC,Backend fabric
+C-201,R01,GPU-05,NIC1,R01,Leaf-02,Ethernet1/1,400G DAC,Backend fabric - swap demo A
+C-202,R01,GPU-06,NIC1,R01,Leaf-02,Ethernet1/2,400G DAC,Backend fabric - swap demo B
+C-203,R01,GPU-07,NIC1,R01,Leaf-02,Ethernet1/3,400G DAC,Installed no LLDP
+C-204,R01,GPU-08,NIC1,R01,Leaf-02,Ethernet1/4,400G DAC,Physical verify demo
+C-205,R01,GPU-01,NIC2,R01,Leaf-02,Ethernet1/5,400G DAC,Blocked - awaiting optics

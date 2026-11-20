@@ -1,0 +1,486 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// --- Better Auth ---
+
+model User {
+  id            String    @id @default(cuid())
+  name          String
+  email         String    @unique
+  emailVerified Boolean   @default(false)
+  image         String?
+  /// Set true for the first-run bootstrap administrator (also PLATFORM_ADMIN_EMAILS).
+  platformAdmin Boolean   @default(false)
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+
+  sessions              Session[]
+  accounts              Account[]
+  workspaceMemberships  WorkspaceMembership[]
+  projectMemberships    ProjectMembership[]
+  invitationsSent       Invitation[]          @relation("InvitationInviter")
+  auditEvents           AuditEvent[]
+  installUpdates        LinkRuntime[]         @relation("Installer")
+  physicalVerifications PhysicalVerification[]
+  handoverSnapshots     HandoverSnapshot[]
+  commercialActivations CommercialActivation[]
+
+  @@map("user")
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  expiresAt DateTime
+  token     String   @unique
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  ipAddress String?
+  userAgent String?
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("session")
+}
+
+model Account {
+  id                    String    @id @default(cuid())
+  accountId             String
+  providerId            String
+  userId                String
+  user                  User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  accessToken           String?
+  refreshToken          String?
+  idToken               String?
+  accessTokenExpiresAt  DateTime?
+  refreshTokenExpiresAt DateTime?
+  scope                 String?
+  password              String?
+  createdAt             DateTime  @default(now())
+  updatedAt             DateTime  @updatedAt
+
+  @@map("account")
+}
+
+model Verification {
+  id         String   @id @default(cuid())
+  identifier String
+  value      String
+  expiresAt  DateTime
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  @@map("verification")
+}
+
+// --- Workspaces & projects ---
+
+enum WorkspaceRole {
+  OWNER
+}
+
+enum ProjectRole {
+  LEAD
+  TECHNICIAN
+}
+
+enum CommercialStatus {
+  NONE
+  PILOT
+  PAID
+}
+
+enum InstallStatus {
+  PLANNED
+  INSTALLED
+  BLOCKED
+}
+
+enum VerificationState {
+  AWAITING
+  VERIFIED_LLDP
+  VERIFIED_PHYSICAL
+  MISMATCH
+  NEEDS_REVIEW
+}
+
+enum FindingSeverity {
+  INFO
+  WARNING
+  ERROR
+}
+
+enum FindingType {
+  EXACT_MATCH
+  WRONG_ENDPOINT
+  AMBIGUOUS
+  NO_OBSERVATION
+  CONFLICTING_OBSERVATIONS
+  PHYSICAL_MISMATCH
+  AWAITING
+}
+
+enum ExceptionStatus {
+  OPEN
+  ACKNOWLEDGED
+  CLOSED
+}
+
+model Workspace {
+  id          String   @id @default(cuid())
+  name        String
+  slug        String   @unique
+  isDemo      Boolean  @default(false)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  memberships WorkspaceMembership[]
+  invitations Invitation[]
+  projects    Project[]
+
+  @@map("workspace")
+}
+
+model WorkspaceMembership {
+  id          String        @id @default(cuid())
+  workspaceId String
+  userId      String
+  role        WorkspaceRole @default(OWNER)
+  createdAt   DateTime      @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([workspaceId, userId])
+  @@map("workspace_membership")
+}
+
+model Invitation {
+  id              String      @id @default(cuid())
+  workspaceId     String
+  email           String
+  role            ProjectRole @default(TECHNICIAN)
+  projectId       String?
+  tokenHash       String      @unique
+  expiresAt       DateTime
+  acceptedAt      DateTime?
+  invitedById     String
+  createdAt       DateTime    @default(now())
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  invitedBy User      @relation("InvitationInviter", fields: [invitedById], references: [id])
+  project   Project?  @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([email, workspaceId])
+  @@map("invitation")
+}
+
+model Project {
+  id               String           @id @default(cuid())
+  workspaceId      String
+  name             String
+  customerName     String?
+  site             String
+  timeZone         String           @default("UTC")
+  commercialStatus CommercialStatus @default(NONE)
+  isDemo           Boolean          @default(false)
+  activeRevisionId String?          @unique
+  createdAt        DateTime         @default(now())
+  updatedAt        DateTime         @updatedAt
+
+  workspace           Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  activeRevision      PlanRevision?          @relation("ActiveRevision", fields: [activeRevisionId], references: [id])
+  memberships         ProjectMembership[]
+  revisions           PlanRevision[]         @relation("ProjectRevisions")
+  evidenceImports     EvidenceImport[]
+  deviceAliases       DeviceAlias[]
+  portAliases         PortAlias[]
+  handoverSnapshots   HandoverSnapshot[]
+  auditEvents         AuditEvent[]
+  invitations         Invitation[]
+  commercialActivations CommercialActivation[]
+
+  @@index([workspaceId])
+  @@map("project")
+}
+
+model ProjectMembership {
+  id        String      @id @default(cuid())
+  projectId String
+  userId    String
+  role      ProjectRole
+  createdAt DateTime    @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, userId])
+  @@map("project_membership")
+}
+
+model PlanRevision {
+  id            String   @id @default(cuid())
+  projectId     String
+  revisionNumber Int
+  publishedAt   DateTime @default(now())
+  publishedById String
+  note          String?
+  importKey     String?
+  sourceCsvHash String?
+
+  project      Project       @relation("ProjectRevisions", fields: [projectId], references: [id], onDelete: Cascade)
+  activeFor    Project?      @relation("ActiveRevision")
+  links        PlannedLink[]
+  findings     VerificationFinding[]
+  physicalChecks PhysicalVerification[]
+
+  @@unique([projectId, revisionNumber])
+  @@unique([projectId, importKey])
+  @@map("plan_revision")
+}
+
+model PlannedLink {
+  id              String @id @default(cuid())
+  revisionId      String
+  cableId         String
+  aRack           String
+  aDevice         String
+  aPort           String
+  aDeviceNorm     String
+  aPortNorm       String
+  zRack           String
+  zDevice         String
+  zPort           String
+  zDeviceNorm     String
+  zPortNorm       String
+  cableType       String?
+  notes           String?
+  endpointKey     String
+
+  revision           PlanRevision           @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  runtime            LinkRuntime?
+  findings           VerificationFinding[]
+  physicalChecks     PhysicalVerification[]
+
+  @@unique([revisionId, cableId])
+  @@unique([revisionId, aDeviceNorm, aPortNorm])
+  @@unique([revisionId, zDeviceNorm, zPortNorm])
+  @@index([revisionId, endpointKey])
+  @@map("planned_link")
+}
+
+model LinkRuntime {
+  id              String        @id @default(cuid())
+  plannedLinkId   String        @unique
+  installStatus   InstallStatus @default(PLANNED)
+  blockedReason   String?
+  installerId     String?
+  installedAt     DateTime?
+  statusChangedAt DateTime?
+  statusChangedBy String?
+  version         Int           @default(1)
+  carriedFromLinkId String?
+  updatedAt       DateTime      @updatedAt
+
+  plannedLink PlannedLink @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
+  installer   User?       @relation("Installer", fields: [installerId], references: [id])
+
+  @@map("link_runtime")
+}
+
+model EvidenceImport {
+  id              String   @id @default(cuid())
+  projectId       String
+  sourceDevice    String
+  sourceDeviceNorm String
+  uploadedAt      DateTime @default(now())
+  captureTime     DateTime?
+  uploadedById    String
+  filename        String?
+  rawTextHash     String
+  parseWarnings   String[] @default([])
+  parseFailed     Boolean  @default(false)
+  parseError      String?
+
+  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  observations Observation[]
+
+  @@index([projectId, sourceDeviceNorm, uploadedAt])
+  @@map("evidence_import")
+}
+
+model Observation {
+  id                 String   @id @default(cuid())
+  evidenceImportId   String
+  localInterface     String
+  localInterfaceNorm String
+  remoteSystemName   String?
+  remoteSystemNorm   String?
+  remotePortId       String?
+  remotePortNorm     String?
+  sourceExcerpt      String
+  createdAt          DateTime @default(now())
+
+  evidenceImport EvidenceImport @relation(fields: [evidenceImportId], references: [id], onDelete: Cascade)
+
+  @@index([evidenceImportId])
+  @@map("observation")
+}
+
+model DeviceAlias {
+  id          String @id @default(cuid())
+  projectId   String
+  alias       String
+  aliasNorm   String
+  deviceName  String
+  deviceNorm  String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, aliasNorm])
+  @@map("device_alias")
+}
+
+model PortAlias {
+  id          String @id @default(cuid())
+  projectId   String
+  deviceNorm  String
+  alias       String
+  aliasNorm   String
+  portLabel   String
+  portNorm    String
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, deviceNorm, aliasNorm])
+  @@map("port_alias")
+}
+
+model PhysicalVerification {
+  id            String   @id @default(cuid())
+  plannedLinkId String
+  revisionId    String
+  verifierId    String
+  verifiedAt    DateTime @default(now())
+  note          String?
+  aConfirmed    Boolean  @default(true)
+  zConfirmed    Boolean  @default(true)
+
+  plannedLink PlannedLink  @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
+  revision    PlanRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+  verifier    User         @relation(fields: [verifierId], references: [id])
+
+  @@index([plannedLinkId])
+  @@map("physical_verification")
+}
+
+model VerificationFinding {
+  id                 String            @id @default(cuid())
+  plannedLinkId      String
+  revisionId         String
+  state              VerificationState @default(AWAITING)
+  findingType        FindingType       @default(AWAITING)
+  severity           FindingSeverity   @default(INFO)
+  expectedSummary    String
+  observedSummary    String?
+  evidenceSource     String?
+  captureTime        DateTime?
+  nextAction         String?
+  exceptionStatus    ExceptionStatus   @default(OPEN)
+  acknowledgedAt     DateTime?
+  acknowledgedById   String?
+  acknowledgeNote    String?
+  closedAt           DateTime?
+  closedReason       String?
+  relatedCableId     String?
+  computedAt         DateTime          @default(now())
+
+  plannedLink PlannedLink  @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
+  revision    PlanRevision @relation(fields: [revisionId], references: [id], onDelete: Cascade)
+
+  @@unique([plannedLinkId, revisionId])
+  @@index([revisionId, state])
+  @@index([revisionId, exceptionStatus])
+  @@map("verification_finding")
+}
+
+model HandoverSnapshot {
+  id          String   @id @default(cuid())
+  projectId   String
+  createdAt   DateTime @default(now())
+  createdById String
+  revisionId  String
+  title       String?
+  payloadJson String
+  hasUnresolvedExceptions Boolean @default(false)
+  awaitingCount Int @default(0)
+  mismatchCount Int @default(0)
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  createdBy User    @relation(fields: [createdById], references: [id])
+
+  @@index([projectId, createdAt])
+  @@map("handover_snapshot")
+}
+
+model AuditEvent {
+  id          String   @id @default(cuid())
+  projectId   String?
+  workspaceId String?
+  actorId     String?
+  action      String
+  summary     String
+  metadata    String?
+  createdAt   DateTime @default(now())
+
+  project Project? @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actor   User?    @relation(fields: [actorId], references: [id])
+
+  @@index([projectId, createdAt])
+  @@map("audit_event")
+}
+
+model PilotRequest {
+  id             String   @id @default(cuid())
+  name           String
+  businessEmail  String
+  company        String
+  projectSize    String
+  createdAt      DateTime @default(now())
+  status         String   @default("NEW")
+  notes          String?
+
+  @@index([createdAt])
+  @@map("pilot_request")
+}
+
+model CommercialActivation {
+  id        String           @id @default(cuid())
+  projectId String
+  status    CommercialStatus
+  actorId   String?
+  note      String?
+  createdAt DateTime         @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  actor   User?   @relation(fields: [actorId], references: [id])
+
+  @@index([projectId])
+  @@map("commercial_activation")
+}
+
+model RateLimitBucket {
+  id          String   @id @default(cuid())
+  key         String
+  windowStart DateTime
+  count       Int      @default(0)
+
+  @@unique([key, windowStart])
+  @@index([key])
+  @@map("rate_limit_bucket")
+}

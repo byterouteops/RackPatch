@@ -1,0 +1,99 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Enterprise console tokens — Cisco DNA / Crosswork–inspired (not a Cisco product) */
+:root {
+  --background: #e8eef3;
+  --foreground: #0b1c2c;
+  --card: #ffffff;
+  --border: #c5d0db;
+  --muted: #f0f4f8;
+  --muted-fg: #5a6f82;
+  --sidebar: #032539;
+  --sidebar-mid: #0a3a52;
+  --sidebar-fg: #e8f1f6;
+  --sidebar-muted: #8aa4b5;
+  --chrome: #021c2c;
+  --accent: #049fd9;
+  --accent-hover: #0386b8;
+  --accent-soft: #e6f6fc;
+  --accent-line: #00bceb;
+  --danger: #c9252d;
+  --danger-soft: #fdf0f0;
+  --success: #6cc04a;
+  --success-ink: #1f6b2d;
+  --success-soft: #eef8e9;
+  --warning: #f0ab00;
+  --warning-ink: #8a5a00;
+  --warning-soft: #fff8e6;
+  --info: #049fd9;
+  --info-soft: #e6f6fc;
+  --z-end: #0a6e8a;
+  --z-end-soft: #e8f4f7;
+  --radius: 0.25rem;
+  --shadow-sm: 0 1px 0 rgba(3, 37, 57, 0.06);
+  --shadow: 0 1px 2px rgba(3, 37, 57, 0.08);
+  --shadow-md: 0 2px 8px rgba(3, 37, 57, 0.1);
+  --font-sans: var(--font-ibm-plex-sans), "Segoe UI", sans-serif;
+  --font-mono: var(--font-ibm-plex-mono), ui-monospace, monospace;
+}
+
+body {
+  color: var(--foreground);
+  background:
+    linear-gradient(180deg, #d9e4ec 0%, var(--background) 140px),
+    var(--background);
+  font-family: var(--font-sans);
+  font-size: 14px;
+  line-height: 1.45;
+  -webkit-font-smoothing: antialiased;
+}
+
+@layer utilities {
+  .rp-card {
+    @apply border border-[var(--border)] bg-[var(--card)];
+    border-radius: var(--radius);
+    box-shadow: var(--shadow-sm);
+  }
+  .rp-focus {
+    @apply focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)];
+  }
+  .rp-mono {
+    font-family: var(--font-mono);
+  }
+  .rp-panel-title {
+    @apply text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--muted-fg)];
+  }
+  .rp-table-wrap {
+    @apply overflow-x-auto border border-[var(--border)] bg-white;
+    border-radius: var(--radius);
+  }
+  .rp-table {
+    @apply w-full min-w-[640px] border-collapse text-left text-sm;
+  }
+  .rp-table thead {
+    @apply bg-[#f3f7fa] text-[11px] font-semibold uppercase tracking-[0.06em] text-[var(--muted-fg)];
+  }
+  .rp-table th {
+    @apply border-b border-[var(--border)] px-3 py-2.5 whitespace-nowrap;
+  }
+  .rp-table td {
+    @apply border-b border-[var(--border)] px-3 py-2.5 align-middle;
+  }
+  .rp-table tbody tr:hover {
+    background: #f7fafc;
+  }
+  .rp-table tbody tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+@media print {
+  body {
+    background: white;
+  }
+  .no-print {
+    display: none !important;
+  }
+}

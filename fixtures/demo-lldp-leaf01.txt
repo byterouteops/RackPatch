@@ -1,0 +1,48 @@
+Capability codes:
+  (R) Router, (B) Bridge, (T) Telephone, (C) DOCSIS Cable Device
+  (W) WLAN Access Point, (P) Repeater, (S) Station, (O) Other
+
+Chassis id: 00:1a:2b:3c:5d:01
+Port id: NIC1
+Local Port id: Eth1/1
+Port Description: - not advertised -
+System Name: GPU-01
+System Description: Synthetic GPU NIC
+Time remaining: 120 seconds
+System Capabilities: B, R
+Enabled Capabilities: B, R
+Management Address: 10.10.10.1
+-------------------------------------------------------
+Chassis id: 00:1a:2b:3c:5d:02
+Port id: NIC1
+Local Port id: Eth1/2
+Port Description: - not advertised -
+System Name: GPU-02
+System Description: Synthetic GPU NIC
+Time remaining: 120 seconds
+System Capabilities: B, R
+Enabled Capabilities: B, R
+Management Address: 10.10.10.2
+-------------------------------------------------------
+Chassis id: 00:1a:2b:3c:5d:03
+Port id: NIC1
+Local Port id: Eth1/3
+Port Description: - not advertised -
+System Name: GPU-03
+System Description: Synthetic GPU NIC
+Time remaining: 118 seconds
+System Capabilities: B, R
+Enabled Capabilities: B, R
+Management Address: 10.10.10.3
+-------------------------------------------------------
+Chassis id: 00:1a:2b:3c:5d:04
+Port id: NIC1
+Local Port id: Eth1/4
+Port Description: - not advertised -
+System Name: GPU-04
+System Description: Synthetic GPU NIC
+Time remaining: 118 seconds
+System Capabilities: B, R
+Enabled Capabilities: B, R
+Management Address: 10.10.10.4
+-------------------------------------------------------

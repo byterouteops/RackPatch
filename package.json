@@ -1,0 +1,60 @@
+{
+  "name": "rackpatch",
+  "version": "0.1.0",
+  "private": false,
+  "license": "Apache-2.0",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma migrate dev",
+    "db:deploy": "prisma migrate deploy",
+    "db:push": "prisma db push",
+    "seed:demo": "tsx prisma/seed-demo.ts",
+    "admin:activate": "tsx scripts/activate-project.ts",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "tsc --noEmit",
+    "verify:demo": "tsx scripts/verify-demo-workflow.ts",
+    "demo:passwords": "tsx scripts/set-demo-passwords.ts",
+    "test:full": "tsx scripts/full-workflow-test.ts",
+    "test:authz": "tsx scripts/authz-cross-workspace.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "bcryptjs": "^3.0.3",
+    "better-auth": "^1.7.27",
+    "clsx": "^2.1.1",
+    "csv-parse": "^7.0.3",
+    "date-fns": "^4.4.0",
+    "lucide-react": "^1.77.0",
+    "nanoid": "^6.0.2",
+    "next": "15.1.3",
+    "qrcode": "^1.5.4",
+    "react": "^19.0.0",
+    "react-dom": "^19.0.0",
+    "tailwind-merge": "^3.7.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@eslint/eslintrc": "^3",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^20",
+    "@types/qrcode": "^1.5.6",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "eslint": "^9",
+    "eslint-config-next": "15.1.3",
+    "postcss": "^8",
+    "prisma": "^6.19.0",
+    "tailwindcss": "^3.4.1",
+    "tsx": "^4.20.5",
+    "typescript": "^5",
+    "vitest": "^3.2.4"
+  }
+}

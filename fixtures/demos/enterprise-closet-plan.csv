@@ -1,0 +1,6 @@
+cable_id,a_rack,a_device,a_port,z_rack,z_device,z_port,cable_type,notes
+E-201,IDF-A,SW-Access-01,Gi1/0/1,IDF-A,Patch-A,1,Cat6A,Desk row 1
+E-202,IDF-A,SW-Access-01,Gi1/0/2,IDF-A,Patch-A,2,Cat6A,Desk row 1
+E-203,IDF-A,SW-Access-01,Gi1/0/3,IDF-A,Patch-A,3,Cat6A,Desk row 2
+E-204,IDF-A,SW-Access-01,Gi1/0/4,IDF-A,Patch-A,4,Cat6A,Desk row 2
+E-205,IDF-A,SW-Access-01,Gi1/0/5,IDF-A,AP-01,PoE,Cat6A,Wi-Fi AP

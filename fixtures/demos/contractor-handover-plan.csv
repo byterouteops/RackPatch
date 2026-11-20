@@ -1,0 +1,5 @@
+cable_id,a_rack,a_device,a_port,z_rack,z_device,z_port,cable_type,notes
+C-301,CR-01,Core-SW-01,Eth1/1,CR-01,Srv-01,eth0,Cat6A,Work order WO-100
+C-302,CR-01,Core-SW-01,Eth1/2,CR-01,Srv-02,eth0,Cat6A,Work order WO-100
+C-303,CR-01,Core-SW-01,Eth1/3,CR-01,Srv-03,eth0,Cat6A,Work order WO-101
+C-304,CR-01,Core-SW-01,Eth1/4,CR-01,Srv-04,eth0,Cat6A,Blocked pending tray

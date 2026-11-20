@@ -1,0 +1,43 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: rackpatch
+      POSTGRES_PASSWORD: rackpatch
+      POSTGRES_DB: rackpatch
+    volumes:
+      - rackpatch_pg:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U rackpatch -d rackpatch"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+    # Local dev: publish port. For a locked-down compose, remove ports and use the app service only.
+    ports:
+      - "5432:5432"
+
+  app:
+    profiles: ["full"]
+    build: .
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      NODE_ENV: production
+      PORT: "3000"
+      HOSTNAME: 0.0.0.0
+      DATABASE_URL: postgresql://rackpatch:rackpatch@postgres:5432/rackpatch?schema=public
+      BETTER_AUTH_URL: ${BETTER_AUTH_URL:-http://localhost:3000}
+      NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3000}
+      BETTER_AUTH_SECRET: ${BETTER_AUTH_SECRET:?Set BETTER_AUTH_SECRET to a 32+ char random value}
+      ENABLE_DEV_LOGIN: ""
+      HOSTED_SAAS: ${HOSTED_SAAS:-}
+    ports:
+      - "3000:3000"
+    # Run migrations once before start (simple self-host). Prefer explicit migrate in CI/CD for production.
+    command: ["sh", "-c", "npx prisma migrate deploy && node server.js"]
+
+volumes:
+  rackpatch_pg:
