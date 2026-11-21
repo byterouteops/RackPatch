@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { useRouter } from "next/navigation";
 import { uploadFieldPhoto } from "@/app/actions/field-evidence";
 import { Button, ErrorBanner, Input } from "@/components/ui";
 
@@ -27,6 +28,7 @@ export function FieldPhotoCapture({
   linkId: string;
   canUpload: boolean;
 }) {
+  const router = useRouter();
   const inputRef = useRef<HTMLInputElement>(null);
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
@@ -50,7 +52,7 @@ export function FieldPhotoCapture({
       setDone(res.deduped ? "Already uploaded" : "Photo saved");
       setNote("");
       if (inputRef.current) inputRef.current.value = "";
-      window.location.reload();
+      router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Upload failed");
     } finally {

@@ -71,17 +71,19 @@ export function CableListClient({
   racks,
   cableTypes,
   history,
+  initialInstall = "",
 }: {
   projectId: string;
   rows: CableRow[];
   racks: string[];
   cableTypes: string[];
   history: CableHistoryEvent[];
+  initialInstall?: string;
 }) {
   const [view, setView] = useState<View>("all");
   const [search, setSearch] = useState("");
   const [rack, setRack] = useState("");
-  const [install, setInstall] = useState("");
+  const [install, setInstall] = useState(initialInstall);
   const [verification, setVerification] = useState("");
   const [cableType, setCableType] = useState("");
   const [pageSize, setPageSize] = useState(25);

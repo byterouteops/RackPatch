@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { acknowledgeException } from "@/app/actions/verify";
 import { Button, Input } from "@/components/ui";
 
@@ -11,6 +12,7 @@ export function ExceptionAckForm({
   projectId: string;
   findingId: string;
 }) {
+  const router = useRouter();
   const [note, setNote] = useState("");
   const [pending, setPending] = useState(false);
 
@@ -22,7 +24,8 @@ export function ExceptionAckForm({
         setPending(true);
         try {
           await acknowledgeException({ projectId, findingId, note });
-          window.location.reload();
+          setNote("");
+          router.refresh();
         } finally {
           setPending(false);
         }

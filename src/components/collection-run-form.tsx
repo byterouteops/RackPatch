@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { runSshCollection } from "@/app/actions/collection";
 import { AlertBanner, Button, ErrorBanner } from "@/components/ui";
 
@@ -13,6 +14,7 @@ export function CollectionRunForm({
   targetId: string;
   targetName: string;
 }) {
+  const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [fingerprint, setFingerprint] = useState<string | null>(null);
@@ -35,7 +37,7 @@ export function CollectionRunForm({
       }
       setFingerprint(null);
       setMessage(`Collected from ${targetName}`);
-      window.location.reload();
+      router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Collection failed");
     } finally {

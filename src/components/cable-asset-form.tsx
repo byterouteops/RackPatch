@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import { retireCable, updateCableAsset } from "@/app/actions/lifecycle";
 import { Button, ErrorBanner, Input } from "@/components/ui";
 
@@ -23,6 +24,7 @@ export function CableAssetForm({
   retireNote: string | null;
   canEdit: boolean;
 }) {
+  const router = useRouter();
   const [serial, setSerial] = useState(assetSerial ?? "");
   const [length, setLength] = useState(lengthMeters?.toString() ?? "");
   const [note, setNote] = useState("");
@@ -42,7 +44,7 @@ export function CableAssetForm({
         expectedVersion: version,
       });
       if (res.conflict) setError(res.message ?? "Conflict");
-      else window.location.reload();
+      else router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Save failed");
     } finally {
@@ -62,7 +64,7 @@ export function CableAssetForm({
         expectedVersion: version,
       });
       if (res.conflict) setError("message" in res ? res.message : "Conflict");
-      else window.location.reload();
+      else router.refresh();
     } catch (e) {
       setError(e instanceof Error ? e.message : "Retire failed");
     } finally {

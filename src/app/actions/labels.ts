@@ -54,6 +54,27 @@ export async function saveLabelTemplate(raw: z.input<typeof saveSchema>) {
   return { id: tpl.id };
 }
 
+const printSchema = z.object({
+  projectId: z.string(),
+  template: z.string().max(80),
+  count: z.number().int().min(1).max(10_000),
+  scope: z.string().max(80),
+});
+
+export async function recordLabelPrint(raw: z.input<typeof printSchema>) {
+  const user = await requireSessionUser();
+  const data = printSchema.parse(raw);
+  await requireProjectAccess(user, data.projectId);
+  await recordAudit({
+    projectId: data.projectId,
+    actorId: user.id,
+    action: "labels.print",
+    summary: `Printed ${data.count} label(s) \u2014 ${data.template} (${data.scope})`,
+    metadata: { count: data.count, template: data.template, scope: data.scope },
+  });
+  return { ok: true as const };
+}
+
 export async function getDefaultLabelConfig(projectId: string) {
   const user = await requireSessionUser();
   await requireProjectAccess(user, projectId);

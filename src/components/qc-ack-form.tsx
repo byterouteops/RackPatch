@@ -1,10 +1,12 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { qcAcknowledgeFinding } from "@/app/actions/qc";
 import { Button, ErrorBanner, Input } from "@/components/ui";
 
 export function QcAckForm({ projectId, findingId }: { projectId: string; findingId: string }) {
+  const router = useRouter();
   const [note, setNote] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
@@ -18,7 +20,8 @@ export function QcAckForm({ projectId, findingId }: { projectId: string; finding
         startTransition(async () => {
           try {
             await qcAcknowledgeFinding({ projectId, findingId, note });
-            window.location.reload();
+            setNote("");
+            router.refresh();
           } catch (err) {
             setError(err instanceof Error ? err.message : "Could not acknowledge");
           }

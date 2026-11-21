@@ -71,7 +71,7 @@ export const SIDEBAR_PRIMARY: AppNavItem[] = [
     label: "Verification",
     icon: ShieldCheck,
     active: "project-path",
-    projectPath: "/exceptions",
+    projectPath: "/verify",
   },
   {
     href: "/app",
@@ -126,6 +126,6 @@ export function adminNavItems(isPlatformAdmin: boolean): AppNavItem[] {
 export const WORKFLOW_STEPS = [
   { label: "Plan", path: "/cables", icon: MapIcon },
   { label: "Install", path: "/work-orders", icon: Wrench },
-  { label: "Verify", path: "/exceptions", icon: CircleCheck },
+  { label: "Verify", path: "/verify", icon: CircleCheck },
   { label: "Handover", path: "/handover", icon: Handshake },
 ] as const;

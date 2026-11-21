@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import {
   createCircuit,
   createPatchPanel,
@@ -15,12 +16,13 @@ type Option = { id: string; label: string };
 function useRunner() {
   const [error, setError] = useState<string | null>(null);
   const [pending, startTransition] = useTransition();
+  const router = useRouter();
   function run(fn: () => Promise<unknown>) {
     setError(null);
     startTransition(async () => {
       try {
         await fn();
-        window.location.reload();
+        router.refresh();
       } catch (e) {
         setError(e instanceof Error ? e.message : "Action failed");
       }
@@ -33,7 +35,7 @@ export function PanelCreateForm({ projectId }: { projectId: string }) {
   const { error, pending, run } = useRunner();
   return (
     <form
-      className="grid gap-3 sm:grid-cols-4"
+      className="grid grid-cols-2 gap-3"
       action={(fd) =>
         run(() =>
           createPatchPanel({
@@ -47,15 +49,15 @@ export function PanelCreateForm({ projectId }: { projectId: string }) {
       }
     >
       {error && (
-        <div className="sm:col-span-4">
+        <div className="col-span-2">
           <ErrorBanner message={error} />
         </div>
       )}
-      <Input name="name" required placeholder="Panel name (e.g. ODF-A1)" />
+      <Input name="name" required placeholder="Panel name (e.g. ODF-A1)" className="col-span-2" />
       <Input name="rack" required placeholder="Rack" />
       <Input name="rackUnit" type="number" min={1} placeholder="Rack U (optional)" />
-      <Input name="portCount" type="number" min={1} max={288} required placeholder="Ports" />
-      <Button type="submit" className="sm:col-span-4" disabled={pending}>
+      <Input name="portCount" type="number" min={1} max={288} required placeholder="Ports" className="col-span-2" />
+      <Button type="submit" className="col-span-2" disabled={pending}>
         Create panel
       </Button>
     </form>

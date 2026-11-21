@@ -59,7 +59,7 @@ test("authenticated UI audit", async ({ page }) => {
     "/app", "/app/projects", "/app/search", "/app/notifications", "/app/help",
     "/app/settings",
     p, `${p}/cables`, `${p}/plan`, `${p}/lldp`, `${p}/evidence`, `${p}/qc`, `${p}/scan`,
-    `${p}/exceptions`, `${p}/handover`, `${p}/reports`, `${p}/labels`, `${p}/work-orders`,
+    `${p}/verify`, `${p}/exceptions`, `${p}/handover`, `${p}/reports`, `${p}/labels`, `${p}/work-orders`,
     `${p}/inventory`, `${p}/panels`, `${p}/integrations`, `${p}/analytics`, `${p}/twin`,
     `${p}/capacity`, `${p}/compliance`, `${p}/spares`, `${p}/collection`, `${p}/assistant`, `${p}/api`,
   ];

@@ -36,10 +36,11 @@ function primaryTabs(projectId: string): Tab[] {
       match: [`${base}/work-orders`, `${base}/labels`, `${base}/scan`],
     },
     {
-      href: `${base}/exceptions`,
+      href: `${base}/verify`,
       label: "Verification",
       icon: ShieldCheck,
       match: [
+        `${base}/verify`,
         `${base}/exceptions`,
         `${base}/lldp`,
         `${base}/qc`,
@@ -105,6 +106,7 @@ function contextTabs(projectId: string, pathname: string): Tab[] | null {
     ];
   }
   if (
+    pathname.startsWith(`${base}/verify`) ||
     pathname.startsWith(`${base}/exceptions`) ||
     pathname.startsWith(`${base}/lldp`) ||
     pathname.startsWith(`${base}/qc`) ||
@@ -112,6 +114,7 @@ function contextTabs(projectId: string, pathname: string): Tab[] | null {
     pathname.startsWith(`${base}/collection`)
   ) {
     return [
+      { href: `${base}/verify`, label: "Results" },
       { href: `${base}/lldp`, label: "LLDP" },
       { href: `${base}/exceptions`, label: "Exceptions" },
       { href: `${base}/qc`, label: "QC" },

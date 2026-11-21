@@ -17,10 +17,14 @@ function pct(n: number, total: number) {
 
 export default async function CablesPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ projectId: string }>;
+  searchParams: Promise<{ status?: string }>;
 }) {
   const { projectId } = await params;
+  const { status } = await searchParams;
+  const initialInstall = status && ["PLANNED", "INSTALLED", "BLOCKED"].includes(status) ? status : "";
   const user = await requireSessionUser();
   const access = await getProjectAccess(user, projectId);
   if (!access) {
@@ -171,6 +175,7 @@ export default async function CablesPage({
       ) : (
         <CableListClient
           projectId={projectId}
+          initialInstall={initialInstall}
           rows={rows}
           racks={Array.from(racks).sort()}
           cableTypes={Array.from(cableTypes).sort()}

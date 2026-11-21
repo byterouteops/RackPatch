@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import type { InstallStatus } from "@prisma/client";
 import { updateInstallStatus } from "@/app/actions/install";
 import { recordPhysicalVerification } from "@/app/actions/verify";
@@ -23,6 +24,7 @@ export function InstallControls({
   canUpdateInstall: boolean;
   canPhysicalVerify: boolean;
 }) {
+  const router = useRouter();
   const [pending, setPending] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [conflict, setConflict] = useState<string | null>(null);
@@ -48,7 +50,7 @@ export function InstallControls({
         setLocalVersion(result.current.version);
       } else {
         setLocalVersion(result.current.version);
-        window.location.reload();
+        router.refresh();
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Update failed");
@@ -72,7 +74,8 @@ export function InstallControls({
         setError(result.error);
         return;
       }
-      window.location.reload();
+      setVerifyNote("");
+      router.refresh();
     } catch (err) {
       setError(err instanceof Error ? err.message : "Verification failed");
     } finally {

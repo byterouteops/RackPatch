@@ -240,7 +240,7 @@ export function StatCard({
         </div>
       )}
       <div className="min-w-0 flex-1">
-        <p className="truncate text-[13px] font-medium text-[var(--muted-fg)]">{label}</p>
+        <p className="text-[13px] font-medium leading-tight text-[var(--muted-fg)]">{label}</p>
         <div className="mt-0.5 flex items-end justify-between gap-2">
           <p className="rp-display text-[26px] font-extrabold leading-tight tracking-tight text-[var(--foreground)]">
             {typeof value === "number" ? value.toLocaleString("en-US") : value}
