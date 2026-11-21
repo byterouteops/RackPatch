@@ -35,10 +35,13 @@ export default async function LabelsPage({
       aPort: l.aPort,
       zDevice: l.zDevice,
       zPort: l.zPort,
-      qr: await QRCode.toDataURL(`${base}/app/projects/${projectId}/cables/${l.id}`, {
-        margin: 1,
-        width: 160,
-      }),
+      qr: await QRCode.toDataURL(
+        `${base}/app/projects/${projectId}/cables/${l.id}?action=install`,
+        {
+          margin: 1,
+          width: 160,
+        },
+      ),
     })),
   );
 
@@ -46,11 +49,12 @@ export default async function LabelsPage({
     <div>
       <PageHeader
         title="Label sheet"
-        description="Print-friendly QR labels linking to each cable record."
+        description="Print-friendly QR labels opening the cable field page (install action)."
       />
       <ProjectSubnav projectId={projectId} />
       <p className="mb-4 text-sm text-[var(--muted-fg)] no-print">
-        Use browser print — layout optimized for Avery-style 2×4 grids.
+        Scan opens the cable on a phone with install highlighted. Use browser print — Avery-style
+        2×4 grids.
       </p>
       <div className="grid gap-2 print:grid-cols-2 sm:grid-cols-2 lg:grid-cols-3">
         {items.map((item) => (

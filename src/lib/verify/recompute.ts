@@ -4,6 +4,7 @@ import {
   FindingType,
   VerificationState,
 } from "@prisma/client";
+import { recordAudit } from "@/lib/audit";
 import { prisma } from "@/lib/db";
 import {
   kindToVerificationState,
@@ -90,6 +91,13 @@ export async function recomputeFindings(projectId: string) {
 
   const matches = matchObservationsToPlan(planned, observations);
   const byCable = new Map(matches.map((m) => [m.cableId, m]));
+  const cleared: Array<{
+    cableId: string;
+    fromState: VerificationState;
+    toState: VerificationState;
+    previousObserved: string | null;
+    newObserved: string | null;
+  }> = [];
 
   for (const link of links) {
     const match = byCable.get(link.cableId)!;
@@ -134,6 +142,7 @@ export async function recomputeFindings(projectId: string) {
 
     const previous = link.findings[0];
     let exceptionStatus = previous?.exceptionStatus ?? ExceptionStatus.OPEN;
+    let justCleared = false;
     if (
       state === VerificationState.VERIFIED_LLDP ||
       state === VerificationState.VERIFIED_PHYSICAL
@@ -144,6 +153,7 @@ export async function recomputeFindings(projectId: string) {
           previous.state === VerificationState.NEEDS_REVIEW)
       ) {
         exceptionStatus = ExceptionStatus.CLOSED;
+        justCleared = true;
       }
     } else if (
       state === VerificationState.MISMATCH ||
@@ -152,6 +162,16 @@ export async function recomputeFindings(projectId: string) {
       if (exceptionStatus === ExceptionStatus.CLOSED) {
         exceptionStatus = ExceptionStatus.OPEN;
       }
+    }
+
+    if (justCleared && previous) {
+      cleared.push({
+        cableId: link.cableId,
+        fromState: previous.state,
+        toState: state,
+        previousObserved: previous.observedSummary,
+        newObserved: observedSummary ?? null,
+      });
     }
 
     await prisma.verificationFinding.upsert({
@@ -199,6 +219,21 @@ export async function recomputeFindings(projectId: string) {
         acknowledgedAt: previous?.acknowledgedAt,
         acknowledgedById: previous?.acknowledgedById,
         acknowledgeNote: previous?.acknowledgeNote,
+      },
+    });
+  }
+
+  if (cleared.length > 0) {
+    await recordAudit({
+      projectId,
+      action: "verify.evidence_cleared",
+      summary:
+        cleared.length === 1
+          ? `Evidence cleared exception on ${cleared[0].cableId}`
+          : `Evidence cleared exceptions on ${cleared.map((c) => c.cableId).join(", ")}`,
+      metadata: {
+        cleared,
+        importDevices: Array.from(seenDevices),
       },
     });
   }

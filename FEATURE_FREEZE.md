@@ -13,9 +13,13 @@
 | QR labels (print sheet → cable URL) | Partial — print/QR only |
 | Neighbor evidence import (NX-OS/IOS-XE LLDP, CDP, Arista, Junos) | Implemented |
 | Expected vs observed / mismatch detection | Implemented |
+| Swap fix playbook (paired mismatches) | Implemented (v0.2) |
+| Evidence clearance audit on re-import | Implemented (v0.2) |
+| Customer handover share link | Implemented (v0.2) |
 | Independent physical verification | Implemented |
 | Exceptions ack (mismatches stay visible) | Implemented |
 | Handover snapshot + CSV export | Implemented |
+| QR → cable field actions | Implemented (v0.2 partial) |
 | Demo project + public `/demo` | Implemented |
 | Pilot request form + platform admin activate | Implemented |
 | Apache 2.0 Community Edition (`HOSTED_SAAS` opt-in gate) | Implemented |

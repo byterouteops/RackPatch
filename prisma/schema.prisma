@@ -420,6 +420,9 @@ model HandoverSnapshot {
   hasUnresolvedExceptions Boolean @default(false)
   awaitingCount Int @default(0)
   mismatchCount Int @default(0)
+  /// Public customer share token (nanoid). Null until a share link is created.
+  shareToken     String?   @unique
+  shareExpiresAt DateTime?
 
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdBy User    @relation(fields: [createdById], references: [id])

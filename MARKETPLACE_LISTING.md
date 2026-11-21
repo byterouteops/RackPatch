@@ -58,3 +58,11 @@ https://github.com/byterouteops/RackPatch (public)
 ```
 
 Listing: https://railway.com/template/rackpatch
+
+## Icon
+
+```text
+https://raw.githubusercontent.com/byterouteops/RackPatch/master/public/rackpatch-mark.svg
+```
+
+Do not upload a local Windows path — Railway will store a broken `devicons.railway.app/C:\...` URL.

@@ -18,4 +18,4 @@ Use your verified domain in `EMAIL_FROM` once DNS is configured. Until then, Res
 4. Redeploy the web service (or wait for the next deploy).
 5. On `/sign-in`, use **Magic link** with your admin email and confirm delivery.
 
-`EMAIL_FROM` is already set on the live smoke project; `RESEND_API_KEY` is still missing until you paste the key.
+Live smoke (`web-production-a08e5b12`) has `EMAIL_FROM` and `RESEND_API_KEY`; magic-link delivery verified to the admin mailbox.

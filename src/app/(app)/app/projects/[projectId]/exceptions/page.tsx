@@ -3,8 +3,10 @@ import { redirect } from "next/navigation";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
+import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
 import { ExceptionAckForm } from "@/components/exception-ack-form";
 import { ProjectSubnav } from "@/components/project-subnav";
+import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import { VerificationBadge } from "@/components/status-badges";
 import { Badge, EmptyState, PageHeader } from "@/components/ui";
 
@@ -26,6 +28,24 @@ export default async function ExceptionsPage({
     findings = await loadFindings(project.activeRevisionId);
   }
 
+  const playbooks = buildSwapFixPlaybooks(
+    findings.map((f) => ({
+      cableId: f.plannedLink.cableId,
+      relatedCableId: f.relatedCableId,
+      findingType: f.findingType,
+      state: f.state,
+      expectedSummary: f.expectedSummary,
+      observedSummary: f.observedSummary,
+      aRack: f.plannedLink.aRack,
+      zRack: f.plannedLink.zRack,
+      aDevice: f.plannedLink.aDevice,
+      aPort: f.plannedLink.aPort,
+      zDevice: f.plannedLink.zDevice,
+      zPort: f.plannedLink.zPort,
+      plannedLinkId: f.plannedLinkId,
+    })),
+  );
+
   return (
     <div>
       <PageHeader
@@ -33,6 +53,11 @@ export default async function ExceptionsPage({
         description="Compare expected design vs observed evidence."
       />
       <ProjectSubnav projectId={projectId} />
+      {playbooks.length > 0 && (
+        <div className="mb-6">
+          <SwapFixPlaybookList projectId={projectId} playbooks={playbooks} />
+        </div>
+      )}
       {!project.activeRevisionId ? (
         <EmptyState title="No plan" />
       ) : findings.length === 0 ? (

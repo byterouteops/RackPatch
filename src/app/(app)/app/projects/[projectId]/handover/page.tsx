@@ -5,7 +5,9 @@ import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { HandoverActions } from "@/components/handover-actions";
+import { HandoverShareButton } from "@/components/handover-share-button";
 import { ProjectSubnav } from "@/components/project-subnav";
+import { getAppUrl } from "@/lib/env";
 import {
   AlertBanner,
   Card,
@@ -133,12 +135,24 @@ export default async function HandoverPage({
                     </p>
                   )}
                 </div>
-                <Link
-                  href={`/app/projects/${projectId}/handover/${s.id}`}
-                  className="font-medium text-[var(--accent)] hover:underline"
-                >
-                  Print report →
-                </Link>
+                <div className="sm:text-right">
+                  <Link
+                    href={`/app/projects/${projectId}/handover/${s.id}`}
+                    className="font-medium text-[var(--accent)] hover:underline"
+                  >
+                    Print report →
+                  </Link>
+                  {access.canExport && (
+                    <HandoverShareButton
+                      projectId={projectId}
+                      snapshotId={s.id}
+                      existingUrl={
+                        s.shareToken ? `${getAppUrl()}/share/handover/${s.shareToken}` : null
+                      }
+                      expiresAt={s.shareExpiresAt?.toISOString() ?? null}
+                    />
+                  )}
+                </div>
               </li>
             ))}
           </ul>

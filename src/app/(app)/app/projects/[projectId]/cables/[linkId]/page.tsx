@@ -2,18 +2,23 @@ import Link from "next/link";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
+import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
 import { InstallControls } from "@/components/install-controls";
 import { ProjectSubnav } from "@/components/project-subnav";
+import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import { InstallStatusBadge, VerificationBadge } from "@/components/status-badges";
 import { AlertBanner, Card, EmptyState, PageHeader } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
 export default async function CableDetailPage({
   params,
+  searchParams,
 }: {
   params: Promise<{ projectId: string; linkId: string }>;
+  searchParams: Promise<{ action?: string }>;
 }) {
   const { projectId, linkId } = await params;
+  const { action } = await searchParams;
   const user = await requireSessionUser();
   const access = await getProjectAccess(user, projectId);
   if (!access) return <EmptyState title="Permission denied" />;
@@ -35,6 +40,63 @@ export default async function CableDetailPage({
 
   const finding = link.findings[0];
   const mismatch = finding?.state === "MISMATCH" || finding?.state === "NEEDS_REVIEW";
+
+  // Partner finding for playbook (if related)
+  let playbooks: ReturnType<typeof buildSwapFixPlaybooks> = [];
+  if (finding?.relatedCableId) {
+    const related = await prisma.plannedLink.findFirst({
+      where: {
+        revisionId: project.activeRevisionId,
+        cableId: finding.relatedCableId,
+      },
+      include: {
+        findings: { where: { revisionId: project.activeRevisionId }, take: 1 },
+      },
+    });
+    if (related?.findings[0]) {
+      playbooks = buildSwapFixPlaybooks([
+        {
+          cableId: link.cableId,
+          relatedCableId: finding.relatedCableId,
+          findingType: finding.findingType,
+          state: finding.state,
+          expectedSummary: finding.expectedSummary,
+          observedSummary: finding.observedSummary,
+          aRack: link.aRack,
+          zRack: link.zRack,
+          aDevice: link.aDevice,
+          aPort: link.aPort,
+          zDevice: link.zDevice,
+          zPort: link.zPort,
+          plannedLinkId: link.id,
+        },
+        {
+          cableId: related.cableId,
+          relatedCableId: related.findings[0].relatedCableId,
+          findingType: related.findings[0].findingType,
+          state: related.findings[0].state,
+          expectedSummary: related.findings[0].expectedSummary,
+          observedSummary: related.findings[0].observedSummary,
+          aRack: related.aRack,
+          zRack: related.zRack,
+          aDevice: related.aDevice,
+          aPort: related.aPort,
+          zDevice: related.zDevice,
+          zPort: related.zPort,
+          plannedLinkId: related.id,
+        },
+      ]);
+    }
+  }
+
+  const fieldHint =
+    action === "install"
+      ? "Field QR: mark this cable installed below."
+      : action === "verify"
+        ? "Field QR: complete physical verification below (must be a different person than the installer)."
+        : action === "fix"
+          ? "Field QR: follow the swap fix playbook, then re-import evidence."
+          : null;
 
   return (
     <div>
@@ -63,6 +125,14 @@ export default async function CableDetailPage({
         />
       </div>
 
+      {fieldHint && (
+        <div className="mb-5">
+          <AlertBanner tone="info" title="Phone field action">
+            {fieldHint}
+          </AlertBanner>
+        </div>
+      )}
+
       {mismatch && (
         <div className="mb-5">
           <AlertBanner tone="danger" title="Verification issue">
@@ -70,6 +140,43 @@ export default async function CableDetailPage({
           </AlertBanner>
         </div>
       )}
+
+      {playbooks.length > 0 && (
+        <div className="mb-5">
+          <SwapFixPlaybookList projectId={projectId} playbooks={playbooks} />
+        </div>
+      )}
+
+      <Card title="Field actions" className="mb-5">
+        <div className="flex flex-wrap gap-3 text-sm">
+          <Link
+            href={`/app/projects/${projectId}/cables/${linkId}?action=install`}
+            className="font-semibold text-[var(--accent)] hover:underline"
+          >
+            Mark installed
+          </Link>
+          <Link
+            href={`/app/projects/${projectId}/cables/${linkId}?action=verify`}
+            className="font-semibold text-[var(--accent)] hover:underline"
+          >
+            Physical verify
+          </Link>
+          {mismatch && (
+            <Link
+              href={`/app/projects/${projectId}/cables/${linkId}?action=fix`}
+              className="font-semibold text-[var(--accent)] hover:underline"
+            >
+              Open fix playbook
+            </Link>
+          )}
+          <Link
+            href={`/app/projects/${projectId}/lldp`}
+            className="font-semibold text-[var(--accent)] hover:underline"
+          >
+            Re-import evidence
+          </Link>
+        </div>
+      </Card>
 
       <div className="grid gap-4 lg:grid-cols-2">
         <EndpointCard side="A" rack={link.aRack} device={link.aDevice} port={link.aPort} />

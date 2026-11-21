@@ -88,23 +88,22 @@ Demo users (after seed; development login password `password123`):
 
 Buyer pitch: both swapped cables can be “up”; RackPatch shows exactly which two ports to fix.
 
-## Supported LLDP format (v1)
+## Neighbor evidence formats
 
-Cisco NX-OS style text from:
+Supported CLI paste (auto-detect or pick format):
 
-```text
-show lldp neighbors detail
-```
+- Cisco NX-OS / IOS-XE LLDP (`show lldp neighbors detail`)
+- Cisco CDP (`show cdp neighbors detail`)
+- Arista EOS LLDP
+- Juniper Junos LLDP
 
-Required fields per neighbor block:
+NX-OS fixtures: `fixtures/demo-lldp-leaf01.txt`, `fixtures/demo-lldp-leaf02.txt`.
 
-- `Local Port id:`
-- `Port id:` (remote)
-- `System Name:` (remote)
+Not supported: JSON APIs, live switch polling / collection agents.
 
-Blocks typically begin with `Chassis id:` and may be separated by dashes. Fixtures: `fixtures/demo-lldp-leaf01.txt`, `fixtures/demo-lldp-leaf02.txt`.
+### Public demo seed
 
-Unsupported in v1: other vendors, JSON APIs, live switch access.
+`/demo` needs a seeded demo workspace. Locally: `SEED_DEMO=true npm run seed:demo`. Production Railway smoke does not seed automatically.
 
 ## Commercial status
 

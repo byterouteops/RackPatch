@@ -10,7 +10,9 @@ import { CommercialStatus } from "@prisma/client";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
+import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
 import { ProjectSubnav } from "@/components/project-subnav";
+import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import {
   AlertBanner,
   Badge,
@@ -52,6 +54,7 @@ export default async function ProjectOverviewPage({
     state: string;
     linkId: string;
   }> = [];
+  let playbooks: ReturnType<typeof buildSwapFixPlaybooks> = [];
 
   if (project.activeRevisionId) {
     const [links, findings] = await Promise.all([
@@ -92,12 +95,13 @@ export default async function ProjectOverviewPage({
       .map(([rack, v]) => ({ rack, ...v }))
       .sort((a, b) => a.rack.localeCompare(b.rack));
 
-    attention = findings
-      .filter(
-        (f) =>
-          f.exceptionStatus !== "CLOSED" &&
-          (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW"),
-      )
+    const openFindings = findings.filter(
+      (f) =>
+        f.exceptionStatus !== "CLOSED" &&
+        (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW"),
+    );
+
+    attention = openFindings
       .slice(0, 6)
       .map((f) => ({
         id: f.id,
@@ -107,6 +111,24 @@ export default async function ProjectOverviewPage({
         state: f.state,
         linkId: f.plannedLinkId,
       }));
+
+    playbooks = buildSwapFixPlaybooks(
+      openFindings.map((f) => ({
+        cableId: f.plannedLink.cableId,
+        relatedCableId: f.relatedCableId,
+        findingType: f.findingType,
+        state: f.state,
+        expectedSummary: f.expectedSummary,
+        observedSummary: f.observedSummary,
+        aRack: f.plannedLink.aRack,
+        zRack: f.plannedLink.zRack,
+        aDevice: f.plannedLink.aDevice,
+        aPort: f.plannedLink.aPort,
+        zDevice: f.plannedLink.zDevice,
+        zPort: f.plannedLink.zPort,
+        plannedLinkId: f.plannedLinkId,
+      })),
+    );
   }
 
   return (
@@ -129,6 +151,9 @@ export default async function ProjectOverviewPage({
         />
       ) : (
         <div className="space-y-6">
+          {playbooks.length > 0 && (
+            <SwapFixPlaybookList projectId={projectId} playbooks={playbooks} />
+          )}
           <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
             <StatCard
               label="Total links"

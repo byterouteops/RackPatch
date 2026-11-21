@@ -1,6 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
+import { nanoid } from "nanoid";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
@@ -8,6 +9,7 @@ import { requireProjectAccess } from "@/lib/authz";
 import { assertPaidOrThrow } from "@/app/actions/workspace";
 import { toCsv } from "@/lib/csv/safe-export";
 import { recordAudit } from "@/lib/audit";
+import { getAppUrl } from "@/lib/env";
 
 export async function buildHandoverPayload(projectId: string) {
   const project = await prisma.project.findUniqueOrThrow({
@@ -183,4 +185,47 @@ export async function createHandoverSnapshot(raw: z.infer<typeof snapshotSchema>
 
   revalidatePath(`/app/projects/${data.projectId}/handover`);
   return snapshot;
+}
+
+const shareSchema = z.object({
+  projectId: z.string(),
+  snapshotId: z.string(),
+  /** Days until the share link expires (default 14). */
+  daysValid: z.number().int().min(1).max(90).optional(),
+});
+
+/**
+ * Create or refresh a time-boxed public customer link for a handover snapshot.
+ */
+export async function createHandoverShareLink(raw: z.infer<typeof shareSchema>) {
+  const user = await requireSessionUser();
+  const data = shareSchema.parse(raw);
+  await requireProjectAccess(user, data.projectId, "canExport");
+  await assertPaidOrThrow(data.projectId);
+
+  const snap = await prisma.handoverSnapshot.findFirst({
+    where: { id: data.snapshotId, projectId: data.projectId },
+  });
+  if (!snap) throw new Error("Snapshot not found");
+
+  const days = data.daysValid ?? 14;
+  const shareToken = snap.shareToken ?? nanoid(24);
+  const shareExpiresAt = new Date(Date.now() + days * 24 * 60 * 60 * 1000);
+
+  await prisma.handoverSnapshot.update({
+    where: { id: snap.id },
+    data: { shareToken, shareExpiresAt },
+  });
+
+  await recordAudit({
+    projectId: data.projectId,
+    actorId: user.id,
+    action: "handover.share_link",
+    summary: `Created customer handover share link (expires ${shareExpiresAt.toISOString()})`,
+    metadata: { snapshotId: snap.id, days },
+  });
+
+  revalidatePath(`/app/projects/${data.projectId}/handover`);
+  const url = `${getAppUrl()}/share/handover/${shareToken}`;
+  return { url, shareExpiresAt: shareExpiresAt.toISOString() };
 }
