@@ -4,8 +4,12 @@ import { useState } from "react";
 import { importLldpEvidence, previewLldpImport } from "@/app/actions/evidence";
 import { SUPPORTED_EVIDENCE_FORMATS, type EvidenceFormat } from "@/lib/lldp/types";
 import { AlertBanner, Button, ErrorBanner, Input, Select, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 type FormatChoice = EvidenceFormat | "auto";
+
+const MAX_CHARS = 2_000_000;
+const TOO_LARGE = "This capture is larger than 2,000,000 characters. Import one device's output at a time.";
 
 export function LldpImportForm({ projectId }: { projectId: string }) {
   const [text, setText] = useState("");
@@ -19,19 +23,21 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
   const [success, setSuccess] = useState<string | null>(null);
 
   async function onPreview() {
+    if (text.length > MAX_CHARS) return setError(TOO_LARGE);
     setPending(true);
     setError(null);
     try {
       const p = await previewLldpImport({ projectId, text, format });
       setPreview(p);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Preview failed");
+      setError(actionErrorMessage(err, "Preview failed"));
     } finally {
       setPending(false);
     }
   }
 
   async function onImport() {
+    if (text.length > MAX_CHARS) return setError(TOO_LARGE);
     setPending(true);
     setError(null);
     setSuccess(null);
@@ -53,7 +59,7 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
         window.location.href = `/app/projects/${projectId}/exceptions`;
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Import failed");
+      setError(actionErrorMessage(err, "Import failed"));
     } finally {
       setPending(false);
     }
@@ -151,7 +157,7 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
               </p>
             </div>
             <div className="border border-[var(--border)] border-l-4 border-l-[var(--accent)] bg-[var(--accent-soft)] p-4 text-center">
-              <p className="truncate text-sm font-semibold text-[var(--accent)]">
+              <p className="truncate text-sm font-semibold text-[var(--accent-ink)]">
                 {preview.format ?? "detected"}
               </p>
               <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
@@ -159,7 +165,7 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
               </p>
             </div>
             <div className="border border-[var(--border)] border-l-4 border-l-[var(--accent)] bg-[var(--accent-soft)] p-4 text-center">
-              <p className="text-2xl font-semibold text-[var(--accent)]">Ready</p>
+              <p className="text-2xl font-semibold text-[var(--accent-ink)]">Ready</p>
               <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
                 Parse status
               </p>

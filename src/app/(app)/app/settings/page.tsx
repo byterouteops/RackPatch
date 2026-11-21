@@ -39,7 +39,7 @@ const NOTIFY_EVENTS: Array<{ event: string; inApp: boolean; webhook: boolean }> 
 ];
 
 function Dot({ on }: { on: boolean }) {
-  return on ? <CheckCircle2 className="mx-auto h-4 w-4 text-[var(--success)]" aria-label="Yes" /> : <Circle className="mx-auto h-4 w-4 text-[var(--border)]" aria-label="No" />;
+  return on ? <CheckCircle2 className="mx-auto h-4 w-4 text-[var(--success-ink)]" aria-label="Yes" /> : <Circle className="mx-auto h-4 w-4 text-[var(--border)]" aria-label="No" />;
 }
 
 function Section({ title, icon: Icon, children, className }: { title: string; icon: typeof Settings; children: React.ReactNode; className?: string }) {
@@ -112,7 +112,7 @@ export default async function SettingsPage() {
         )}
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-4 xl:grid-cols-7">
+      <div className="mb-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-7">
         <StatCard label="Workspaces" value={memberships.length} icon={<Building2 aria-hidden />} tone="success" />
         <StatCard label="Users" value={users} icon={<Users aria-hidden />} tone="info" />
         <StatCard label="Roles in use" value={roles} icon={<Layers aria-hidden />} tone="neutral" />
@@ -181,11 +181,11 @@ export default async function SettingsPage() {
                       </td>
                       <td className="px-2 py-2 text-right">{m.workspace._count.projects}</td>
                       <td className="whitespace-nowrap px-4 py-2 text-right text-xs font-semibold">
-                        <Link href={`/app/workspaces/${m.workspaceId}/sites`} className="text-[var(--accent)] hover:underline">
+                        <Link href={`/app/workspaces/${m.workspaceId}/sites`} className="text-[var(--accent-ink)] hover:underline">
                           Sites
                         </Link>
                         <span className="mx-1.5 text-[var(--border)]">|</span>
-                        <Link href={`/app/workspaces/${m.workspaceId}/team`} className="text-[var(--accent)] hover:underline">
+                        <Link href={`/app/workspaces/${m.workspaceId}/team`} className="text-[var(--accent-ink)] hover:underline">
                           Team ({m.workspace._count.memberships})
                         </Link>
                       </td>
@@ -205,11 +205,11 @@ export default async function SettingsPage() {
                 <span className="rp-mono text-xs">{getAppUrl()}</span>
               </Row>
               <Row label="Health">
-                <a href="/api/health" target="_blank" rel="noreferrer" className="text-[var(--accent)]">
+                <a href="/api/health" target="_blank" rel="noreferrer" className="text-[var(--accent-ink)]">
                   /api/health
                 </a>{" "}
                 {"\u00b7"}{" "}
-                <a href="/api/ready" target="_blank" rel="noreferrer" className="text-[var(--accent)]">
+                <a href="/api/ready" target="_blank" rel="noreferrer" className="text-[var(--accent-ink)]">
                   /api/ready
                 </a>
               </Row>

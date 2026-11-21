@@ -4,6 +4,7 @@ import { useState } from "react";
 import { createWebhookEndpoint } from "@/app/actions/webhooks";
 import { WEBHOOK_EVENTS } from "@/lib/webhooks";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function WebhookCreateForm({ projectId }: { projectId: string }) {
   const [url, setUrl] = useState("");
@@ -21,7 +22,7 @@ export function WebhookCreateForm({ projectId }: { projectId: string }) {
       setSecret(res.secret);
       setUrl("");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not add endpoint");
+      setError(actionErrorMessage(e, "Could not add endpoint"));
     } finally {
       setBusy(false);
     }

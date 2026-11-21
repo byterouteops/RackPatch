@@ -231,7 +231,7 @@ export default async function VerifyPage({
         }
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Planned Links" value={total} icon={<Link2 aria-hidden />} tone="info" />
         <StatCard label="Verified" value={verified} hint={pct(verified, total)} icon={<CheckCircle2 aria-hidden />} tone="success" />
         <StatCard label="Pending" value={pending} hint={pct(pending, total)} icon={<Clock aria-hidden />} tone="warning" />
@@ -260,7 +260,7 @@ export default async function VerifyPage({
                     "rounded-full border px-2.5 py-1 text-xs font-semibold",
                     filter.id === f.id
                       ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                      : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+                      : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent-ink)]",
                   )}
                 >
                   {f.label}
@@ -291,7 +291,7 @@ export default async function VerifyPage({
                       )}
                     >
                       <td className="px-4 py-2">
-                        <Link href={qs({ cable: r.id })} scroll={false} className="rp-mono font-bold text-[var(--accent)] hover:underline">
+                        <Link href={qs({ cable: r.id })} scroll={false} className="rp-mono font-bold text-[var(--accent-ink)] hover:underline">
                           {r.cableId}
                         </Link>
                       </td>
@@ -300,7 +300,7 @@ export default async function VerifyPage({
                           {r.aDevice}/{r.aPort} {"\u2194"} {r.zDevice}/{r.zPort}
                         </Link>
                       </td>
-                      <td className={cn("px-2 py-2", f && (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW") ? "font-medium text-[var(--danger)]" : "text-[var(--muted-fg)]")}>
+                      <td className={cn("px-2 py-2", f && (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW") ? "font-medium text-[var(--danger-ink)]" : "text-[var(--muted-fg)]")}>
                         {f?.observedSummary ?? "\u2014 (no neighbor yet)"}
                       </td>
                       <td className="px-2 py-2">
@@ -352,7 +352,7 @@ export default async function VerifyPage({
                     zp={selected.zPort}
                   />
                   <div className={cn("rounded-lg border p-3", problem ? "border-red-200 bg-[var(--danger-soft)]" : "border-emerald-200 bg-[var(--success-soft)]")}>
-                    <p className={cn("mb-2 text-xs font-bold", problem ? "text-[var(--danger)]" : "text-[var(--success-ink)]")}>Observed (LLDP/CDP)</p>
+                    <p className={cn("mb-2 text-xs font-bold", problem ? "text-[var(--danger-ink)]" : "text-[var(--success-ink)]")}>Observed (LLDP/CDP)</p>
                     <p className="text-[13px] font-semibold">{sf?.observedSummary ?? "No neighbor evidence yet"}</p>
                     {sf?.evidenceSource && <p className="mt-1 text-[11px] text-[var(--muted-fg)]">Source: {sf.evidenceSource}</p>}
                   </div>
@@ -385,7 +385,7 @@ export default async function VerifyPage({
             {neighbors.length === 0 ? (
               <p className="p-4 text-sm text-[var(--muted-fg)]">
                 No neighbor observations recorded for these ports.{" "}
-                <Link href={`/app/projects/${projectId}/lldp`} className="font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/lldp`} className="font-semibold text-[var(--accent-ink)]">
                   Import evidence
                 </Link>
               </p>
@@ -446,9 +446,9 @@ export default async function VerifyPage({
                 >
                   {s.done ? <CheckCircle2 className="h-4 w-4" aria-hidden /> : i + 1}
                 </span>
-                <span className={cn("mt-2 text-xs", isCurrent ? "font-bold text-[var(--accent)]" : "font-medium")}>{s.label}</span>
+                <span className={cn("mt-2 text-xs", isCurrent ? "font-bold text-[var(--accent-ink)]" : "font-medium")}>{s.label}</span>
                 {i === 3 && (
-                  <Link href={`/app/projects/${projectId}/qc`} className="mt-0.5 text-[11px] text-[var(--accent)]">
+                  <Link href={`/app/projects/${projectId}/qc`} className="mt-0.5 text-[11px] text-[var(--accent-ink)]">
                     <UserCheck className="mr-0.5 inline h-3 w-3" aria-hidden />
                     QC queue
                   </Link>
@@ -465,7 +465,7 @@ export default async function VerifyPage({
 function EndpointBox({ tone, title, a, ap, z, zp }: { tone: "info"; title: string; a: string; ap: string; z: string; zp: string }) {
   return (
     <div className={cn("rounded-lg border p-3", tone === "info" && "border-blue-200 bg-[var(--accent-soft)]")}>
-      <p className="mb-2 text-xs font-bold text-[var(--accent)]">{title}</p>
+      <p className="mb-2 text-xs font-bold text-[var(--accent-ink)]">{title}</p>
       <div className="flex items-center justify-between gap-2 text-[13px]">
         <div>
           <p className="font-bold">{a}</p>

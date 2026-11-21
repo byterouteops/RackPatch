@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createHandoverShareLink } from "@/app/actions/handover";
 import { Button, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function HandoverShareButton({
   projectId,
@@ -30,7 +31,7 @@ export function HandoverShareButton({
       setUrl(result.url);
       setExpires(result.shareExpiresAt);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not create share link");
+      setError(actionErrorMessage(err, "Could not create share link"));
     } finally {
       setPending(false);
     }

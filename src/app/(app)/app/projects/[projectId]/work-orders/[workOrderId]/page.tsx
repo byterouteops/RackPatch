@@ -108,7 +108,7 @@ export default async function WorkOrderDetailPage({
                   <td className="px-3 py-2">
                     <Link
                       href={`/app/projects/${projectId}/cables/${l.id}`}
-                      className="rp-mono font-semibold text-[var(--accent)] hover:underline"
+                      className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline"
                     >
                       {l.cableId}
                     </Link>

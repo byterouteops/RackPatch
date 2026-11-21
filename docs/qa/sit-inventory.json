@@ -1,0 +1,1264 @@
+{
+  "generatedAt": "2026-11-21T21:24:04.767Z",
+  "pages": [
+    {
+      "route": "/",
+      "file": "src/app/page.tsx",
+      "params": [],
+      "authenticated": false,
+      "guards": [],
+      "forms": 0,
+      "links": 7
+    },
+    {
+      "route": "/about",
+      "file": "src/app/about/page.tsx",
+      "params": [],
+      "authenticated": false,
+      "guards": [],
+      "forms": 0,
+      "links": 5
+    },
+    {
+      "route": "/app",
+      "file": "src/app/(app)/app/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser",
+        "listVisibleProjects"
+      ],
+      "forms": 2,
+      "links": 14
+    },
+    {
+      "route": "/app/admin",
+      "file": "src/app/(app)/app/admin/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser",
+        "requirePlatformAdmin",
+        "listVisibleProjects"
+      ],
+      "forms": 1,
+      "links": 0
+    },
+    {
+      "route": "/app/help",
+      "file": "src/app/(app)/app/help/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 14
+    },
+    {
+      "route": "/app/notifications",
+      "file": "src/app/(app)/app/notifications/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser",
+        "listVisibleProjects"
+      ],
+      "forms": 1,
+      "links": 13
+    },
+    {
+      "route": "/app/projects",
+      "file": "src/app/(app)/app/projects/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser",
+        "listVisibleProjects"
+      ],
+      "forms": 1,
+      "links": 5
+    },
+    {
+      "route": "/app/projects/[projectId]",
+      "file": "src/app/(app)/app/projects/[projectId]/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser",
+        "listVisibleProjects"
+      ],
+      "forms": 0,
+      "links": 28
+    },
+    {
+      "route": "/app/projects/[projectId]/analytics",
+      "file": "src/app/(app)/app/projects/[projectId]/analytics/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 2
+    },
+    {
+      "route": "/app/projects/[projectId]/api",
+      "file": "src/app/(app)/app/projects/[projectId]/api/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 11
+    },
+    {
+      "route": "/app/projects/[projectId]/assistant",
+      "file": "src/app/(app)/app/projects/[projectId]/assistant/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 0
+    },
+    {
+      "route": "/app/projects/[projectId]/cables",
+      "file": "src/app/(app)/app/projects/[projectId]/cables/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 3
+    },
+    {
+      "route": "/app/projects/[projectId]/cables/[linkId]",
+      "file": "src/app/(app)/app/projects/[projectId]/cables/[linkId]/page.tsx",
+      "params": [
+        "projectId",
+        "linkId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 5
+    },
+    {
+      "route": "/app/projects/[projectId]/capacity",
+      "file": "src/app/(app)/app/projects/[projectId]/capacity/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 12
+    },
+    {
+      "route": "/app/projects/[projectId]/collection",
+      "file": "src/app/(app)/app/projects/[projectId]/collection/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 2,
+      "links": 8
+    },
+    {
+      "route": "/app/projects/[projectId]/compliance",
+      "file": "src/app/(app)/app/projects/[projectId]/compliance/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 6
+    },
+    {
+      "route": "/app/projects/[projectId]/evidence",
+      "file": "src/app/(app)/app/projects/[projectId]/evidence/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 15
+    },
+    {
+      "route": "/app/projects/[projectId]/evidence/explorer",
+      "file": "src/app/(app)/app/projects/[projectId]/evidence/explorer/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 8
+    },
+    {
+      "route": "/app/projects/[projectId]/exceptions",
+      "file": "src/app/(app)/app/projects/[projectId]/exceptions/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "getSessionUser"
+      ],
+      "forms": 0,
+      "links": 17
+    },
+    {
+      "route": "/app/projects/[projectId]/fabric",
+      "file": "src/app/(app)/app/projects/[projectId]/fabric/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 4
+    },
+    {
+      "route": "/app/projects/[projectId]/fabric/[fabric]",
+      "file": "src/app/(app)/app/projects/[projectId]/fabric/[fabric]/page.tsx",
+      "params": [
+        "projectId",
+        "fabric"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 4
+    },
+    {
+      "route": "/app/projects/[projectId]/handover",
+      "file": "src/app/(app)/app/projects/[projectId]/handover/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 11
+    },
+    {
+      "route": "/app/projects/[projectId]/handover/[snapshotId]",
+      "file": "src/app/(app)/app/projects/[projectId]/handover/[snapshotId]/page.tsx",
+      "params": [
+        "projectId",
+        "snapshotId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 2
+    },
+    {
+      "route": "/app/projects/[projectId]/integrations",
+      "file": "src/app/(app)/app/projects/[projectId]/integrations/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 2
+    },
+    {
+      "route": "/app/projects/[projectId]/inventory",
+      "file": "src/app/(app)/app/projects/[projectId]/inventory/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 3,
+      "links": 14
+    },
+    {
+      "route": "/app/projects/[projectId]/labels",
+      "file": "src/app/(app)/app/projects/[projectId]/labels/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 2
+    },
+    {
+      "route": "/app/projects/[projectId]/lldp",
+      "file": "src/app/(app)/app/projects/[projectId]/lldp/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 10
+    },
+    {
+      "route": "/app/projects/[projectId]/panels",
+      "file": "src/app/(app)/app/projects/[projectId]/panels/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 8
+    },
+    {
+      "route": "/app/projects/[projectId]/plan",
+      "file": "src/app/(app)/app/projects/[projectId]/plan/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 1
+    },
+    {
+      "route": "/app/projects/[projectId]/qc",
+      "file": "src/app/(app)/app/projects/[projectId]/qc/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 13
+    },
+    {
+      "route": "/app/projects/[projectId]/racks",
+      "file": "src/app/(app)/app/projects/[projectId]/racks/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 4
+    },
+    {
+      "route": "/app/projects/[projectId]/racks/[rack]",
+      "file": "src/app/(app)/app/projects/[projectId]/racks/[rack]/page.tsx",
+      "params": [
+        "projectId",
+        "rack"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 10
+    },
+    {
+      "route": "/app/projects/[projectId]/reports",
+      "file": "src/app/(app)/app/projects/[projectId]/reports/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 8
+    },
+    {
+      "route": "/app/projects/[projectId]/scan",
+      "file": "src/app/(app)/app/projects/[projectId]/scan/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 1
+    },
+    {
+      "route": "/app/projects/[projectId]/spares",
+      "file": "src/app/(app)/app/projects/[projectId]/spares/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 8
+    },
+    {
+      "route": "/app/projects/[projectId]/trace",
+      "file": "src/app/(app)/app/projects/[projectId]/trace/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 2
+    },
+    {
+      "route": "/app/projects/[projectId]/twin",
+      "file": "src/app/(app)/app/projects/[projectId]/twin/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 12
+    },
+    {
+      "route": "/app/projects/[projectId]/verify",
+      "file": "src/app/(app)/app/projects/[projectId]/verify/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 20
+    },
+    {
+      "route": "/app/projects/[projectId]/work-orders",
+      "file": "src/app/(app)/app/projects/[projectId]/work-orders/page.tsx",
+      "params": [
+        "projectId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 17
+    },
+    {
+      "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
+      "file": "src/app/(app)/app/projects/[projectId]/work-orders/[workOrderId]/page.tsx",
+      "params": [
+        "projectId",
+        "workOrderId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "getProjectAccess",
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 2
+    },
+    {
+      "route": "/app/search",
+      "file": "src/app/(app)/app/search/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser",
+        "listVisibleProjects"
+      ],
+      "forms": 1,
+      "links": 9
+    },
+    {
+      "route": "/app/settings",
+      "file": "src/app/(app)/app/settings/page.tsx",
+      "params": [],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser"
+      ],
+      "forms": 0,
+      "links": 11
+    },
+    {
+      "route": "/app/workspaces/[workspaceId]/sites",
+      "file": "src/app/(app)/app/workspaces/[workspaceId]/sites/page.tsx",
+      "params": [
+        "workspaceId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser"
+      ],
+      "forms": 2,
+      "links": 12
+    },
+    {
+      "route": "/app/workspaces/[workspaceId]/team",
+      "file": "src/app/(app)/app/workspaces/[workspaceId]/team/page.tsx",
+      "params": [
+        "workspaceId"
+      ],
+      "authenticated": true,
+      "guards": [
+        "requireSessionUser"
+      ],
+      "forms": 1,
+      "links": 6
+    },
+    {
+      "route": "/demo",
+      "file": "src/app/demo/page.tsx",
+      "params": [],
+      "authenticated": false,
+      "guards": [],
+      "forms": 0,
+      "links": 6
+    },
+    {
+      "route": "/invite/[token]",
+      "file": "src/app/invite/[token]/page.tsx",
+      "params": [
+        "token"
+      ],
+      "authenticated": false,
+      "guards": [
+        "getSessionUser"
+      ],
+      "forms": 0,
+      "links": 1
+    },
+    {
+      "route": "/share/handover/[token]",
+      "file": "src/app/share/handover/[token]/page.tsx",
+      "params": [
+        "token"
+      ],
+      "authenticated": false,
+      "guards": [],
+      "forms": 0,
+      "links": 0
+    },
+    {
+      "route": "/sign-in",
+      "file": "src/app/sign-in/page.tsx",
+      "params": [],
+      "authenticated": false,
+      "guards": [],
+      "forms": 0,
+      "links": 2
+    }
+  ],
+  "apis": [
+    {
+      "route": "/api/auth/[...all]",
+      "file": "src/app/api/auth/[...all]/route.ts",
+      "methods": [
+        "GET",
+        "POST"
+      ],
+      "guards": []
+    },
+    {
+      "route": "/api/field-photos/[photoId]",
+      "file": "src/app/api/field-photos/[photoId]/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "getProjectAccess",
+        "getSessionUser"
+      ]
+    },
+    {
+      "route": "/api/health",
+      "file": "src/app/api/health/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": []
+    },
+    {
+      "route": "/api/internal/compliance-check",
+      "file": "src/app/api/internal/compliance-check/route.ts",
+      "methods": [
+        "POST"
+      ],
+      "guards": [
+        "verifyComplianceSecret"
+      ]
+    },
+    {
+      "route": "/api/me/notifications",
+      "file": "src/app/api/me/notifications/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "getSessionUser"
+      ]
+    },
+    {
+      "route": "/api/me/search",
+      "file": "src/app/api/me/search/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "getSessionUser"
+      ]
+    },
+    {
+      "route": "/api/ready",
+      "file": "src/app/api/ready/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": []
+    },
+    {
+      "route": "/api/v1/projects/[projectId]/cables",
+      "file": "src/app/api/v1/projects/[projectId]/cables/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "authenticateProjectRead"
+      ]
+    },
+    {
+      "route": "/api/v1/projects/[projectId]/gitops",
+      "file": "src/app/api/v1/projects/[projectId]/gitops/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "authenticateProjectRead"
+      ]
+    },
+    {
+      "route": "/api/v1/projects/[projectId]/summary",
+      "file": "src/app/api/v1/projects/[projectId]/summary/route.ts",
+      "methods": [
+        "GET"
+      ],
+      "guards": [
+        "authenticateProjectRead"
+      ]
+    }
+  ],
+  "actions": [
+    {
+      "file": "src/app/actions/api-tokens.ts",
+      "name": "createApiToken",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/api-tokens.ts",
+      "name": "revokeApiToken",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/assistant.ts",
+      "name": "askAssistant",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/bootstrap.ts",
+      "name": "createFirstAdministrator",
+      "guards": []
+    },
+    {
+      "file": "src/app/actions/bootstrap.ts",
+      "name": "getBootstrapStatus",
+      "guards": []
+    },
+    {
+      "file": "src/app/actions/collection.ts",
+      "name": "createDeviceCredential",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/collection.ts",
+      "name": "createCollectionTarget",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/collection.ts",
+      "name": "runSshCollection",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/collection.ts",
+      "name": "listCollectionProfiles",
+      "guards": []
+    },
+    {
+      "file": "src/app/actions/compliance.ts",
+      "name": "saveCompliancePolicy",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/compliance.ts",
+      "name": "runComplianceNow",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/demo.ts",
+      "name": "setDemoEvidenceSnapshot",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/evidence.ts",
+      "name": "previewLldpImport",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/evidence.ts",
+      "name": "importLldpEvidence",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/field-evidence.ts",
+      "name": "uploadFieldPhoto",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/field-evidence.ts",
+      "name": "syncOfflineFieldQueue",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/handover.ts",
+      "name": "exportProjectCsv",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/handover.ts",
+      "name": "createHandoverSnapshot",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/handover.ts",
+      "name": "approveHandoverStage",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/handover.ts",
+      "name": "createHandoverShareLink",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/install.ts",
+      "name": "updateInstallStatus",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/install.ts",
+      "name": "setInstaller",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "saveNetBoxConfig",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "removeNetBoxConfig",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "runNetBoxDryRun",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "previewNetBoxFixture",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "exportPlanGitOps",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "applyNetBoxPlanImport",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "writeNetBoxCableLabels",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/integrations.ts",
+      "name": "previewGitOpsImport",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/inventory.ts",
+      "name": "syncPortInventory",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/inventory.ts",
+      "name": "addInventoryPort",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/inventory.ts",
+      "name": "updateInventoryPort",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/labels.ts",
+      "name": "saveLabelTemplate",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/labels.ts",
+      "name": "recordLabelPrint",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/labels.ts",
+      "name": "getDefaultLabelConfig",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/lifecycle.ts",
+      "name": "updateCableAsset",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/lifecycle.ts",
+      "name": "retireCable",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/notifications.ts",
+      "name": "markNotificationAsRead",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/notifications.ts",
+      "name": "markAllAsRead",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/panels.ts",
+      "name": "createPatchPanel",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/panels.ts",
+      "name": "mapPanelPort",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/panels.ts",
+      "name": "unmapPanelPort",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/panels.ts",
+      "name": "createCircuit",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/panels.ts",
+      "name": "deleteCircuit",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/pilot.ts",
+      "name": "submitPilotRequest",
+      "guards": []
+    },
+    {
+      "file": "src/app/actions/pilot.ts",
+      "name": "activateProjectCommercial",
+      "guards": [
+        "requireSessionUser",
+        "requirePlatformAdmin"
+      ]
+    },
+    {
+      "file": "src/app/actions/plan.ts",
+      "name": "previewPlanImport",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/plan.ts",
+      "name": "publishPlanImport",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/plan.ts",
+      "name": "hashCsv",
+      "guards": []
+    },
+    {
+      "file": "src/app/actions/plan.ts",
+      "name": "logPlanPreviewAudit",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/qc.ts",
+      "name": "qcAcknowledgeFinding",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/spares.ts",
+      "name": "createStockItem",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/spares.ts",
+      "name": "adjustStock",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/verify.ts",
+      "name": "recordPhysicalVerification",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/verify.ts",
+      "name": "acknowledgeException",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/verify.ts",
+      "name": "assignException",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/verify.ts",
+      "name": "waiveException",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/webhooks.ts",
+      "name": "createWebhookEndpoint",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/webhooks.ts",
+      "name": "revokeWebhookEndpoint",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/work-orders.ts",
+      "name": "createWorkOrder",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/work-orders.ts",
+      "name": "updateWorkOrderStatus",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/work-orders.ts",
+      "name": "attachLinksToWorkOrder",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/workspace.ts",
+      "name": "createWorkspace",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/workspace.ts",
+      "name": "createProject",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/workspace.ts",
+      "name": "inviteTeammate",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/workspace.ts",
+      "name": "acceptInvitation",
+      "guards": [
+        "requireSessionUser"
+      ]
+    },
+    {
+      "file": "src/app/actions/workspace.ts",
+      "name": "createSite",
+      "guards": [
+        "requireSessionUser"
+      ]
+    }
+  ]
+}

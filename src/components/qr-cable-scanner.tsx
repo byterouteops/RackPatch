@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { parseCableQr } from "@/lib/qr/parse-cable-qr";
 import { queueOfflineScan } from "@/components/offline-field-sync";
 import { AlertBanner, Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 type BarcodeDetectorLike = {
   detect: (source: ImageBitmapSource) => Promise<Array<{ rawValue: string }>>;
@@ -71,7 +72,7 @@ export function QrCableScanner({ projectId }: { projectId: string }) {
           });
           setHint(`Offline — queued ${parsed.linkId}. Sync when back online.`);
         } catch (e) {
-          setError(e instanceof Error ? e.message : "Could not queue offline scan");
+          setError(actionErrorMessage(e, "Could not queue offline scan"));
         }
         return;
       }

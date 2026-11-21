@@ -78,7 +78,7 @@ export function NotificationCenter() {
               <button
                 type="button"
                 disabled={pending || unread === 0}
-                className="text-xs font-semibold text-[var(--accent)] disabled:opacity-40"
+                className="text-xs font-semibold text-[var(--accent-ink)] disabled:opacity-40"
                 onClick={() =>
                   startTransition(async () => {
                     await markAllAsRead();
@@ -131,7 +131,7 @@ export function NotificationCenter() {
             <div className="border-t border-[var(--border)] px-3 py-2 text-center">
               <Link
                 href="/app/notifications"
-                className="text-xs font-semibold text-[var(--accent)] hover:underline"
+                className="text-xs font-semibold text-[var(--accent-ink)] hover:underline"
                 onClick={() => setOpen(false)}
               >
                 View all activity

@@ -171,7 +171,7 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
     <div>
       {header}
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Overall Completion" value={`${completion.toFixed(1)}%`} icon={<CheckCircle2 aria-hidden />} tone="success" />
         <StatCard label="Cable Links" value={total} icon={<Cable aria-hidden />} tone="info" />
         <StatCard label="Racks" value={capacity.byRack.length} icon={<Server aria-hidden />} tone="neutral" />
@@ -208,11 +208,11 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
           </h2>
           <div className="flex items-center gap-5">
             <Donut segments={statusSegments} total={total} label="Cable Links" />
-            <ul className="flex-1 space-y-2 text-[13px]">
+            <ul className="min-w-0 flex-1 space-y-2 text-[13px]">
               {statusSegments.map((s) => (
                 <li key={s.label} className="flex items-center gap-2">
                   <span className="h-2.5 w-2.5 rounded-sm" style={{ background: s.color }} aria-hidden />
-                  <span className="flex-1">{s.label}</span>
+                  <span className="min-w-0 flex-1 truncate" title={s.label}>{s.label}</span>
                   <span className="font-semibold">{s.value}</span>
                   <span className="w-12 text-right text-xs text-[var(--muted-fg)]">{pct(s.value, total).toFixed(1)}%</span>
                 </li>
@@ -309,7 +309,7 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
           <ul className="space-y-2 text-[13px]">
             {quality.map((q) => (
               <li key={q.label} className="flex items-center gap-2">
-                <CheckCircle2 className={cn("h-4 w-4 shrink-0", q.value >= 100 ? "text-[var(--success)]" : "text-[var(--muted-fg)]")} aria-hidden />
+                <CheckCircle2 className={cn("h-4 w-4 shrink-0", q.value >= 100 ? "text-[var(--success-ink)]" : "text-[var(--muted-fg)]")} aria-hidden />
                 <span className="flex-1">{q.label}</span>
                 <span className="font-bold">{q.value.toFixed(1)}%</span>
               </li>
@@ -325,9 +325,9 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
             {insights.map((t, i) => (
               <li key={i} className="flex items-start gap-2">
                 {i === insights.length - 1 ? (
-                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                  <Info className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                 ) : (
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                 )}
                 {t}
               </li>
@@ -352,7 +352,7 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
                       {s.createdAt.toISOString().slice(0, 16).replace("T", " ")} {"\u00b7"} {s.createdBy.name || s.createdBy.email}
                     </span>
                   </span>
-                  <Link href={`/app/projects/${projectId}/handover/${s.id}`} className="text-[var(--accent)]" aria-label="Open report">
+                  <Link href={`/app/projects/${projectId}/handover/${s.id}`} className="text-[var(--accent-ink)]" aria-label="Open report">
                     <Download className="h-4 w-4" />
                   </Link>
                 </li>
@@ -385,10 +385,10 @@ export default async function ProjectReportsPage({ params }: { params: Promise<{
             <p className="text-sm text-[var(--muted-fg)]">Exports require the lead role on an activated project.</p>
           )}
           <div className="mt-3 flex flex-wrap gap-3 text-xs font-semibold">
-            <Link href={`/app/projects/${projectId}/analytics`} className="text-[var(--accent)]">
+            <Link href={`/app/projects/${projectId}/analytics`} className="text-[var(--accent-ink)]">
               Analytics {"\u2192"}
             </Link>
-            <Link href={`/app/projects/${projectId}/capacity`} className="text-[var(--accent)]">
+            <Link href={`/app/projects/${projectId}/capacity`} className="text-[var(--accent-ink)]">
               Capacity {"\u2192"}
             </Link>
           </div>

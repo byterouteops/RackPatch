@@ -146,7 +146,7 @@ export default async function EvidenceExplorerPage({ params, searchParams }: { p
       )}
 
       {imports.length === 0 ? (
-        <EmptyState icon={<FileSearch className="h-5 w-5" aria-hidden />} title="No evidence yet" description="Import LLDP/CDP output on the LLDP page or run a collection job; captures appear here with their parsed neighbors." action={<Link className="text-sm font-semibold text-[var(--accent)]" href={`/app/projects/${projectId}/lldp`}>Import evidence</Link>} />
+        <EmptyState icon={<FileSearch className="h-5 w-5" aria-hidden />} title="No evidence yet" description="Import LLDP/CDP output on the LLDP page or run a collection job; captures appear here with their parsed neighbors." action={<Link className="text-sm font-semibold text-[var(--accent-ink)]" href={`/app/projects/${projectId}/lldp`}>Import evidence</Link>} />
       ) : (
         <div className="grid gap-4 lg:grid-cols-[340px_minmax(0,1fr)]">
           <ul className="max-h-[72vh] divide-y divide-[var(--border)] overflow-auto rounded-lg border border-[var(--border)] bg-white text-xs" aria-label="Captures">
@@ -195,7 +195,7 @@ export default async function EvidenceExplorerPage({ params, searchParams }: { p
                     </div>
                   )}
                   {shownFile ? (
-                    <pre className="max-h-[340px] overflow-auto rounded-md bg-slate-900 p-3 font-mono text-[11px] leading-snug text-slate-100" aria-label="Raw CLI output">{shownFile.text}</pre>
+                    <pre tabIndex={0} className="max-h-[340px] overflow-auto rounded-md bg-slate-900 p-3 font-mono text-[11px] leading-snug text-slate-100" aria-label="Raw CLI output">{shownFile.text}</pre>
                   ) : (
                     <p className="text-xs text-[var(--muted-fg)]">Raw text is not stored for uploaded captures (only its SHA-256). Parsed rows and source excerpts are shown below.</p>
                   )}
@@ -251,7 +251,7 @@ export default async function EvidenceExplorerPage({ params, searchParams }: { p
                                   {label && <span className="ml-1 text-[var(--muted-fg)]">{label}</span>}
                                 </td>
                                 <td className="py-1 font-mono">
-                                  <Link className="text-[var(--accent)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link>
+                                  <Link className="text-[var(--accent-ink)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link>
                                 </td>
                               </tr>
                             );

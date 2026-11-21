@@ -97,7 +97,7 @@ export default function Home() {
                 Explore the Demo
               </Button>
             </div>
-            <p className="mt-4 text-sm text-white/45">
+            <p className="mt-4 text-sm text-white/70">
               Self-host free. Optional assisted pilot is a service — not a software license.
             </p>
           </div>
@@ -119,7 +119,7 @@ export default function Home() {
               {features.map((f) => (
                 <div key={f.title} className="rp-card flex gap-3 border-l-4 border-l-[var(--accent)] p-4">
                   <CheckCircle2
-                    className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]"
+                    className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-ink)]"
                     aria-hidden
                   />
                   <div>
@@ -140,7 +140,7 @@ export default function Home() {
               Optional service: installation assistance, first cable-plan import help, and a
               handover walkthrough. Community Edition remains free to self-host.
             </p>
-            <p className="mt-3 max-w-xl text-xs text-white/45">
+            <p className="mt-3 max-w-xl text-xs text-white/70">
               Manual invoicing. No in-app checkout. Hosted SaaS commercial activation is separate
               from open-source self-host.
             </p>
@@ -167,7 +167,7 @@ export default function Home() {
             <p className="mt-4">
               Docs: see repository <code className="rp-mono text-xs">README.md</code>,{" "}
               <code className="rp-mono text-xs">FIRST_PROJECT_QUICKSTART.md</code>, and{" "}
-              <Link className="font-semibold text-[var(--accent)] hover:underline" href="/about">
+              <Link className="font-semibold text-[var(--accent-ink)] hover:underline" href="/about">
                 About
               </Link>
               .
@@ -176,9 +176,9 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-[var(--border)] bg-[var(--chrome)] py-5 text-center text-xs tracking-[0.06em] text-white/45">
+      <footer className="border-t border-[var(--border)] bg-[var(--chrome)] py-5 text-center text-xs tracking-[0.06em] text-white/70">
         <p className="uppercase">RackPatch Community Edition · Apache License 2.0</p>
-        <p className="mt-1.5 text-[11px] normal-case tracking-normal text-white/35">
+        <p className="mt-1.5 text-[11px] normal-case tracking-normal text-white/70">
           © 2026 K G Pramod / VEX-NX
         </p>
       </footer>

@@ -86,7 +86,7 @@ export default async function FabricDetailPage({ params }: { params: Promise<{ p
                     return (
                       <tr key={s.id} className="border-t border-[var(--border)]">
                         <td className="px-3 py-1.5 font-mono font-semibold">
-                          <Link className="text-[var(--accent)]" href={`${base}/racks/${encodeURIComponent(s.rack ?? "")}?device=${encodeURIComponent(s.name)}`}>{s.name}</Link>
+                          <Link className="text-[var(--accent-ink)]" href={`${base}/racks/${encodeURIComponent(s.rack ?? "")}?device=${encodeURIComponent(s.name)}`}>{s.name}</Link>
                         </td>
                         <td className="px-3 py-1.5">{s.role}</td>
                         <td className="px-3 py-1.5">{up.length}</td>
@@ -107,7 +107,7 @@ export default async function FabricDetailPage({ params }: { params: Promise<{ p
               <ul className="divide-y divide-[var(--border)] rounded-lg border border-[var(--border)] bg-white text-xs">
                 {problems.map((l) => (
                   <li key={l.cableId} className="flex flex-wrap items-center gap-2 px-3 py-2">
-                    <Link className="font-mono font-semibold text-[var(--accent)]" href={`${base}/cables/${l.id}`}>{l.cableId}</Link>
+                    <Link className="font-mono font-semibold text-[var(--accent-ink)]" href={`${base}/cables/${l.id}`}>{l.cableId}</Link>
                     <span className="font-mono">{l.aDevice} {l.aPort} {"\u2194"} {l.zDevice} {l.zPort}</span>
                     <VerificationBadge state={l.state as never} compact />
                     <span className="text-[var(--muted-fg)]">{l.nextAction}</span>

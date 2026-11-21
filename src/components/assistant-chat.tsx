@@ -3,6 +3,7 @@
 import { useRef, useState, useTransition } from "react";
 import { askAssistant } from "@/app/actions/assistant";
 import { Badge, Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 type Turn =
   | { role: "user"; text: string }
@@ -39,7 +40,7 @@ export function AssistantChat({
         if (res.suggestions.length > 0) setFollowUps(res.suggestions);
         setTimeout(() => endRef.current?.scrollIntoView({ behavior: "smooth" }), 0);
       } catch (err) {
-        setError(err instanceof Error ? err.message : "Could not get an answer");
+        setError(actionErrorMessage(err, "Could not get an answer"));
       }
     });
   }

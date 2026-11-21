@@ -2,56 +2,61 @@
 @tailwind components;
 @tailwind utilities;
 
-/* RackPatch — visual system aligned to UI reference PNGs */
+/* RackPatch enterprise theme: navy / blue / cyan, Poppins + JetBrains Mono (docs/design/THEME.md) */
 :root {
-  --background: #f3f6fa;
-  --background-glow: #f8fafc;
-  --foreground: #0b1220;
+  --background: #f4f9fd;
+  --background-glow: #eaf4fc;
+  --foreground: #101b3a;
+  --body: #263b5a;
   --card: #ffffff;
-  --border: #e2e8f0;
-  --border-strong: #cbd5e1;
-  --muted: #f1f5f9;
-  --muted-fg: #64748b;
+  --border: #dce7f2;
+  --border-strong: #c3d4e6;
+  --muted: #eef4fa;
+  --muted-fg: #526783;
   --sidebar: #071b33;
   --sidebar-mid: #0c2744;
-  --sidebar-fg: #e8eef7;
-  --sidebar-muted: #8ba3bc;
+  --sidebar-fg: #e8f1fb;
+  --sidebar-muted: #9bb2cc;
   --chrome: #051526;
-  --accent: #2563eb;
-  --accent-hover: #1d4ed8;
-  --accent-soft: #eff6ff;
-  --accent-line: #06b6d4;
-  --cyan: #06b6d4;
+  --accent: #0076d5;
+  --accent-hover: #005ff8;
+  /* Text-safe primary: #0076d5 is AA for white-on-blue fills but not for small blue text on light surfaces. */
+  --accent-ink: #005fb0;
+  --accent-soft: #e8f3fd;
+  --accent-line: #00bceb;
+  --cyan: #00bceb;
   --danger: #dc2626;
-  --danger-soft: #fef2f2;
+  --danger-soft: #fdeeee;
+  --danger-ink: #b91c1c;
   --success: #16a34a;
   --success-ink: #166534;
-  --success-soft: #f0fdf4;
-  --warning: #d97706;
-  --warning-ink: #92400e;
-  --warning-soft: #fffbeb;
-  --info: #2563eb;
-  --info-soft: #eff6ff;
+  --success-soft: #ecf8f0;
+  --warning: #f59e0b;
+  --warning-ink: #b45309;
+  --warning-soft: #fff6e6;
+  --info: #0076d5;
+  --info-soft: #e8f3fd;
   --z-end: #0e7490;
-  --z-end-soft: #ecfeff;
-  --radius: 0.75rem;
+  --z-end-soft: #e6f9fd;
+  --radius: 0.875rem;
   --radius-sm: 0.5rem;
-  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04), 0 1px 1px rgba(15, 23, 42, 0.03);
-  --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.06), 0 2px 4px -2px rgba(15, 23, 42, 0.05);
-  --shadow-md: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 10px -4px rgba(15, 23, 42, 0.05);
-  --shadow-lg: 0 20px 40px -12px rgba(15, 23, 42, 0.12);
-  --font-sans: var(--font-inter), "Segoe UI", system-ui, sans-serif;
-  --font-display: var(--font-jakarta), var(--font-inter), sans-serif;
-  --font-mono: var(--font-jetbrains), ui-monospace, monospace;
+  --shadow-sm: 0 1px 2px rgba(16, 27, 58, 0.04);
+  --shadow: 0 1px 2px rgba(16, 27, 58, 0.04), 0 2px 8px -2px rgba(0, 118, 213, 0.08);
+  --shadow-md: 0 4px 14px -4px rgba(0, 118, 213, 0.14), 0 1px 3px rgba(16, 27, 58, 0.05);
+  --shadow-lg: 0 16px 32px -12px rgba(16, 27, 58, 0.18);
+  --font-sans: var(--font-poppins), "Segoe UI", system-ui, sans-serif;
+  --font-display: var(--font-poppins), "Segoe UI", system-ui, sans-serif;
+  --font-mono: var(--font-jetbrains), ui-monospace, Consolas, monospace;
 }
 
+@layer base {
 body {
-  color: var(--foreground);
+  color: var(--body);
   background: var(--background);
   font-family: var(--font-sans);
   font-size: 14px;
   line-height: 1.55;
-  letter-spacing: -0.011em;
+  letter-spacing: 0;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
@@ -62,8 +67,33 @@ h2,
 h3,
 .rp-display {
   font-family: var(--font-display);
-  letter-spacing: -0.03em;
+  color: var(--foreground);
+  letter-spacing: -0.015em;
   font-weight: 700;
+}
+
+code,
+kbd,
+pre,
+samp {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @media print {
@@ -77,15 +107,16 @@ h3,
 
 @layer utilities {
   .rp-card {
+    min-width: 0;
     background: var(--card);
-    border: 1px solid rgba(226, 232, 240, 0.9);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow);
   }
 
   .rp-card-elevated {
     background: var(--card);
-    border: 1px solid rgba(226, 232, 240, 0.95);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
     box-shadow: var(--shadow-md);
   }
@@ -120,12 +151,42 @@ h3,
   }
 
   .rp-table thead {
-    background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 0.07em;
+    background: #eef5fc;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--muted-fg);
+  }
+
+  .rp-table td {
+    font-weight: 500;
+    color: var(--body);
+  }
+
+  .rp-h1 {
+    font-family: var(--font-display);
+    font-size: 30px;
+    line-height: 1.2;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  .rp-h2 {
+    font-family: var(--font-display);
+    font-size: 19px;
+    line-height: 1.3;
+    font-weight: 700;
+    color: var(--foreground);
+  }
+
+  .rp-kpi {
+    font-family: var(--font-display);
+    font-size: 32px;
+    line-height: 1.1;
+    font-weight: 700;
+    color: var(--foreground);
+    font-variant-numeric: tabular-nums;
   }
 
   .rp-table th {

@@ -37,14 +37,14 @@ export function SwapFixPlaybookList({
               <Link
                 key={linkId}
                 href={`/app/projects/${projectId}/cables/${linkId}`}
-                className="font-medium text-[var(--accent)] hover:underline"
+                className="font-medium text-[var(--accent-ink)] hover:underline"
               >
                 Open {pb.cableIds[i]}
               </Link>
             ))}
             <Link
               href={`/app/projects/${projectId}/lldp`}
-              className="font-medium text-[var(--accent)] hover:underline"
+              className="font-medium text-[var(--accent-ink)] hover:underline"
             >
               Re-import evidence →
             </Link>

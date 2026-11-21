@@ -1,5 +1,6 @@
 import { expect, test, type Browser, type Page } from "@playwright/test";
 import { PrismaClient } from "@prisma/client";
+import { signIn } from "./sit/helpers";
 
 /**
  * Staged handover approvals on the synthetic AI/HPC demo. Opt-in: AI_HPC_E2E=1.
@@ -12,7 +13,6 @@ try {
   process.loadEnvFile(".env");
 } catch {}
 const prisma = new PrismaClient();
-const PASSWORD = process.env.DEMO_PASSWORD ?? "password123";
 let projectId = "";
 let snapshotId = "";
 
@@ -34,12 +34,7 @@ test.afterAll(async () => {
 
 async function as(browser: Browser, who: string): Promise<Page> {
   const page = await (await browser.newContext({ viewport: { width: 1600, height: 1000 } })).newPage();
-  await page.goto("/sign-in");
-  await page.getByRole("button", { name: "Password", exact: true }).click();
-  await page.locator('input[name="email"]').first().fill(`${who}@demo.northstar.local`);
-  await page.locator('input[name="password"]').fill(PASSWORD);
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL(/\/app/);
+  await signIn(page, `${who}@demo.northstar.local`);
   await page.goto(`/app/projects/${projectId}/handover`);
   return page;
 }

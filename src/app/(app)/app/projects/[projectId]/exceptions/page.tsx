@@ -229,7 +229,7 @@ export default async function ExceptionsPage({
     <div>
       {header}
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Open" value={openCount} icon={<AlertTriangle aria-hidden />} tone={openCount ? "danger" : "neutral"} />
         <StatCard label="Acknowledged" value={ackCount} icon={<UserCheck aria-hidden />} tone="warning" />
         <StatCard label="Resolved" value={closed.length} icon={<CheckCircle2 aria-hidden />} tone="success" />
@@ -246,16 +246,16 @@ export default async function ExceptionsPage({
         />
       ) : (
         <>
-          <div className="mb-4 grid gap-4 lg:grid-cols-3">
+          <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-3">
             <section className="rp-card p-4" aria-label="Exceptions by category">
               <h2 className="rp-display mb-3 text-[15px] font-bold">Exceptions by Category</h2>
               <div className="flex items-center gap-5">
                 <Donut segments={[...byCategory].map(([k, v]) => ({ value: v, color: CATEGORY[k].color }))} total={active.length} />
-                <ul className="flex-1 space-y-1.5 text-[13px]">
+                <ul className="min-w-0 flex-1 space-y-1.5 text-[13px]">
                   {[...byCategory].sort((a, b) => b[1] - a[1]).map(([k, v]) => (
                     <li key={k} className="flex items-center gap-2">
                       <span className="h-2.5 w-2.5 rounded-full" style={{ background: CATEGORY[k].color }} aria-hidden />
-                      <span className="flex-1">{CATEGORY[k].label}</span>
+                      <span className="min-w-0 flex-1 truncate" title={CATEGORY[k].label}>{CATEGORY[k].label}</span>
                       <span className="font-semibold">{v}</span>
                       <span className="w-12 text-right text-xs text-[var(--muted-fg)]">{Math.round((v / active.length) * 100)}%</span>
                     </li>
@@ -291,7 +291,7 @@ export default async function ExceptionsPage({
                 <div className="bg-emerald-500" style={{ width: `${(closed.length / all.length) * 100}%` }} />
               </div>
               <div className="grid grid-cols-3 gap-2 text-center">
-                <MiniStat value={openCount} label="Open" className="border-red-200 bg-[var(--danger-soft)] text-[var(--danger)]" />
+                <MiniStat value={openCount} label="Open" className="border-red-200 bg-[var(--danger-soft)] text-[var(--danger-ink)]" />
                 <MiniStat value={ackCount} label="Acknowledged" className="border-amber-200 bg-amber-50 text-amber-700" />
                 <MiniStat value={closed.length} label="Resolved" className="border-emerald-200 bg-[var(--success-soft)] text-[var(--success-ink)]" />
               </div>
@@ -314,7 +314,7 @@ export default async function ExceptionsPage({
                         "rounded-full border px-2.5 py-1 text-xs font-semibold",
                         filter.id === f.id
                           ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                          : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+                          : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent-ink)]",
                       )}
                     >
                       {f.label}
@@ -347,7 +347,7 @@ export default async function ExceptionsPage({
                             )}
                           >
                             <td className="px-4 py-2">
-                              <Link href={qs({ ex: f.id })} scroll={false} className="rp-mono font-bold text-[var(--accent)] hover:underline">
+                              <Link href={qs({ ex: f.id })} scroll={false} className="rp-mono font-bold text-[var(--accent-ink)] hover:underline">
                                 {f.plannedLink.cableId}
                               </Link>
                             </td>
@@ -358,7 +358,7 @@ export default async function ExceptionsPage({
                                 {(f.assigneeId || f.waivedAt) && (
                                   <span className="block text-[11px] text-[var(--muted-fg)]">
                                     {f.assigneeId && <>Owner: {userName(f.assigneeId)}</>}
-                                    {f.dueAt && f.exceptionStatus !== "CLOSED" && f.dueAt < now && <span className="font-semibold text-[var(--danger)]"> · overdue</span>}
+                                    {f.dueAt && f.exceptionStatus !== "CLOSED" && f.dueAt < now && <span className="font-semibold text-[var(--danger-ink)]"> · overdue</span>}
                                     {f.waivedAt && <span className="font-semibold text-[var(--success-ink)]"> · waived</span>}
                                   </span>
                                 )}
@@ -398,7 +398,7 @@ export default async function ExceptionsPage({
                     <dt className="text-[var(--muted-fg)]">Plan (Expected)</dt>
                     <dd>{selected.expectedSummary}</dd>
                     <dt className="text-[var(--muted-fg)]">Observed</dt>
-                    <dd className="font-medium text-[var(--danger)]">{selected.observedSummary ?? "\u2014"}</dd>
+                    <dd className="font-medium text-[var(--danger-ink)]">{selected.observedSummary ?? "\u2014"}</dd>
                     <dt className="text-[var(--muted-fg)]">Evidence</dt>
                     <dd className="break-words text-xs">{selected.evidenceSource ?? "\u2014"}</dd>
                     <dt className="text-[var(--muted-fg)]">Captured</dt>
@@ -415,7 +415,7 @@ export default async function ExceptionsPage({
                     <dd>
                       {userName(selected.assigneeId) ?? "Unassigned"}
                       {selected.dueAt && (
-                        <span className={cn("ml-2 text-xs", selected.exceptionStatus !== "CLOSED" && selected.dueAt < now ? "font-semibold text-[var(--danger)]" : "text-[var(--muted-fg)]")}>
+                        <span className={cn("ml-2 text-xs", selected.exceptionStatus !== "CLOSED" && selected.dueAt < now ? "font-semibold text-[var(--danger-ink)]" : "text-[var(--muted-fg)]")}>
                           due {fmt(selected.dueAt)}
                           {selected.exceptionStatus !== "CLOSED" && selected.dueAt < now && " (overdue)"}
                         </span>
@@ -490,8 +490,8 @@ export default async function ExceptionsPage({
                     <span
                       className={cn(
                         "flex h-10 w-10 items-center justify-center rounded-xl border",
-                        i === 0 && "border-red-200 bg-[var(--danger-soft)] text-[var(--danger)]",
-                        i === 1 && "border-blue-200 bg-[var(--accent-soft)] text-[var(--accent)]",
+                        i === 0 && "border-red-200 bg-[var(--danger-soft)] text-[var(--danger-ink)]",
+                        i === 1 && "border-blue-200 bg-[var(--accent-soft)] text-[var(--accent-ink)]",
                         i === 2 && "border-amber-200 bg-amber-50 text-amber-700",
                         i === 3 && "border-violet-200 bg-violet-50 text-violet-700",
                         i === 4 && "border-emerald-200 bg-[var(--success-soft)] text-[var(--success-ink)]",
@@ -515,8 +515,8 @@ export default async function ExceptionsPage({
                 <ul className="space-y-2 text-[13px]">
                   {recentClosed.map((f) => (
                     <li key={f.id} className="flex items-center gap-2">
-                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
-                      <Link href={qs({ ex: f.id, status: "closed" })} className="rp-mono font-semibold text-[var(--accent)]">
+                      <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
+                      <Link href={qs({ ex: f.id, status: "closed" })} className="rp-mono font-semibold text-[var(--accent-ink)]">
                         {f.plannedLink.cableId}
                       </Link>
                       <span className="min-w-0 flex-1 truncate text-[var(--muted-fg)]">{f.closedReason ?? "Resolved"}</span>
@@ -562,7 +562,7 @@ export default async function ExceptionsPage({
 
 function MiniStat({ value, label, className }: { value: number; label: string; className: string }) {
   return (
-    <div className={cn("rounded-lg border px-2 py-2", className)}>
+    <div className={cn("min-w-0 rounded-lg border px-2 py-2", className)}>
       <p className="rp-display text-xl font-bold">{value}</p>
       <p className="text-[11px] font-semibold">{label}</p>
     </div>

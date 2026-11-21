@@ -68,7 +68,7 @@ export default async function ProjectApiPage({
         description="Read-only REST for this project, signed outbound webhooks, and GitOps export."
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="API Tokens (active)" value={`${activeTokens} / ${tokens.length}`} icon={<KeyRound aria-hidden />} tone="info" />
         <StatCard label="Tokens Ever Used" value={usedTokens} icon={<ShieldCheck aria-hidden />} tone="neutral" />
         <StatCard label="Webhooks (active)" value={`${activeHooks} / ${webhooks.length}`} icon={<Webhook aria-hidden />} tone="success" href={`${base}/integrations`} />
@@ -129,7 +129,7 @@ export default async function ProjectApiPage({
           )}
         </Panel>
 
-        <Panel title={`Webhooks (${webhooks.length})`} icon={Webhook} flush action={<Link href={`${base}/integrations#webhooks`} className="text-xs font-semibold text-[var(--accent)]">+ Add webhook</Link>}>
+        <Panel title={`Webhooks (${webhooks.length})`} icon={Webhook} flush action={<Link href={`${base}/integrations#webhooks`} className="text-xs font-semibold text-[var(--accent-ink)]">+ Add webhook</Link>}>
           {webhooks.length === 0 ? (
             <p className="p-4 text-sm text-[var(--muted-fg)]">No webhook endpoints. Add one under Integrations.</p>
           ) : (
@@ -171,7 +171,7 @@ export default async function ProjectApiPage({
               </Link>
             ))}
           </div>
-          <pre className="rp-mono overflow-x-auto rounded-md bg-slate-900 p-3 text-[11px] leading-relaxed text-slate-100">{snippets[lang]}</pre>
+          <pre tabIndex={0} className="rp-mono overflow-x-auto rounded-md bg-slate-900 p-3 text-[11px] leading-relaxed text-slate-100">{snippets[lang]}</pre>
           <p className="mt-2 text-xs text-[var(--muted-fg)]">Signed-in browsers can also call these with the session cookie.</p>
         </Panel>
 
@@ -194,7 +194,7 @@ export default async function ProjectApiPage({
           <ul className="space-y-2 text-[13px]">
             {WEBHOOK_EVENTS.map((e) => (
               <li key={e} className="flex items-start gap-2">
-                <code className="rp-mono shrink-0 rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent)]">{e}</code>
+                <code className="rp-mono shrink-0 rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-xs font-semibold text-[var(--accent-ink)]">{e}</code>
                 <span className="text-xs">{EVENT_INFO[e]}</span>
               </li>
             ))}

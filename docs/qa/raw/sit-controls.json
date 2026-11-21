@@ -1,0 +1,696 @@
+{
+  "lead": {
+    "routes": 48,
+    "totals": {
+      "links": 2005,
+      "buttons": 356,
+      "fields": 209,
+      "total": 2570
+    },
+    "perRoute": [
+      {
+        "route": "/",
+        "links": 6,
+        "buttons": 1,
+        "fields": 4,
+        "total": 11
+      },
+      {
+        "route": "/about",
+        "links": 4,
+        "buttons": 0,
+        "fields": 0,
+        "total": 4
+      },
+      {
+        "route": "/app",
+        "links": 33,
+        "buttons": 3,
+        "fields": 2,
+        "total": 38
+      },
+      {
+        "route": "/app/admin",
+        "links": 19,
+        "buttons": 2,
+        "fields": 1,
+        "total": 22
+      },
+      {
+        "route": "/app/help",
+        "links": 50,
+        "buttons": 5,
+        "fields": 2,
+        "total": 57
+      },
+      {
+        "route": "/app/notifications",
+        "links": 24,
+        "buttons": 5,
+        "fields": 1,
+        "total": 30
+      },
+      {
+        "route": "/app/projects",
+        "links": 27,
+        "buttons": 5,
+        "fields": 2,
+        "total": 34
+      },
+      {
+        "route": "/app/projects/[projectId]",
+        "links": 75,
+        "buttons": 6,
+        "fields": 1,
+        "total": 82
+      },
+      {
+        "route": "/app/projects/[projectId]/analytics",
+        "links": 35,
+        "buttons": 6,
+        "fields": 1,
+        "total": 42
+      },
+      {
+        "route": "/app/projects/[projectId]/api",
+        "links": 42,
+        "buttons": 5,
+        "fields": 2,
+        "total": 49
+      },
+      {
+        "route": "/app/projects/[projectId]/assistant",
+        "links": 29,
+        "buttons": 12,
+        "fields": 2,
+        "total": 43
+      },
+      {
+        "route": "/app/projects/[projectId]/cables",
+        "links": 37,
+        "buttons": 16,
+        "fields": 34,
+        "total": 87
+      },
+      {
+        "route": "/app/projects/[projectId]/cables/[linkId]",
+        "links": 36,
+        "buttons": 12,
+        "fields": 8,
+        "total": 56
+      },
+      {
+        "route": "/app/projects/[projectId]/capacity",
+        "links": 40,
+        "buttons": 6,
+        "fields": 1,
+        "total": 47
+      },
+      {
+        "route": "/app/projects/[projectId]/collection",
+        "links": 37,
+        "buttons": 7,
+        "fields": 5,
+        "total": 49
+      },
+      {
+        "route": "/app/projects/[projectId]/compliance",
+        "links": 47,
+        "buttons": 6,
+        "fields": 5,
+        "total": 58
+      },
+      {
+        "route": "/app/projects/[projectId]/evidence",
+        "links": 56,
+        "buttons": 7,
+        "fields": 3,
+        "total": 66
+      },
+      {
+        "route": "/app/projects/[projectId]/evidence/explorer",
+        "links": 93,
+        "buttons": 10,
+        "fields": 6,
+        "total": 109
+      },
+      {
+        "route": "/app/projects/[projectId]/exceptions",
+        "links": 102,
+        "buttons": 9,
+        "fields": 5,
+        "total": 116
+      },
+      {
+        "route": "/app/projects/[projectId]/fabric",
+        "links": 90,
+        "buttons": 6,
+        "fields": 1,
+        "total": 97
+      },
+      {
+        "route": "/app/projects/[projectId]/fabric/[fabric]",
+        "links": 19,
+        "buttons": 3,
+        "fields": 1,
+        "total": 23
+      },
+      {
+        "route": "/app/projects/[projectId]/handover",
+        "links": 54,
+        "buttons": 20,
+        "fields": 2,
+        "total": 76
+      },
+      {
+        "route": "/app/projects/[projectId]/handover/[snapshotId]",
+        "links": 20,
+        "buttons": 6,
+        "fields": 1,
+        "total": 27
+      },
+      {
+        "route": "/app/projects/[projectId]/integrations",
+        "links": 37,
+        "buttons": 11,
+        "fields": 11,
+        "total": 59
+      },
+      {
+        "route": "/app/projects/[projectId]/inventory",
+        "links": 101,
+        "buttons": 55,
+        "fields": 52,
+        "total": 208
+      },
+      {
+        "route": "/app/projects/[projectId]/labels",
+        "links": 19,
+        "buttons": 5,
+        "fields": 1,
+        "total": 25
+      },
+      {
+        "route": "/app/projects/[projectId]/lldp",
+        "links": 45,
+        "buttons": 8,
+        "fields": 4,
+        "total": 57
+      },
+      {
+        "route": "/app/projects/[projectId]/panels",
+        "links": 71,
+        "buttons": 10,
+        "fields": 12,
+        "total": 93
+      },
+      {
+        "route": "/app/projects/[projectId]/plan",
+        "links": 32,
+        "buttons": 6,
+        "fields": 2,
+        "total": 40
+      },
+      {
+        "route": "/app/projects/[projectId]/qc",
+        "links": 69,
+        "buttons": 7,
+        "fields": 2,
+        "total": 78
+      },
+      {
+        "route": "/app/projects/[projectId]/racks",
+        "links": 48,
+        "buttons": 6,
+        "fields": 1,
+        "total": 55
+      },
+      {
+        "route": "/app/projects/[projectId]/racks/[rack]",
+        "links": 79,
+        "buttons": 9,
+        "fields": 1,
+        "total": 89
+      },
+      {
+        "route": "/app/projects/[projectId]/reports",
+        "links": 38,
+        "buttons": 8,
+        "fields": 2,
+        "total": 48
+      },
+      {
+        "route": "/app/projects/[projectId]/scan",
+        "links": 33,
+        "buttons": 9,
+        "fields": 2,
+        "total": 44
+      },
+      {
+        "route": "/app/projects/[projectId]/spares",
+        "links": 47,
+        "buttons": 12,
+        "fields": 9,
+        "total": 68
+      },
+      {
+        "route": "/app/projects/[projectId]/trace",
+        "links": 34,
+        "buttons": 7,
+        "fields": 5,
+        "total": 46
+      },
+      {
+        "route": "/app/projects/[projectId]/twin",
+        "links": 92,
+        "buttons": 6,
+        "fields": 1,
+        "total": 99
+      },
+      {
+        "route": "/app/projects/[projectId]/verify",
+        "links": 98,
+        "buttons": 6,
+        "fields": 1,
+        "total": 105
+      },
+      {
+        "route": "/app/projects/[projectId]/work-orders",
+        "links": 64,
+        "buttons": 6,
+        "fields": 1,
+        "total": 71
+      },
+      {
+        "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
+        "links": 38,
+        "buttons": 9,
+        "fields": 1,
+        "total": 48
+      },
+      {
+        "route": "/app/search",
+        "links": 20,
+        "buttons": 5,
+        "fields": 7,
+        "total": 32
+      },
+      {
+        "route": "/app/settings",
+        "links": 20,
+        "buttons": 4,
+        "fields": 1,
+        "total": 25
+      },
+      {
+        "route": "/app/workspaces/[workspaceId]/sites",
+        "links": 19,
+        "buttons": 2,
+        "fields": 1,
+        "total": 22
+      },
+      {
+        "route": "/app/workspaces/[workspaceId]/team",
+        "links": 19,
+        "buttons": 4,
+        "fields": 1,
+        "total": 24
+      },
+      {
+        "route": "/demo",
+        "links": 5,
+        "buttons": 0,
+        "fields": 0,
+        "total": 5
+      },
+      {
+        "route": "/invite/[token]",
+        "links": 1,
+        "buttons": 0,
+        "fields": 0,
+        "total": 1
+      },
+      {
+        "route": "/share/handover/[token]",
+        "links": 0,
+        "buttons": 0,
+        "fields": 0,
+        "total": 0
+      },
+      {
+        "route": "/sign-in",
+        "links": 1,
+        "buttons": 3,
+        "fields": 1,
+        "total": 5
+      }
+    ]
+  },
+  "owner": {
+    "routes": 48,
+    "totals": {
+      "links": 2099,
+      "buttons": 342,
+      "fields": 222,
+      "total": 2663
+    },
+    "perRoute": [
+      {
+        "route": "/",
+        "links": 6,
+        "buttons": 1,
+        "fields": 4,
+        "total": 11
+      },
+      {
+        "route": "/about",
+        "links": 4,
+        "buttons": 0,
+        "fields": 0,
+        "total": 4
+      },
+      {
+        "route": "/app",
+        "links": 45,
+        "buttons": 4,
+        "fields": 6,
+        "total": 55
+      },
+      {
+        "route": "/app/admin",
+        "links": 19,
+        "buttons": 2,
+        "fields": 1,
+        "total": 22
+      },
+      {
+        "route": "/app/help",
+        "links": 50,
+        "buttons": 5,
+        "fields": 2,
+        "total": 57
+      },
+      {
+        "route": "/app/notifications",
+        "links": 24,
+        "buttons": 3,
+        "fields": 1,
+        "total": 28
+      },
+      {
+        "route": "/app/projects",
+        "links": 38,
+        "buttons": 3,
+        "fields": 2,
+        "total": 43
+      },
+      {
+        "route": "/app/projects/[projectId]",
+        "links": 86,
+        "buttons": 6,
+        "fields": 1,
+        "total": 93
+      },
+      {
+        "route": "/app/projects/[projectId]/analytics",
+        "links": 35,
+        "buttons": 6,
+        "fields": 1,
+        "total": 42
+      },
+      {
+        "route": "/app/projects/[projectId]/api",
+        "links": 42,
+        "buttons": 7,
+        "fields": 2,
+        "total": 51
+      },
+      {
+        "route": "/app/projects/[projectId]/assistant",
+        "links": 29,
+        "buttons": 10,
+        "fields": 2,
+        "total": 41
+      },
+      {
+        "route": "/app/projects/[projectId]/cables",
+        "links": 37,
+        "buttons": 16,
+        "fields": 34,
+        "total": 87
+      },
+      {
+        "route": "/app/projects/[projectId]/cables/[linkId]",
+        "links": 36,
+        "buttons": 12,
+        "fields": 8,
+        "total": 56
+      },
+      {
+        "route": "/app/projects/[projectId]/capacity",
+        "links": 40,
+        "buttons": 4,
+        "fields": 1,
+        "total": 45
+      },
+      {
+        "route": "/app/projects/[projectId]/collection",
+        "links": 37,
+        "buttons": 5,
+        "fields": 5,
+        "total": 47
+      },
+      {
+        "route": "/app/projects/[projectId]/compliance",
+        "links": 47,
+        "buttons": 8,
+        "fields": 5,
+        "total": 60
+      },
+      {
+        "route": "/app/projects/[projectId]/evidence",
+        "links": 56,
+        "buttons": 5,
+        "fields": 3,
+        "total": 64
+      },
+      {
+        "route": "/app/projects/[projectId]/evidence/explorer",
+        "links": 93,
+        "buttons": 10,
+        "fields": 6,
+        "total": 109
+      },
+      {
+        "route": "/app/projects/[projectId]/exceptions",
+        "links": 102,
+        "buttons": 9,
+        "fields": 5,
+        "total": 116
+      },
+      {
+        "route": "/app/projects/[projectId]/fabric",
+        "links": 90,
+        "buttons": 6,
+        "fields": 1,
+        "total": 97
+      },
+      {
+        "route": "/app/projects/[projectId]/fabric/[fabric]",
+        "links": 19,
+        "buttons": 3,
+        "fields": 1,
+        "total": 23
+      },
+      {
+        "route": "/app/projects/[projectId]/handover",
+        "links": 54,
+        "buttons": 20,
+        "fields": 2,
+        "total": 76
+      },
+      {
+        "route": "/app/projects/[projectId]/handover/[snapshotId]",
+        "links": 20,
+        "buttons": 6,
+        "fields": 1,
+        "total": 27
+      },
+      {
+        "route": "/app/projects/[projectId]/integrations",
+        "links": 37,
+        "buttons": 11,
+        "fields": 11,
+        "total": 59
+      },
+      {
+        "route": "/app/projects/[projectId]/inventory",
+        "links": 101,
+        "buttons": 55,
+        "fields": 52,
+        "total": 208
+      },
+      {
+        "route": "/app/projects/[projectId]/labels",
+        "links": 19,
+        "buttons": 5,
+        "fields": 1,
+        "total": 25
+      },
+      {
+        "route": "/app/projects/[projectId]/lldp",
+        "links": 45,
+        "buttons": 8,
+        "fields": 4,
+        "total": 57
+      },
+      {
+        "route": "/app/projects/[projectId]/panels",
+        "links": 71,
+        "buttons": 8,
+        "fields": 12,
+        "total": 91
+      },
+      {
+        "route": "/app/projects/[projectId]/plan",
+        "links": 32,
+        "buttons": 6,
+        "fields": 2,
+        "total": 40
+      },
+      {
+        "route": "/app/projects/[projectId]/qc",
+        "links": 69,
+        "buttons": 8,
+        "fields": 5,
+        "total": 82
+      },
+      {
+        "route": "/app/projects/[projectId]/racks",
+        "links": 48,
+        "buttons": 6,
+        "fields": 1,
+        "total": 55
+      },
+      {
+        "route": "/app/projects/[projectId]/racks/[rack]",
+        "links": 79,
+        "buttons": 9,
+        "fields": 1,
+        "total": 89
+      },
+      {
+        "route": "/app/projects/[projectId]/reports",
+        "links": 38,
+        "buttons": 8,
+        "fields": 2,
+        "total": 48
+      },
+      {
+        "route": "/app/projects/[projectId]/scan",
+        "links": 33,
+        "buttons": 7,
+        "fields": 2,
+        "total": 42
+      },
+      {
+        "route": "/app/projects/[projectId]/spares",
+        "links": 47,
+        "buttons": 12,
+        "fields": 9,
+        "total": 68
+      },
+      {
+        "route": "/app/projects/[projectId]/trace",
+        "links": 34,
+        "buttons": 5,
+        "fields": 5,
+        "total": 44
+      },
+      {
+        "route": "/app/projects/[projectId]/twin",
+        "links": 92,
+        "buttons": 6,
+        "fields": 1,
+        "total": 99
+      },
+      {
+        "route": "/app/projects/[projectId]/verify",
+        "links": 98,
+        "buttons": 4,
+        "fields": 1,
+        "total": 103
+      },
+      {
+        "route": "/app/projects/[projectId]/work-orders",
+        "links": 64,
+        "buttons": 6,
+        "fields": 1,
+        "total": 71
+      },
+      {
+        "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
+        "links": 38,
+        "buttons": 11,
+        "fields": 1,
+        "total": 50
+      },
+      {
+        "route": "/app/search",
+        "links": 20,
+        "buttons": 3,
+        "fields": 7,
+        "total": 30
+      },
+      {
+        "route": "/app/settings",
+        "links": 26,
+        "buttons": 2,
+        "fields": 1,
+        "total": 29
+      },
+      {
+        "route": "/app/workspaces/[workspaceId]/sites",
+        "links": 57,
+        "buttons": 5,
+        "fields": 3,
+        "total": 65
+      },
+      {
+        "route": "/app/workspaces/[workspaceId]/team",
+        "links": 35,
+        "buttons": 3,
+        "fields": 5,
+        "total": 43
+      },
+      {
+        "route": "/demo",
+        "links": 5,
+        "buttons": 0,
+        "fields": 0,
+        "total": 5
+      },
+      {
+        "route": "/invite/[token]",
+        "links": 1,
+        "buttons": 0,
+        "fields": 0,
+        "total": 1
+      },
+      {
+        "route": "/share/handover/[token]",
+        "links": 0,
+        "buttons": 0,
+        "fields": 0,
+        "total": 0
+      },
+      {
+        "route": "/sign-in",
+        "links": 1,
+        "buttons": 3,
+        "fields": 1,
+        "total": 5
+      }
+    ]
+  }
+}

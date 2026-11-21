@@ -21,7 +21,7 @@ import { normalizeDevice } from "../src/lib/csv/normalize";
 import { recomputeFindings } from "../src/lib/verify/recompute";
 import { commercialAllowsMutations } from "../src/lib/authz";
 import { toCsv } from "../src/lib/csv/safe-export";
-import { buildHandoverPayload } from "../src/app/actions/handover";
+import { buildHandoverPayload } from "../src/lib/handover/payload";
 
 const prisma = new PrismaClient();
 let failed = 0;

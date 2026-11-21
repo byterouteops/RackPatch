@@ -53,7 +53,7 @@ export function RackElevation({
               {!compact && (
                 <>
                   <span className="truncate text-[11px] font-bold">{d.name}</span>
-                  <span className="ml-auto truncate text-[10px] opacity-80">{face === "rear" ? `${d.usedPorts}/${d.portCount} ports` : d.model ?? d.role}</span>
+                  <span className="ml-auto truncate text-[10px]">{face === "rear" ? `${d.usedPorts}/${d.portCount} ports` : d.model ?? d.role}</span>
                 </>
               )}
             </div>

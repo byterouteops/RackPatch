@@ -121,7 +121,7 @@ export default async function PublicHandoverSharePage({
                 >
                   <p className="font-medium">{ex.expected}</p>
                   {ex.observed && (
-                    <p className="mt-1 text-[var(--danger)]">Observed: {ex.observed}</p>
+                    <p className="mt-1 text-[var(--danger-ink)]">Observed: {ex.observed}</p>
                   )}
                   {ex.nextAction && (
                     <p className="mt-1 text-[var(--muted-fg)]">{ex.nextAction}</p>

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { assignException, waiveException } from "@/app/actions/verify";
 import { Button, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 const field =
   "h-9 w-full rounded-[var(--radius-sm)] border border-[var(--border)] bg-white px-2 text-sm focus:border-[var(--accent)] focus:outline-none focus:ring-2 focus:ring-[var(--accent)]/20";
@@ -46,7 +47,7 @@ export function ExceptionOwnerForm({
           router.refresh();
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not save");
+        setError(actionErrorMessage(e, "Could not save"));
       }
     });
   }

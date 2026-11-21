@@ -109,7 +109,7 @@ export default async function SparesPage({
         description="Spare cables, optics and consumables. Quantities change only through immutable transactions and never go below zero."
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-4 xl:grid-cols-7">
+      <div className="mb-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-7">
         <StatCard label="Total SKUs" value={items.length} icon={<Boxes aria-hidden />} tone="info" />
         <StatCard label="Units on Hand" value={units} icon={<Package aria-hidden />} tone="neutral" />
         <StatCard label="In Stock" value={inStock} icon={<CheckCircle2 aria-hidden />} tone="success" />
@@ -121,7 +121,7 @@ export default async function SparesPage({
 
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)_340px]">
         <div className="min-w-0 space-y-4">
-          <Panel title="Inventory" icon={Package} flush action={sp.item && <Link href={href({ item: undefined, tx: undefined })} className="text-xs font-semibold text-[var(--accent)]">Show all</Link>}>
+          <Panel title="Inventory" icon={Package} flush action={sp.item && <Link href={href({ item: undefined, tx: undefined })} className="text-xs font-semibold text-[var(--accent-ink)]">Show all</Link>}>
             {items.length === 0 ? (
               <div className="p-4">
                 <EmptyState icon={<Package className="h-5 w-5" aria-hidden />} title="No stock items" description="A lead can add the first SKU with Add Stock Item." />
@@ -143,7 +143,7 @@ export default async function SparesPage({
                       return (
                         <tr key={i.id} className={cn("border-b border-[var(--border)] last:border-0", sp.item === i.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                           <td className="px-4 py-2">
-                            <Link href={href({ item: i.id, tx: undefined })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                            <Link href={href({ item: i.id, tx: undefined })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                               {i.sku}
                             </Link>
                             <span className="block truncate text-xs text-[var(--muted-fg)]">{i.description}</span>
@@ -184,7 +184,7 @@ export default async function SparesPage({
                 "Every transaction records user, time and reason",
               ].map((r) => (
                 <li key={r} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                   {r}
                 </li>
               ))}
@@ -228,7 +228,7 @@ export default async function SparesPage({
                     {shown.map((t) => (
                       <tr key={t.id} className={cn("border-b border-[var(--border)] last:border-0", selected?.id === t.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                         <td className="whitespace-nowrap px-4 py-2 text-xs">
-                          <Link href={href({ tx: t.id })} scroll={false} className="font-medium text-[var(--accent)] hover:underline">
+                          <Link href={href({ tx: t.id })} scroll={false} className="font-medium text-[var(--accent-ink)] hover:underline">
                             {t.createdAt.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}
                           </Link>
                         </td>
@@ -236,7 +236,7 @@ export default async function SparesPage({
                           <Badge tone={KIND_TONE[t.kind]}>{t.kind}</Badge>
                         </td>
                         <td className="rp-mono px-2 py-2 text-xs">{t.item.sku}</td>
-                        <td className={cn("rp-mono px-2 py-2 text-right font-semibold", t.delta > 0 ? "text-[var(--success)]" : "text-[var(--danger)]")}>
+                        <td className={cn("rp-mono px-2 py-2 text-right font-semibold", t.delta > 0 ? "text-[var(--success-ink)]" : "text-[var(--danger-ink)]")}>
                           {t.delta > 0 ? "+" : ""}
                           {t.delta.toLocaleString("en-US")}
                         </td>
@@ -263,7 +263,7 @@ export default async function SparesPage({
                   <span className="rp-mono font-semibold">{selected.item.sku}</span> {"\u00b7"} {selected.item.description}
                 </dd>
                 <dt className="text-[var(--muted-fg)]">Quantity</dt>
-                <dd className={cn("font-semibold", selected.delta > 0 ? "text-[var(--success)]" : "text-[var(--danger)]")}>
+                <dd className={cn("font-semibold", selected.delta > 0 ? "text-[var(--success-ink)]" : "text-[var(--danger-ink)]")}>
                   {selected.delta > 0 ? "+" : ""}
                   {selected.delta} {selected.item.unit}
                 </dd>

@@ -149,7 +149,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
         </div>
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Cables" value={totalCables} icon={<Cable aria-hidden />} tone="info" />
         <StatCard label="Devices" value={totalDevices} icon={<Server aria-hidden />} tone="neutral" />
         <StatCard label="Ports" value={totalPorts} icon={<Network aria-hidden />} tone="neutral" />
@@ -165,7 +165,7 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
               <Filter className="h-4 w-4" aria-hidden />
               Advanced Filters
             </h2>
-            <Link href="/app/search" className="text-xs font-semibold text-[var(--accent)]">
+            <Link href="/app/search" className="text-xs font-semibold text-[var(--accent-ink)]">
               Reset all
             </Link>
           </div>
@@ -258,12 +258,12 @@ export default async function SearchPage({ searchParams }: { searchParams: Promi
                         <tr key={r.key} className={cn("border-b border-[var(--border)] last:border-0", active ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                           <td className="px-4 py-2">
                             <span className="flex items-center gap-1.5 text-xs capitalize">
-                              <Icon className="h-3.5 w-3.5 text-[var(--accent)]" aria-hidden />
+                              <Icon className="h-3.5 w-3.5 text-[var(--accent-ink)]" aria-hidden />
                               {r.kind}
                             </span>
                           </td>
                           <td className="px-2 py-2">
-                            <Link href={keep({ sel: r.key })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                            <Link href={keep({ sel: r.key })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                               {r.title}
                             </Link>
                           </td>

@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { runSshCollection } from "@/app/actions/collection";
 import { AlertBanner, Button, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function CollectionRunForm({
   projectId,
@@ -39,7 +40,7 @@ export function CollectionRunForm({
       setMessage(`Collected from ${targetName}`);
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Collection failed");
+      setError(actionErrorMessage(e, "Collection failed"));
     } finally {
       setBusy(false);
     }

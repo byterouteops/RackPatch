@@ -5,7 +5,7 @@ import { z } from "zod";
 import { createHash } from "crypto";
 import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
-import { assertPaidOrThrow } from "@/app/actions/workspace";
+import { assertPaidOrThrow } from "@/lib/commercial-gate";
 import {
   importPlanCsv,
   type HeaderMapping,

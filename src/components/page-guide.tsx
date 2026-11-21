@@ -39,7 +39,7 @@ export function PageGuide() {
 
   return (
     <section aria-label="Page guide" className="mb-4 rounded-lg border border-[#bfdbfe] bg-[var(--info-soft)]/60 text-sm" data-testid="page-guide">
-      <button type="button" onClick={toggle} aria-expanded={!collapsed} className="flex w-full items-center gap-2 px-3 py-2 text-left font-semibold text-[var(--accent)]">
+      <button type="button" onClick={toggle} aria-expanded={!collapsed} className="flex w-full items-center gap-2 px-3 py-2 text-left font-semibold text-[var(--accent-ink)]">
         <Lightbulb className="h-4 w-4 shrink-0" aria-hidden />
         <span className="min-w-0 flex-1 truncate">
           How to use: {guide.title}

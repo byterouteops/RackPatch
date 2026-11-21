@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { syncPortInventory } from "@/app/actions/inventory";
 import { AlertBanner, Button, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function InventorySyncButton({ projectId }: { projectId: string }) {
   const [pending, startTransition] = useTransition();
@@ -30,7 +31,7 @@ export function InventorySyncButton({ projectId }: { projectId: string }) {
                 `${r.usedPorts} used ports on ${r.devices} devices; ${r.released} released; ${r.reservedConflicts} reserved ports now used by plan; ${r.portConflicts} port conflicts in plan.`,
               );
             } catch (e) {
-              setError(e instanceof Error ? e.message : "Sync failed");
+              setError(actionErrorMessage(e, "Sync failed"));
             }
           });
         }}

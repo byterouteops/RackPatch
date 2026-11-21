@@ -1,0 +1,131 @@
+[
+  {
+    "check": "replay as viewer",
+    "status": 500,
+    "dbUnchanged": true,
+    "pass": true
+  },
+  {
+    "check": "replay as cross-workspace lead",
+    "status": 500,
+    "dbUnchanged": true,
+    "pass": true
+  },
+  {
+    "check": "replay anonymous",
+    "status": 303,
+    "dbUnchanged": true,
+    "pass": true
+  },
+  {
+    "check": "replay as lead with forged Origin (CSRF)",
+    "status": 500,
+    "dbUnchanged": true,
+    "pass": true
+  },
+  {
+    "check": "control: lead replay with valid origin",
+    "status": 200,
+    "pass": true
+  },
+  {
+    "check": "me/search cross-workspace returns no AI/HPC hits",
+    "status": 200,
+    "pass": true
+  },
+  {
+    "check": "v1 summary without token",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "v1 cables with malformed token",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "v1 cables with unknown well-formed token",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "v1 gitops without token",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "me/search anonymous",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "me/notifications anonymous",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "internal compliance without secret",
+    "status": 503,
+    "pass": true
+  },
+  {
+    "check": "internal compliance with wrong secret",
+    "status": 503,
+    "pass": true
+  },
+  {
+    "check": "field photo anonymous",
+    "status": 401,
+    "pass": true
+  },
+  {
+    "check": "v1 summary as cross-workspace session",
+    "status": 403,
+    "pass": true
+  },
+  {
+    "check": "field photo as cross-workspace session",
+    "status": 403,
+    "pass": true
+  },
+  {
+    "check": "revoked session within 5-min cookie-cache window (documented P3)",
+    "status": "still signed in",
+    "pass": true
+  },
+  {
+    "check": "revoked session (3 rows) rejected once cache cookie expires",
+    "status": "http://localhost:3100/sign-in",
+    "pass": true
+  },
+  {
+    "check": "viewer: no install buttons, no plan import",
+    "status": "ui",
+    "pass": true
+  },
+  {
+    "check": "contractor: no plan import, no handover snapshot",
+    "status": "ui",
+    "pass": true
+  },
+  {
+    "check": "header content-security-policy",
+    "status": "present",
+    "pass": true
+  },
+  {
+    "check": "header x-content-type-options",
+    "status": "present",
+    "pass": true
+  },
+  {
+    "check": "header referrer-policy",
+    "status": "present",
+    "pass": true
+  },
+  {
+    "check": "revoked session (5 rows) rejected once cache cookie expires",
+    "status": "http://localhost:3100/sign-in",
+    "pass": true
+  }
+]

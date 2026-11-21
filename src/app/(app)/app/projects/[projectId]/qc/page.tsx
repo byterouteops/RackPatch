@@ -138,7 +138,7 @@ export default async function QcQueuePage({
     <div>
       {header}
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Total Cables" value={rows.length} icon={<ClipboardList aria-hidden />} tone="info" />
         <StatCard label="Accepted" value={counts.Accepted} icon={<CheckCircle2 aria-hidden />} tone="success" href={href({ status: "Accepted", page: undefined, item: undefined })} />
         <StatCard label="Under QC" value={counts["Under QC"]} icon={<Clock aria-hidden />} tone="warning" href={href({ status: "Under QC", page: undefined, item: undefined })} />
@@ -162,7 +162,7 @@ export default async function QcQueuePage({
           flush
           action={
             filterStatus && (
-              <Link href={href({ status: undefined, page: undefined, item: undefined })} className="text-xs font-semibold text-[var(--accent)]">
+              <Link href={href({ status: undefined, page: undefined, item: undefined })} className="text-xs font-semibold text-[var(--accent-ink)]">
                 Show queue
               </Link>
             )
@@ -187,7 +187,7 @@ export default async function QcQueuePage({
                   {shown.map(({ link: l, status }) => (
                     <tr key={l.id} className={cn("border-b border-[var(--border)] last:border-0", sel?.id === l.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={href({ item: l.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={href({ item: l.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                           {l.cableId}
                         </Link>
                       </td>
@@ -272,7 +272,7 @@ export default async function QcQueuePage({
                   </div>
                   <div>
                     <p className="text-xs font-semibold text-[var(--muted-fg)]">Observed</p>
-                    <p className={f.state === "MISMATCH" ? "text-[var(--danger)]" : ""}>{f.observedSummary ?? "\u2014"}</p>
+                    <p className={f.state === "MISMATCH" ? "text-[var(--danger-ink)]" : ""}>{f.observedSummary ?? "\u2014"}</p>
                   </div>
                 </div>
               )}
@@ -282,7 +282,7 @@ export default async function QcQueuePage({
                 <ul className="grid gap-1.5 text-[13px] sm:grid-cols-2">
                   {checklist.map((c) => (
                     <li key={c.label} className="flex items-center gap-2">
-                      {c.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden /> : <CircleDashed className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
+                      {c.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden /> : <CircleDashed className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
                       <span className={c.ok ? "" : "text-[var(--muted-fg)]"}>
                         {c.label}
                         {"na" in c && c.na && !c.ok ? " (n/a yet)" : ""}
@@ -295,7 +295,7 @@ export default async function QcQueuePage({
               {f?.acknowledgeNote && <p className="rounded-md border border-[var(--border)] p-2 text-xs">{f.acknowledgeNote}</p>}
               {sel.physicalChecks[0] && !(sel.physicalChecks[0].aConfirmed && sel.physicalChecks[0].zConfirmed) && (
                 <p className="rounded-md border border-[#efb4b7] bg-[var(--danger-soft)] p-2 text-xs">
-                  <span className="font-semibold text-[var(--danger)]">QC rejected: </span>
+                  <span className="font-semibold text-[var(--danger-ink)]">QC rejected: </span>
                   {sel.physicalChecks[0].note ?? "No note"}
                 </p>
               )}
@@ -343,8 +343,8 @@ export default async function QcQueuePage({
                         {r.contractor && <Badge tone="info">Contractor</Badge>}
                       </td>
                       <td className="rp-mono px-2 py-2 text-right">{r.tasks}</td>
-                      <td className="rp-mono px-2 py-2 text-right text-[var(--success)]">{r.accepted}</td>
-                      <td className="rp-mono px-2 py-2 text-right text-[var(--danger)]">{r.rejected}</td>
+                      <td className="rp-mono px-2 py-2 text-right text-[var(--success-ink)]">{r.accepted}</td>
+                      <td className="rp-mono px-2 py-2 text-right text-[var(--danger-ink)]">{r.rejected}</td>
                       <td className="px-4 py-2">
                         <span className="flex items-center gap-2">
                           <span className="h-2 flex-1 overflow-hidden rounded-full bg-[var(--muted)]">

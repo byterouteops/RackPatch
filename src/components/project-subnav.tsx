@@ -197,7 +197,7 @@ export function ProjectSubnav({ projectId }: { projectId: string }) {
               className={cn(
                 "relative -mb-px flex min-h-[46px] items-center gap-2 whitespace-nowrap border-b-[3px] px-4 text-sm font-semibold transition-colors",
                 active
-                  ? "border-[var(--accent)] text-[var(--accent)]"
+                  ? "border-[var(--accent)] text-[var(--accent-ink)]"
                   : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
               )}
             >
@@ -214,7 +214,7 @@ export function ProjectSubnav({ projectId }: { projectId: string }) {
             className={cn(
               "relative -mb-px flex min-h-[46px] items-center gap-1 whitespace-nowrap border-b-[3px] px-4 text-sm font-semibold",
               moreActive || open
-                ? "border-[var(--accent)] text-[var(--accent)]"
+                ? "border-[var(--accent)] text-[var(--accent-ink)]"
                 : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
             )}
             aria-expanded={open}
@@ -237,7 +237,7 @@ export function ProjectSubnav({ projectId }: { projectId: string }) {
                   className={cn(
                     "block px-3 py-2 text-sm hover:bg-[var(--muted)]",
                     isActive(pathname, tab)
-                      ? "font-semibold text-[var(--accent)]"
+                      ? "font-semibold text-[var(--accent-ink)]"
                       : "text-[var(--foreground)]",
                   )}
                 >
@@ -261,7 +261,7 @@ export function ProjectSubnav({ projectId }: { projectId: string }) {
                   "rounded-full border px-3 py-1 text-xs font-semibold transition-colors",
                   active
                     ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                    : "border-[var(--border)] bg-white text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+                    : "border-[var(--border)] bg-white text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent-ink)]",
                 )}
               >
                 {tab.label}

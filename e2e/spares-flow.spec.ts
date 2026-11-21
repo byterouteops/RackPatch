@@ -1,4 +1,5 @@
 import { expect, test } from "@playwright/test";
+import { signIn } from "./sit/helpers";
 
 /** Exercises the spare-stock UI end to end. Opt-in: SPARES_FLOW=1 (writes ledger rows). */
 test.skip(!process.env.SPARES_FLOW, "Set SPARES_FLOW=1");
@@ -6,12 +7,7 @@ test.setTimeout(180_000);
 
 test("add SKU, receive and issue stock", async ({ page }) => {
   await page.setViewportSize({ width: 1600, height: 1000 });
-  await page.goto("/sign-in");
-  await page.getByRole("button", { name: "Password", exact: true }).click();
-  await page.locator('input[name="email"]').first().fill(process.env.E2E_EMAIL ?? "lead@demo.rackpatch.local");
-  await page.locator('input[name="password"]').fill(process.env.E2E_PASSWORD ?? "password123");
-  await page.getByRole("button", { name: "Sign in" }).click();
-  await page.waitForURL(/\/app/);
+  await signIn(page, process.env.E2E_EMAIL ?? "lead@demo.rackpatch.local");
   const href = await page.locator('a[href^="/app/projects/"]').first().getAttribute("href");
   const base = href!.match(/\/app\/projects\/[^/?#]+/)![0];
   await page.goto(`${base}/spares`);

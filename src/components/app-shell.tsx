@@ -96,13 +96,14 @@ function SidebarLink({
       prefetch
       onClick={onNavigate}
       className={cn(
-        "flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[13.5px] font-medium transition-colors",
+        "flex min-h-[40px] items-center gap-3 rounded-lg px-3 text-[15px] font-medium leading-tight transition-colors focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--cyan)]",
         active
-          ? "bg-[var(--accent)] text-white shadow-[0_4px_14px_rgba(37,99,235,0.35)]"
-          : "text-[var(--sidebar-muted)] hover:bg-white/[0.07] hover:text-white",
+          ? "bg-gradient-to-r from-[#005ff8] to-[#0076d5] font-semibold text-white shadow-[0_4px_12px_rgba(0,95,248,0.3)]"
+          : "text-[#dbe7f5] hover:bg-white/[0.08] hover:text-white",
       )}
+      aria-current={active ? "page" : undefined}
     >
-      <Icon className="h-[18px] w-[18px] shrink-0" aria-hidden />
+      <Icon className="h-[19px] w-[19px] shrink-0" aria-hidden />
       {item.label}
     </Link>
   );
@@ -176,7 +177,7 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
         <div className="flex h-16 items-center gap-2.5 px-4">
           <BrandMark size={32} />
           <div className="min-w-0">
-            <p className="rp-display truncate text-[17px] font-extrabold leading-tight text-white">
+            <p className="rp-display truncate text-[19px] font-bold leading-tight text-white">
               RackPatch<sup className="ml-0.5 text-[8px] font-semibold">®</sup>
             </p>
             <p className="truncate text-[10px] font-medium text-[var(--sidebar-muted)]">
@@ -198,12 +199,12 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
           <div className="space-y-1 border-t border-white/10 pt-4">{renderLinks(secondary)}</div>
         </nav>
 
-        <div className="border-t border-white/10 px-4 py-3">
-          <div className="flex items-start gap-2">
+        <div className="px-3 pb-3 pt-2">
+          <div className="flex items-start gap-2 rounded-xl border border-white/15 bg-white/[0.03] px-3 py-2.5">
             <span className="mt-1.5 inline-flex h-2 w-2 rounded-full bg-[var(--success)]" aria-hidden />
             <div className="min-w-0 flex-1">
-              <p className="text-xs font-semibold text-white">RackPatch Community</p>
-              <p className="text-[11px] text-[var(--sidebar-muted)]">v0.2.0 (Apache 2.0)</p>
+              <p className="text-[13px] font-semibold text-white">RackPatch Community</p>
+              <p className="text-[11.5px] text-[var(--sidebar-muted)]">v0.2.0 (Apache 2.0)</p>
             </div>
             <button
               type="button"
@@ -239,7 +240,7 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
           </button>
 
           {projects.length > 0 ? (
-            <label className="relative hidden h-10 min-w-[220px] max-w-[300px] items-center rounded-lg border border-[var(--border)] bg-white shadow-sm hover:border-[var(--accent)] sm:flex">
+            <label className="relative hidden h-10 min-w-[150px] max-w-[300px] flex-1 items-center rounded-lg border border-[var(--border)] bg-white shadow-sm hover:border-[var(--accent)] sm:flex xl:min-w-[220px]">
               <span className="sr-only">Current project</span>
               <FolderKanban className="pointer-events-none absolute left-3 h-4 w-4 text-[var(--muted-fg)]" aria-hidden />
               <select
@@ -263,15 +264,15 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
           ) : (
             <Link
               href="/app#create"
-              className="hidden h-10 items-center rounded-lg border border-dashed border-[var(--border)] px-3 text-sm font-semibold text-[var(--accent)] sm:flex"
+              className="hidden h-10 items-center rounded-lg border border-dashed border-[var(--border)] px-3 text-sm font-semibold text-[var(--accent-ink)] sm:flex"
             >
               Create a project
             </Link>
           )}
 
           {projectId && (
-            <nav className="mx-auto hidden h-16 items-stretch gap-1 md:flex" aria-label="Workflow">
-              {WORKFLOW_STEPS.map((step) => {
+            <nav className="mx-auto hidden h-16 items-stretch md:flex" aria-label="Workflow">
+              {WORKFLOW_STEPS.map((step, i) => {
                 const href = `/app/projects/${projectId}${step.path}`;
                 const active = urlProjectId !== null && pathname.startsWith(href);
                 const Icon = step.icon;
@@ -281,13 +282,15 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
                     href={href}
                     prefetch
                     className={cn(
-                      "flex min-w-[96px] flex-col items-center justify-center gap-0.5 border-b-[3px] px-4 text-[13px] font-semibold transition-colors",
+                      "relative flex min-w-[76px] flex-col items-center justify-center gap-0.5 border-b-[3px] px-2.5 text-[13px] font-semibold transition-colors xl:min-w-[104px] xl:px-4 xl:text-[13.5px]",
+                      i > 0 && "before:absolute before:left-0 before:top-1/2 before:h-8 before:-translate-y-1/2 before:border-l before:border-[var(--border)]",
                       active
-                        ? "border-[var(--accent)] text-[var(--accent)]"
-                        : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
+                        ? "border-b-[var(--accent)] text-[var(--accent-ink)]"
+                        : "border-b-transparent text-[var(--foreground)] hover:text-[var(--accent-ink)]",
                     )}
+                    aria-current={active ? "page" : undefined}
                   >
-                    <Icon className="h-[18px] w-[18px]" aria-hidden />
+                    <Icon className="h-5 w-5" aria-hidden />
                     {step.label}
                   </Link>
                 );
@@ -308,13 +311,14 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
           </div>
           <Link
             href="/app/settings"
-            className="ml-1 hidden items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 hover:bg-[var(--muted)] sm:flex"
+            className="ml-1 hidden shrink-0 items-center gap-2.5 rounded-lg py-1 pl-1 pr-2 hover:bg-[var(--muted)] sm:flex"
+            aria-label={`Account settings for ${user.name || user.email}`}
           >
             <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--accent)] text-sm font-bold text-white">
               {avatar}
             </span>
-            <span className="text-left leading-tight">
-              <span className="block max-w-[140px] truncate text-sm font-semibold">
+            <span className="hidden text-left leading-tight xl:block">
+              <span className="block max-w-[140px] truncate text-sm font-semibold text-[var(--foreground)]">
                 {user.name || user.email}
               </span>
               <span className="block text-[11px] text-[var(--muted-fg)]">

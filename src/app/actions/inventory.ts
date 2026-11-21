@@ -6,7 +6,7 @@ import { PortStatus } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
-import { assertPaidOrThrow } from "@/app/actions/workspace";
+import { assertPaidOrThrow } from "@/lib/commercial-gate";
 import { recordAudit } from "@/lib/audit";
 import { normalizeDevice, normalizePort } from "@/lib/csv/normalize";
 import { derivePortsFromLinks, planPortSync } from "@/lib/port-inventory";

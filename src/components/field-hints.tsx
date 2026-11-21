@@ -76,7 +76,7 @@ export function FieldHints() {
       className="pointer-events-none fixed z-[60] flex items-start gap-1.5 rounded-md border border-[#bfdbfe] bg-white px-2.5 py-1.5 text-xs leading-snug text-[var(--foreground)] shadow-md"
       style={{ top: hint.top, left: hint.left, maxWidth: hint.width }}
     >
-      <Info className="mt-px h-3.5 w-3.5 shrink-0 text-[var(--accent)]" aria-hidden />
+      <Info className="mt-px h-3.5 w-3.5 shrink-0 text-[var(--accent-ink)]" aria-hidden />
       {hint.text}
     </div>
   );

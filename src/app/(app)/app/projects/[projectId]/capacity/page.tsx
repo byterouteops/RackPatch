@@ -162,7 +162,7 @@ export default async function CapacityPage({
           {deviceRows.length === 0 ? (
             <p className="text-sm text-[var(--muted-fg)]">
               No device inventory yet.{" "}
-              <Link href={`/app/projects/${projectId}/inventory`} className="font-semibold text-[var(--accent)]">
+              <Link href={`/app/projects/${projectId}/inventory`} className="font-semibold text-[var(--accent-ink)]">
                 Sync from the plan
               </Link>
             </p>

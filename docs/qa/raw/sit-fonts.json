@@ -1,0 +1,87 @@
+{
+  "bodyFont": "poppins, \"poppins Fallback\", \"Segoe UI\", system-ui, sans-serif",
+  "headingFont": "poppins, \"poppins Fallback\", \"Segoe UI\", system-ui, sans-serif, \"Segoe UI\", system-ui, sans-serif",
+  "headingWeight": "700",
+  "monoFont": "jetbrains, \"jetbrains Fallback\", ui-monospace, Consolas, monospace, ui-monospace, Consolas, monospace",
+  "faces": [
+    {
+      "family": "poppins",
+      "weight": "400",
+      "status": "loaded"
+    },
+    {
+      "family": "poppins",
+      "weight": "500",
+      "status": "loaded"
+    },
+    {
+      "family": "poppins",
+      "weight": "600",
+      "status": "loaded"
+    },
+    {
+      "family": "poppins",
+      "weight": "700",
+      "status": "loaded"
+    },
+    {
+      "family": "poppins Fallback",
+      "weight": "normal",
+      "status": "loaded"
+    },
+    {
+      "family": "jetbrains",
+      "weight": "400",
+      "status": "loaded"
+    },
+    {
+      "family": "jetbrains",
+      "weight": "500",
+      "status": "unloaded"
+    },
+    {
+      "family": "jetbrains",
+      "weight": "600",
+      "status": "unloaded"
+    },
+    {
+      "family": "jetbrains Fallback",
+      "weight": "normal",
+      "status": "loaded"
+    }
+  ],
+  "poppinsLoaded": [
+    "400",
+    "500",
+    "600",
+    "700",
+    "normal"
+  ],
+  "monoLoaded": [
+    "400",
+    "normal"
+  ],
+  "fontResponses": [
+    {
+      "url": "/_next/static/media/7777133e901cd5ed-s.p.woff2",
+      "status": 200
+    },
+    {
+      "url": "/_next/static/media/9a881e2ac07d406b-s.p.woff2",
+      "status": 200
+    },
+    {
+      "url": "/_next/static/media/916d3686010a8de2-s.p.woff2",
+      "status": 200
+    },
+    {
+      "url": "/_next/static/media/d869208648ca5469-s.p.woff2",
+      "status": 200
+    },
+    {
+      "url": "/_next/static/media/db9d659a1acad1e2-s.p.woff2",
+      "status": 200
+    }
+  ],
+  "failed": []
+}

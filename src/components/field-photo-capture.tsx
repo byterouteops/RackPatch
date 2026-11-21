@@ -4,6 +4,7 @@ import { useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { uploadFieldPhoto } from "@/app/actions/field-evidence";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 function fileToBase64(file: File): Promise<{ base64: string; mimeType: string }> {
   return new Promise((resolve, reject) => {
@@ -54,7 +55,7 @@ export function FieldPhotoCapture({
       if (inputRef.current) inputRef.current.value = "";
       router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Upload failed");
+      setError(actionErrorMessage(e, "Upload failed"));
     } finally {
       setBusy(false);
     }
@@ -79,6 +80,7 @@ export function FieldPhotoCapture({
         type="file"
         accept="image/jpeg,image/png,image/webp,capture=camera"
         capture="environment"
+        aria-label="Field photo"
         disabled={busy}
         onChange={(e) => void onFile(e.target.files?.[0] ?? null)}
         className="block w-full text-sm"

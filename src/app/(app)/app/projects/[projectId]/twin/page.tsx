@@ -86,6 +86,17 @@ export default async function TwinPage({
   const slotOf = new Map(rack.devices.map((d) => [d.device, d.slot]));
   const svgH = rack.devices.length * ROW + 16;
   const y = (slot: number) => 8 + (slot - 1) * ROW + ROW / 2;
+  const exitLabels = new Map<number, { firstId: string; racks: Set<string>; count: number }>();
+  for (const l of rackLinks) {
+    const ay = l.aRack === rack.rack ? slotOf.get(l.aDevice) : undefined;
+    const zy = l.zRack === rack.rack ? slotOf.get(l.zDevice) : undefined;
+    if ((ay && zy) || !(ay ?? zy)) continue;
+    const yy = y((ay ?? zy)!);
+    const entry = exitLabels.get(yy) ?? { firstId: l.id, racks: new Set<string>(), count: 0 };
+    entry.racks.add(l.aRack === rack.rack ? l.zRack : l.aRack);
+    entry.count += 1;
+    exitLabels.set(yy, entry);
+  }
   const href = (extra: Record<string, string | undefined>) => {
     const p = new URLSearchParams();
     for (const [k, v] of Object.entries({ rack: sp.rack, dev: sp.dev, cable: sp.cable, ...extra })) if (v) p.set(k, v);
@@ -187,13 +198,16 @@ export default async function TwinPage({
                 );
               }
               const yy = y((ay ?? zy)!);
-              const other = l.aRack === rack.rack ? l.zRack : l.aRack;
+              const label = exitLabels.get(yy);
               return (
                 <g key={l.id} opacity={dim ? 0.15 : 1}>
                   <path d={`M162 ${yy} L 400 ${yy}`} stroke={stroke} strokeWidth={sel ? 4 : 2.5} strokeDasharray={st === "planned" ? "5 4" : undefined} />
-                  <text x="398" y={yy - 4} textAnchor="end" className="fill-slate-300 text-[9px]">
-                    {"\u2192"} {other}
-                  </text>
+                  {label?.firstId === l.id && (
+                    <text x="398" y={yy - 4} textAnchor="end" className="fill-slate-300 text-[9px]">
+                      {"\u2192"} {[...label.racks].sort().join(", ")}
+                      {label.count > 1 ? ` (\u00d7${label.count})` : ""}
+                    </text>
+                  )}
                 </g>
               );
             })}
@@ -257,7 +271,7 @@ export default async function TwinPage({
                 <tr key={d.device} className={cn("border-b border-[var(--border)] last:border-0", device?.device === d.device ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                   <td className="px-4 py-2 text-xs">{d.slot}</td>
                   <td className="px-2 py-2">
-                    <Link href={href({ dev: d.device, cable: undefined })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                    <Link href={href({ dev: d.device, cable: undefined })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                       {d.device}
                     </Link>
                   </td>
@@ -271,7 +285,7 @@ export default async function TwinPage({
           </table>
         </Panel>
 
-        <Panel title={device ? `Port-to-Cable Mapping \u2014 ${device.device}` : "Port-to-Cable Mapping"} icon={Cable} flush action={device && <Link href={href({ dev: undefined, cable: undefined })} className="text-xs font-semibold text-[var(--accent)]">Whole rack</Link>}>
+        <Panel title={device ? `Port-to-Cable Mapping \u2014 ${device.device}` : "Port-to-Cable Mapping"} icon={Cable} flush action={device && <Link href={href({ dev: undefined, cable: undefined })} className="text-xs font-semibold text-[var(--accent-ink)]">Whole rack</Link>}>
           <div className="max-h-[360px] overflow-auto">
             <table className="w-full min-w-[520px] text-[13px]">
               <thead className="sticky top-0 bg-white">
@@ -290,7 +304,7 @@ export default async function TwinPage({
                     <tr key={l.id} className={cn("border-b border-[var(--border)] last:border-0", cable?.id === l.id ? "bg-[var(--accent-soft)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2 text-xs">{here ? `${l.aDevice} ${l.aPort}` : `${l.zDevice} ${l.zPort}`}</td>
                       <td className="px-2 py-2">
-                        <Link href={href({ cable: l.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={href({ cable: l.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                           {l.cableId}
                         </Link>
                       </td>

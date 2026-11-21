@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recordPhysicalVerification } from "@/app/actions/verify";
 import { Button, ErrorBanner, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 /** Independent physical QC: confirm each end on site, or reject with a note. */
 export function QcDecisionForm({ projectId, linkId, aLabel, zLabel }: { projectId: string; linkId: string; aLabel: string; zLabel: string }) {
@@ -26,7 +27,7 @@ export function QcDecisionForm({ projectId, linkId, aLabel, zLabel }: { projectI
           router.refresh();
         }
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not record QC result");
+        setError(actionErrorMessage(e, "Could not record QC result"));
       }
     });
   }

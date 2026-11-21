@@ -9,21 +9,22 @@ import type {
 import { cn } from "@/lib/utils";
 
 type ButtonProps = ButtonHTMLAttributes<HTMLButtonElement> & {
-  variant?: "primary" | "secondary" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "outline" | "ghost" | "danger";
   size?: "sm" | "md" | "lg";
   href?: string;
 };
 
 const buttonBase =
-  "inline-flex items-center justify-center gap-2 rounded-[var(--radius-sm)] font-semibold transition-colors rp-focus disabled:pointer-events-none disabled:opacity-50";
+  "inline-flex items-center justify-center gap-2 text-center leading-tight rounded-[var(--radius-sm)] font-semibold transition-colors rp-focus disabled:pointer-events-none disabled:opacity-50 [&>svg]:shrink-0";
 
 const variants = {
-  primary:
-    "bg-[var(--accent)] text-white shadow-sm shadow-blue-600/25 hover:bg-[var(--accent-hover)]",
+  primary: "bg-[var(--accent)] text-white shadow-sm shadow-[#0076d5]/25 hover:bg-[var(--accent-hover)]",
   secondary:
-    "border border-[var(--border-strong)] bg-white text-[var(--foreground)] shadow-sm hover:border-[var(--accent)] hover:text-[var(--accent)]",
-  ghost: "text-[var(--foreground)] hover:bg-[var(--muted)] hover:text-[var(--accent)]",
-  danger: "bg-[var(--danger)] text-white shadow-sm hover:bg-[#a81f26]",
+    "border border-[var(--border-strong)] bg-white text-[var(--foreground)] shadow-sm hover:border-[var(--accent)] hover:text-[var(--accent-ink)]",
+  outline:
+    "rounded-full border border-[#b9d6f2] bg-white text-[var(--accent-ink)] hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]",
+  ghost: "text-[var(--foreground)] hover:bg-[var(--muted)] hover:text-[var(--accent-ink)]",
+  danger: "bg-[var(--danger)] text-white shadow-sm hover:bg-[#b91c1c]",
 };
 
 const sizes = {
@@ -42,6 +43,14 @@ export function Button({
 }: ButtonProps) {
   const classes = cn(buttonBase, variants[variant], sizes[size], className);
   if (href) {
+    // Route handlers are not pages: a <Link> would prefetch (and run) them on every render.
+    if (href.startsWith("/api/")) {
+      return (
+        <a href={href} className={classes}>
+          {children}
+        </a>
+      );
+    }
     return (
       <Link href={href} className={classes}>
         {children}
@@ -103,16 +112,16 @@ export function Badge({
   tone?: "neutral" | "success" | "warning" | "danger" | "info";
 }) {
   const tones = {
-    neutral: "bg-[#eef2f6] text-[#3d5266] border-[#c5d0db]",
-    success: "bg-[var(--success-soft)] text-[var(--success-ink)] border-[#b7df9e]",
-    warning: "bg-[var(--warning-soft)] text-[var(--warning-ink)] border-[#f0d48a]",
-    danger: "bg-[var(--danger-soft)] text-[var(--danger)] border-[#efb4b7]",
-    info: "bg-[var(--info-soft)] text-[var(--accent)] border-[#bfdbfe]",
+    neutral: "bg-[#eef3f8] text-[#3d5266] border-[#d3deea]",
+    success: "bg-[var(--success-soft)] text-[var(--success-ink)] border-[#bfe3cb]",
+    warning: "bg-[var(--warning-soft)] text-[var(--warning-ink)] border-[#f6d9a4]",
+    danger: "bg-[var(--danger-soft)] text-[#b91c1c] border-[#f3c1c1]",
+    info: "bg-[var(--info-soft)] text-[#005fb0] border-[#c3dcf4]",
   };
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 whitespace-nowrap rounded-md border px-2 py-0.5 text-[11.5px] font-semibold",
+        "inline-flex items-center gap-1 whitespace-nowrap rounded-full border px-2.5 py-0.5 text-[12px] font-semibold",
         tones[tone],
         className,
       )}
@@ -129,6 +138,7 @@ export function Card({
   description,
   action,
   flush,
+  icon,
 }: {
   className?: string;
   children: ReactNode;
@@ -137,25 +147,30 @@ export function Card({
   action?: ReactNode;
   /** Remove body padding (use for tables / lists that run edge to edge). */
   flush?: boolean;
+  /** Small icon shown before the title. */
+  icon?: ReactNode;
 }) {
   return (
-    <div className={cn("rp-card", flush && "overflow-hidden", className)}>
+    <div className={cn("rp-card min-w-0", flush && "overflow-hidden", className)}>
       {(title || description || action) && (
-        <div className="flex items-start justify-between gap-3 border-b border-[var(--border)]/70 px-5 py-3.5">
-          <div className="min-w-0">
+        <div className="flex items-start justify-between gap-3 px-5 pb-2 pt-4">
+          <div className="flex min-w-0 items-start gap-2.5">
+            {icon && <span className="mt-0.5 shrink-0 text-[var(--accent-ink)] [&>svg]:h-5 [&>svg]:w-5">{icon}</span>}
+            <div className="min-w-0">
             {title && (
-              <h2 className="rp-display text-[16px] font-bold text-[var(--foreground)]">
+              <h2 className="rp-display text-[18px] font-bold leading-snug text-[var(--foreground)]">
                 {title}
               </h2>
             )}
             {description && (
               <p className="mt-0.5 text-xs leading-relaxed text-[var(--muted-fg)]">{description}</p>
             )}
+            </div>
           </div>
-          {action && <div className="shrink-0">{action}</div>}
+          {action && <div className="flex shrink-0 items-center gap-2">{action}</div>}
         </div>
       )}
-      <div className={flush ? undefined : "p-5"}>{children}</div>
+      <div className={flush ? undefined : "px-5 pb-5 pt-3"}>{children}</div>
     </div>
   );
 }
@@ -185,7 +200,7 @@ export function TextLink({ href, children }: { href: string; children: ReactNode
   return (
     <Link
       href={href}
-      className="rp-focus inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent)] hover:text-[var(--accent-hover)] hover:underline"
+      className="rp-focus inline-flex items-center gap-1 text-sm font-semibold text-[var(--accent-ink)] hover:text-[var(--accent-hover)] hover:underline"
     >
       {children}
     </Link>
@@ -199,64 +214,98 @@ export function StatCard({
   href,
   tone = "neutral",
   hint,
+  sub,
+  progress,
 }: {
   label: string;
   value: string | number;
   icon?: ReactNode;
   href?: string;
   tone?: "neutral" | "success" | "warning" | "danger" | "info";
-  /** Small secondary figure shown bottom-right (e.g. a live percentage). */
+  /** Small secondary figure shown as a pill (e.g. a live percentage). */
   hint?: string;
+  /** Optional muted line under the value (e.g. "Planned: 9 | Installed: 4"). */
+  sub?: string;
+  /** Optional 0-100 bar along the bottom of the card. */
+  progress?: number;
 }) {
   const tones = {
-    neutral: "bg-slate-100 text-slate-600",
-    success: "bg-[var(--success-soft)] text-[var(--success)]",
-    warning: "bg-[var(--warning-soft)] text-[var(--warning)]",
-    danger: "bg-[var(--danger-soft)] text-[var(--danger)]",
-    info: "bg-[var(--accent-soft)] text-[var(--accent)]",
+    neutral: "bg-[#eef3f8] text-[#3d5a7a]",
+    success: "bg-[var(--success-soft)] text-[var(--success-ink)]",
+    warning: "bg-[var(--warning-soft)] text-[#e07b00]",
+    danger: "bg-[var(--danger-soft)] text-[var(--danger-ink)]",
+    info: "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
   };
-  const hintTones = {
-    neutral: "text-[var(--muted-fg)]",
-    success: "text-[var(--success)]",
-    warning: "text-[var(--warning)]",
-    danger: "text-[var(--danger)]",
-    info: "text-[var(--accent)]",
+  const pillTones = {
+    neutral: "bg-[#eef3f8] text-[#3d5266]",
+    success: "bg-[var(--success-soft)] text-[var(--success-ink)]",
+    warning: "bg-[var(--warning-soft)] text-[var(--warning-ink)]",
+    danger: "bg-[var(--danger-soft)] text-[#b91c1c]",
+    info: "bg-[var(--accent-soft)] text-[#005fb0]",
+  };
+  const barTones = {
+    neutral: "bg-[#94a9c2]",
+    success: "bg-[var(--success)]",
+    warning: "bg-[var(--warning)]",
+    danger: "bg-[var(--danger)]",
+    info: "bg-[var(--accent)]",
   };
   const inner = (
     <div
       className={cn(
-        "rp-card flex items-center gap-4 px-5 py-4",
+        "rp-card flex h-full min-h-[96px] flex-col justify-center px-4 py-3.5",
         href && "transition-shadow hover:shadow-[var(--shadow-md)]",
       )}
     >
-      {icon && (
-        <div
-          className={cn(
-            "flex h-12 w-12 shrink-0 items-center justify-center rounded-full [&>svg]:h-6 [&>svg]:w-6",
-            tones[tone],
-          )}
-        >
-          {icon}
-        </div>
-      )}
-      <div className="min-w-0 flex-1">
-        <p className="text-[13px] font-medium leading-tight text-[var(--muted-fg)]">{label}</p>
-        <div className="mt-0.5 flex items-end justify-between gap-2">
-          <p className="rp-display text-[26px] font-extrabold leading-tight tracking-tight text-[var(--foreground)]">
-            {typeof value === "number" ? value.toLocaleString("en-US") : value}
+      <div className="flex items-center gap-3.5">
+        {icon && (
+          <div
+            className={cn(
+              "flex h-12 w-12 shrink-0 items-center justify-center rounded-full [&>svg]:h-6 [&>svg]:w-6",
+              tones[tone],
+            )}
+          >
+            {icon}
+          </div>
+        )}
+        <div className="min-w-0 flex-1">
+          <p className="line-clamp-2 text-[14px] font-semibold leading-tight text-[var(--foreground)]" title={label}>
+            {label}
           </p>
-          {hint && (
-            <span className={cn("pb-1 text-[13px] font-semibold", hintTones[tone])}>{hint}</span>
+          {/* The figure must never be truncated; the pill wraps below it instead. */}
+          <div className="mt-1 flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+            <p
+              className={cn("rp-kpi whitespace-nowrap", typeof value === "string" && value.length > 5 && "text-[22px] leading-[1.6]")}
+              title={typeof value === "string" ? value : undefined}
+            >
+              {typeof value === "number" ? value.toLocaleString("en-US") : value}
+            </p>
+            {hint && (
+              <span className={cn("shrink-0 rounded-full px-2 py-0.5 text-[12px] font-semibold tabular-nums", pillTones[tone])}>
+                {hint}
+              </span>
+            )}
+          </div>
+          {sub && (
+            <p className="truncate text-[12px] text-[var(--muted-fg)]" title={sub}>
+              {sub}
+            </p>
           )}
         </div>
       </div>
+      {progress !== undefined && (
+        <div className="mt-2.5 h-1.5 overflow-hidden rounded-full bg-[var(--muted)]" aria-hidden>
+          <div className={cn("h-full rounded-full", barTones[tone])} style={{ width: `${Math.max(0, Math.min(100, progress))}%` }} />
+        </div>
+      )}
     </div>
   );
   if (href) {
+    const Anchor = href.startsWith("/api/") ? "a" : Link;
     return (
-      <Link href={href} className="block rp-focus rounded-[var(--radius)]">
+      <Anchor href={href} className="block h-full rp-focus rounded-[var(--radius)]">
         {inner}
-      </Link>
+      </Anchor>
     );
   }
   return inner;
@@ -278,8 +327,11 @@ export function ProgressRing({
   const r = (size - stroke) / 2;
   const c = 2 * Math.PI * r;
   const color = tone === "success" ? "var(--success)" : "var(--accent)";
+  // Small rings cannot fit one decimal; floor so an unfinished project never reads "100%".
+  const compact = size < 48;
+  const label = compact ? String(Math.floor(pct)) : pct >= 99.95 ? "100" : pct.toFixed(1);
   return (
-    <div className="relative shrink-0" style={{ width: size, height: size }}>
+    <div className="relative shrink-0" style={{ width: size, height: size }} title={`${pct.toFixed(1)}%`}>
       <svg width={size} height={size} className="-rotate-90" aria-hidden>
         <circle cx={size / 2} cy={size / 2} r={r} fill="none" stroke="var(--muted)" strokeWidth={stroke} />
         <circle
@@ -294,8 +346,13 @@ export function ProgressRing({
           strokeDashoffset={c - (pct / 100) * c}
         />
       </svg>
-      <span className="rp-mono absolute inset-0 flex items-center justify-center text-[10.5px] font-bold text-[var(--foreground)]">
-        {pct >= 99.95 ? "100" : pct.toFixed(1)}%
+      <span
+        className={cn(
+          "rp-mono absolute inset-0 flex items-center justify-center font-bold text-[var(--foreground)]",
+          compact ? "text-[10px]" : "text-[10.5px]",
+        )}
+      >
+        {label}%
       </span>
     </div>
   );
@@ -305,11 +362,14 @@ export function ProgressBar({
   value,
   max = 100,
   label,
+  ariaLabel,
   className,
 }: {
   value: number;
   max?: number;
   label?: string;
+  /** Accessible name when no visible label is shown. */
+  ariaLabel?: string;
   className?: string;
 }) {
   const pct = max <= 0 ? 0 : Math.min(100, Math.round((value / max) * 100));
@@ -321,11 +381,12 @@ export function ProgressBar({
           {value}/{max} ({pct}%)
         </span>
       </div>
-      <div className="h-2.5 overflow-hidden rounded-full bg-[var(--muted)] shadow-inner">
+      <div className="h-2.5 overflow-hidden rounded-full bg-[var(--muted)]">
         <div
-          className="h-full rounded-full bg-gradient-to-r from-[var(--accent)] to-[#60a5fa] transition-all"
+          className="h-full rounded-full bg-gradient-to-r from-[var(--accent)] to-[var(--cyan)] transition-all"
           style={{ width: `${pct}%` }}
           role="progressbar"
+          aria-label={ariaLabel || label || "Progress"}
           aria-valuenow={value}
           aria-valuemin={0}
           aria-valuemax={max}
@@ -347,8 +408,8 @@ export function AlertBanner({
   const tones = {
     success: "border-l-[var(--success)] bg-[var(--success-soft)] text-[var(--success-ink)]",
     warning: "border-l-[var(--warning)] bg-[var(--warning-soft)] text-[var(--warning-ink)]",
-    danger: "border-l-[var(--danger)] bg-[var(--danger-soft)] text-[var(--danger)]",
-    info: "border-l-[var(--accent)] bg-[var(--info-soft)] text-[#036a91]",
+    danger: "border-l-[var(--danger)] bg-[var(--danger-soft)] text-[var(--danger-ink)]",
+    info: "border-l-[var(--accent)] bg-[var(--info-soft)] text-[#005fb0]",
   };
   return (
     <div
@@ -379,11 +440,11 @@ export function PageHeader({
     <div className="mb-5 flex flex-col gap-3 border-b border-[var(--border)] pb-4 sm:flex-row sm:items-end sm:justify-between">
       <div>
         {breadcrumb && <div className="mb-1.5 text-xs text-[var(--muted-fg)]">{breadcrumb}</div>}
-        <h1 className="rp-display text-[28px] font-extrabold leading-tight text-[var(--foreground)] sm:text-[32px]">
+        <h1 className="rp-display text-[24px] font-bold leading-tight text-[var(--foreground)] sm:text-[30px]">
           {title}
         </h1>
         {description && (
-          <p className="mt-1.5 max-w-2xl text-[15px] leading-relaxed text-[var(--muted-fg)]">
+          <p className="mt-1 max-w-2xl text-[14px] leading-relaxed text-[var(--muted-fg)]">
             {description}
           </p>
         )}
@@ -407,7 +468,7 @@ export function EmptyState({
   return (
     <div className="rounded-[var(--radius)] border border-dashed border-[var(--border)] bg-white px-6 py-12 text-center">
       {icon && (
-        <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent)]">
+        <div className="mx-auto mb-3 flex h-11 w-11 items-center justify-center rounded-full bg-[var(--accent-soft)] text-[var(--accent-ink)]">
           {icon}
         </div>
       )}
@@ -422,7 +483,7 @@ export function EmptyState({
 
 export function ErrorBanner({ message }: { message: string }) {
   return (
-    <div className="rounded-[var(--radius)] border border-[#efb4b7] border-l-4 border-l-[var(--danger)] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
+    <div role="alert" className="rounded-[var(--radius)] border border-[#efb4b7] border-l-4 border-l-[var(--danger)] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger-ink)]">
       {message}
     </div>
   );

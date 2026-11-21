@@ -2,7 +2,13 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  distDir: process.env.NEXT_DIST_DIR || ".next",
+  poweredByHeader: false,
   devIndicators: { position: "bottom-right" },
+  experimental: {
+    // Field photos are capped at 1.5 MB (≈2 MB as base64) and LLDP pastes at 2,000,000 chars.
+    serverActions: { bodySizeLimit: "3mb" },
+  },
   async headers() {
     const csp = [
       "default-src 'self'",
@@ -23,7 +29,7 @@ const nextConfig: NextConfig = {
           { key: "X-Content-Type-Options", value: "nosniff" },
           { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
           { key: "X-Frame-Options", value: "DENY" },
-          { key: "Permissions-Policy", value: "camera=(), microphone=(), geolocation=()" },
+          { key: "Permissions-Policy", value: "camera=(self), microphone=(), geolocation=()" },
           { key: "Content-Security-Policy", value: csp },
         ],
       },

@@ -135,7 +135,7 @@ export function GlobalSearchDialog() {
                         "flex w-full items-start gap-3 rounded-lg px-3 py-2 text-left hover:bg-[var(--muted)]",
                       )}
                     >
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                       <span className="min-w-0">
                         <span className="block truncate text-sm font-semibold text-[var(--foreground)]">
                           {h.title}
@@ -152,7 +152,7 @@ export function GlobalSearchDialog() {
             <div className="border-t border-[var(--border)] px-3 py-2 text-right text-[11px]">
               <a
                 href="/app/search"
-                className="font-semibold text-[var(--accent)] hover:underline"
+                className="font-semibold text-[var(--accent-ink)] hover:underline"
                 onClick={() => setOpen(false)}
               >
                 Open full search

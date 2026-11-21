@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createHandoverSnapshot, exportProjectCsv } from "@/app/actions/handover";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function HandoverActions({ projectId, snapshotsEnabled }: { projectId: string; snapshotsEnabled: boolean }) {
   const [pending, setPending] = useState(false);
@@ -22,7 +23,7 @@ export function HandoverActions({ projectId, snapshotsEnabled }: { projectId: st
       a.click();
       URL.revokeObjectURL(url);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Export failed");
+      setError(actionErrorMessage(err, "Export failed"));
     } finally {
       setPending(false);
     }
@@ -36,7 +37,7 @@ export function HandoverActions({ projectId, snapshotsEnabled }: { projectId: st
       const snap = await createHandoverSnapshot({ projectId, title: title || undefined });
       window.location.href = `/app/projects/${projectId}/handover/${snap.id}`;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Snapshot failed");
+      setError(actionErrorMessage(err, "Snapshot failed"));
     } finally {
       setPending(false);
     }

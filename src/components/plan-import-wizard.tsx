@@ -9,6 +9,7 @@ import {
   publishPlanImport,
 } from "@/app/actions/plan";
 import { Button, Card, ErrorBanner, Select, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function PlanImportWizard({ projectId }: { projectId: string }) {
   const [csvText, setCsvText] = useState("");
@@ -34,7 +35,7 @@ export function PlanImportWizard({ projectId }: { projectId: string }) {
       setMapping(p.mapping as Record<string, string>);
       await logPlanPreviewAudit(projectId, p.rowCount);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Preview failed");
+      setError(actionErrorMessage(err, "Preview failed"));
     } finally {
       setPending(false);
     }
@@ -60,7 +61,7 @@ export function PlanImportWizard({ projectId }: { projectId: string }) {
       );
       window.location.href = `/app/projects/${projectId}`;
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Publish failed");
+      setError(actionErrorMessage(err, "Publish failed"));
     } finally {
       setPending(false);
     }
@@ -160,17 +161,17 @@ export function PlanImportWizard({ projectId }: { projectId: string }) {
             <div className="space-y-4">
               <div className="grid grid-cols-3 gap-3">
                 <div className="rounded-xl bg-[var(--accent-soft)] p-3 text-center">
-                  <FileSpreadsheet className="mx-auto h-5 w-5 text-[var(--accent)]" aria-hidden />
+                  <FileSpreadsheet className="mx-auto h-5 w-5 text-[var(--accent-ink)]" aria-hidden />
                   <p className="mt-1 text-2xl font-semibold">{preview.rowCount}</p>
                   <p className="text-xs text-[var(--muted-fg)]">Rows</p>
                 </div>
                 <div className="rounded-xl bg-[var(--danger-soft)] p-3 text-center">
-                  <AlertCircle className="mx-auto h-5 w-5 text-[var(--danger)]" aria-hidden />
+                  <AlertCircle className="mx-auto h-5 w-5 text-[var(--danger-ink)]" aria-hidden />
                   <p className="mt-1 text-2xl font-semibold">{preview.errors.length}</p>
                   <p className="text-xs text-[var(--muted-fg)]">Errors</p>
                 </div>
                 <div className="rounded-xl bg-[var(--success-soft)] p-3 text-center">
-                  <CheckCircle2 className="mx-auto h-5 w-5 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mx-auto h-5 w-5 text-[var(--success-ink)]" aria-hidden />
                   <p className="mt-1 text-2xl font-semibold">
                     {preview.canPublish ? "Ready" : "—"}
                   </p>
@@ -196,7 +197,7 @@ export function PlanImportWizard({ projectId }: { projectId: string }) {
                   <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted-fg)]">
                     Sample normalized row
                   </p>
-                  <pre className="mt-2 max-h-40 overflow-auto rounded-lg bg-slate-50 p-3 text-xs">
+                  <pre tabIndex={0} className="mt-2 max-h-40 overflow-auto rounded-lg bg-slate-50 p-3 text-xs">
                     {JSON.stringify(preview.rows[0], null, 2)}
                   </pre>
                 </div>

@@ -100,7 +100,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <nav aria-label="Breadcrumb" className="mb-1 text-xs font-medium text-[var(--muted-fg)]">
-            <Link href="/app" className="hover:text-[var(--accent)]">
+            <Link href="/app" className="hover:text-[var(--accent-ink)]">
               Workspaces
             </Link>{" "}
             / <span className="text-[var(--foreground)]">{workspace.name}</span>
@@ -119,7 +119,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
         </div>
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Total Users" value={list.length} icon={<Users aria-hidden />} tone="info" />
         <StatCard label="Owners" value={count("owner")} icon={<Shield aria-hidden />} tone="info" />
         <StatCard label="Leads" value={count("lead")} icon={<ShieldCheck aria-hidden />} tone="success" />
@@ -206,7 +206,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
                       {PERMS.map((p) => (
                         <td key={p.key} className="px-1 py-2 text-center">
                           {caps[p.key] ? (
-                            <CheckCircle2 className="mx-auto h-4 w-4 text-[var(--success)]" aria-label="Allowed" />
+                            <CheckCircle2 className="mx-auto h-4 w-4 text-[var(--success-ink)]" aria-label="Allowed" />
                           ) : (
                             <MinusCircle className="mx-auto h-4 w-4 text-[var(--border)]" aria-label="Not allowed" />
                           )}
@@ -234,7 +234,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
                 return (
                   <tr key={p.id} className="border-b border-[var(--border)] last:border-0">
                     <td className="px-4 py-2">
-                      <Link href={`/app/projects/${p.id}`} className="font-semibold text-[var(--accent)] hover:underline">
+                      <Link href={`/app/projects/${p.id}`} className="font-semibold text-[var(--accent-ink)] hover:underline">
                         {p.name}
                       </Link>
                     </td>
@@ -261,7 +261,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
               ["Audit logging", "All mutations are recorded"],
             ].map(([t, d]) => (
               <li key={t} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                 <span>
                   <span className="font-semibold">{t}</span> {"\u2014"} <span className="text-[var(--muted-fg)]">{d}</span>
                 </span>

@@ -6,6 +6,7 @@ import { ArrowDownToLine, ArrowUpFromLine, RotateCcw, SlidersHorizontal } from "
 import { adjustStock } from "@/app/actions/spares";
 import { Button, ErrorBanner, Input, Select, TextArea } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { actionErrorMessage } from "@/lib/action-error";
 
 type Mode = "Receive" | "Issue" | "Return" | "Adjust";
 const MODES: Array<{ id: Mode; icon: typeof ArrowDownToLine }> = [
@@ -58,7 +59,7 @@ export function StockTransactionForm({
             setNotes("");
             router.refresh();
           } catch (err) {
-            setError(err instanceof Error ? err.message : "Transaction failed");
+            setError(actionErrorMessage(err, "Transaction failed"));
           }
         });
       }}

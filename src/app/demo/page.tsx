@@ -51,7 +51,7 @@ export default async function DemoPage() {
       </header>
 
       <main className="mx-auto max-w-3xl px-4 py-12">
-        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent)]">
+        <p className="text-[11px] font-semibold uppercase tracking-[0.12em] text-[var(--accent-ink)]">
           Synthetic demo dataset — not customer data
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Interactive demo</h1>

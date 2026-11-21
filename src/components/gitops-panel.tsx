@@ -3,9 +3,10 @@
 import { useState } from "react";
 import { previewGitOpsImport } from "@/app/actions/integrations";
 import { Badge, Button, ErrorBanner, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 const linkBtn =
-  "inline-flex h-9 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-white px-4 text-sm font-semibold tracking-wide text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent)]";
+  "inline-flex h-9 items-center justify-center rounded-[var(--radius)] border border-[var(--border)] bg-white px-4 text-sm font-semibold tracking-wide text-[var(--foreground)] hover:border-[var(--accent)] hover:text-[var(--accent-ink)]";
 
 type Result = Awaited<ReturnType<typeof previewGitOpsImport>>;
 
@@ -32,7 +33,7 @@ export function GitOpsPanel({
     try {
       setResult(await previewGitOpsImport({ projectId, text }));
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Dry-run failed");
+      setError(actionErrorMessage(e, "Dry-run failed"));
     } finally {
       setBusy(false);
     }
@@ -82,7 +83,7 @@ export function GitOpsPanel({
 
       {error && <ErrorBanner message={error} />}
       {result && !result.ok && (
-        <ul className="list-disc pl-5 text-sm text-[var(--danger)]">
+        <ul className="list-disc pl-5 text-sm text-[var(--danger-ink)]">
           {result.errors.map((e, i) => (
             <li key={i}>{e}</li>
           ))}
@@ -105,7 +106,7 @@ export function GitOpsPanel({
             )}
           </div>
           {result.errors.length > 0 && (
-            <ul className="list-disc pl-5 text-[var(--danger)]">
+            <ul className="list-disc pl-5 text-[var(--danger-ink)]">
               {result.errors.slice(0, 20).map((e, i) => (
                 <li key={i}>
                   #{e.lineNumber} {e.message}

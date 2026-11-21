@@ -319,7 +319,7 @@ export default async function EvidenceLibraryPage({
               <Filter className="h-4 w-4" aria-hidden />
               Filters
             </h2>
-            <Link href={base} className="text-xs font-semibold text-[var(--accent)]">
+            <Link href={base} className="text-xs font-semibold text-[var(--accent-ink)]">
               Reset
             </Link>
           </div>
@@ -381,7 +381,7 @@ export default async function EvidenceLibraryPage({
                       )}
                     >
                       <td className="max-w-[220px] px-3 py-2">
-                        <Link href={qs({ item: i.key })} scroll={false} className="flex items-center gap-2 font-medium text-[var(--accent)] hover:underline">
+                        <Link href={qs({ item: i.key })} scroll={false} className="flex items-center gap-2 font-medium text-[var(--accent-ink)] hover:underline">
                           <Icon className="h-4 w-4 shrink-0" aria-hidden />
                           <span className="truncate">{i.name}</span>
                         </Link>
@@ -465,7 +465,7 @@ export default async function EvidenceLibraryPage({
                   <>
                     <dt className="text-[var(--muted-fg)]">Cable ID</dt>
                     <dd>
-                      <Link href={`/app/projects/${projectId}/cables/${selLink.id}`} className="rp-mono font-semibold text-[var(--accent)]">
+                      <Link href={`/app/projects/${projectId}/cables/${selLink.id}`} className="rp-mono font-semibold text-[var(--accent-ink)]">
                         {selLink.cableId}
                       </Link>
                     </dd>
@@ -556,7 +556,7 @@ export default async function EvidenceLibraryPage({
             <ul className="space-y-2 text-[13px]">
               {feed.map((a) => (
                 <li key={a.id} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success-ink)]" aria-hidden />
                   <span className="min-w-0 flex-1">{a.summary}</span>
                   <span className="whitespace-nowrap text-[11px] text-[var(--muted-fg)]">{a.createdAt.toISOString().slice(5, 16).replace("T", " ")}</span>
                 </li>
@@ -581,7 +581,7 @@ export default async function EvidenceLibraryPage({
               ].map((s, i) => (
                 <li key={s.label} className="relative flex flex-1 flex-col items-center text-center">
                   {i > 0 && <span className="absolute right-1/2 top-3.5 h-0.5 w-full bg-[var(--border)]" aria-hidden />}
-                  <span className={cn("relative z-10 rounded-full bg-white", s.done ? "text-[var(--success)]" : "text-[var(--muted-fg)]")}>
+                  <span className={cn("relative z-10 rounded-full bg-white", s.done ? "text-[var(--success-ink)]" : "text-[var(--muted-fg)]")}>
                     {s.done ? <CheckCircle2 className="h-7 w-7" aria-hidden /> : <Circle className="h-7 w-7" aria-hidden />}
                   </span>
                   <span className="mt-1.5 text-xs font-semibold">{s.label}</span>

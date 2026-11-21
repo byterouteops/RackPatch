@@ -42,7 +42,7 @@ export function DemoTour({
   return (
     <div className="mb-4 space-y-2" data-testid="demo-banner">
       <div className="flex flex-wrap items-center gap-2 rounded-lg border border-amber-300 bg-amber-50 px-3 py-2 text-xs text-amber-900">
-        <span className="rounded bg-amber-500 px-1.5 py-0.5 font-bold tracking-wide text-white">DEMO / SYNTHETIC DATA</span>
+        <span className="rounded bg-amber-800 px-1.5 py-0.5 font-bold tracking-wide text-white">DEMO / SYNTHETIC DATA</span>
         <span>
           Fictional organisation and equipment.
           {snapshot ? (
@@ -52,7 +52,7 @@ export function DemoTour({
           ) : null}
         </span>
         {step === null && scenarios.length > 0 && (
-          <button type="button" onClick={() => go(0)} className="ml-auto inline-flex items-center gap-1 rounded-md bg-amber-600 px-2.5 py-1 font-semibold text-white hover:bg-amber-700">
+          <button type="button" onClick={() => go(0)} className="ml-auto inline-flex items-center gap-1 rounded-md bg-amber-700 px-2.5 py-1 font-semibold text-white hover:bg-amber-800">
             <Compass className="h-3.5 w-3.5" aria-hidden /> Start demo tour
           </button>
         )}

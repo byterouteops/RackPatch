@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { authClient } from "@/lib/auth-client";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function SignInForm({
   devLoginEnabled,
@@ -34,7 +35,7 @@ export function SignInForm({
         "Check your email for a sign-in link. In local dev without Resend, see the server console.",
       );
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Could not send magic link");
+      setError(actionErrorMessage(err, "Could not send magic link"));
     } finally {
       setPending(false);
     }
@@ -66,7 +67,7 @@ export function SignInForm({
       if (err) throw new Error(err.message);
       window.location.href = "/app";
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Sign-in failed");
+      setError(actionErrorMessage(err, "Sign-in failed"));
     } finally {
       setPending(false);
     }
@@ -79,7 +80,7 @@ export function SignInForm({
           type="button"
           className={`flex-1 px-3 py-2 text-xs font-semibold uppercase tracking-[0.06em] ${
             mode === "magic"
-              ? "bg-white text-[var(--accent)] shadow-sm"
+              ? "bg-white text-[var(--accent-ink)] shadow-sm"
               : "text-[var(--muted-fg)] hover:text-[var(--foreground)]"
           }`}
           onClick={() => setMode("magic")}
@@ -90,7 +91,7 @@ export function SignInForm({
           type="button"
           className={`flex-1 px-3 py-2 text-xs font-semibold uppercase tracking-[0.06em] ${
             mode === "password"
-              ? "bg-white text-[var(--accent)] shadow-sm"
+              ? "bg-white text-[var(--accent-ink)] shadow-sm"
               : "text-[var(--muted-fg)] hover:text-[var(--foreground)]"
           }`}
           onClick={() => setMode("password")}

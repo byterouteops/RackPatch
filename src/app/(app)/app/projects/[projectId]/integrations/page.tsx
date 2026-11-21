@@ -86,7 +86,7 @@ export default async function ProjectIntegrationsPage({ params }: { params: Prom
         description="NetBox dry-run and apply-to-plan, optional NetBox writes, signed outbound webhooks, and cable plans as code."
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="NetBox" value={netbox ? (netbox.enabled ? "Connected" : "Disabled") : "Not set"} icon={<Network aria-hidden />} tone={netbox?.enabled ? "success" : "neutral"} />
         <StatCard label="Sync Jobs" value={`${completedJobs} / ${jobs.length}`} icon={<Activity aria-hidden />} tone="info" />
         <StatCard label="Devices (last preview)" value={preview.devices ?? 0} icon={<Server aria-hidden />} tone="neutral" />
@@ -95,16 +95,16 @@ export default async function ProjectIntegrationsPage({ params }: { params: Prom
         <StatCard label="Plan Revision" value={revision ? `r${revision.revisionNumber}` : "\u2014"} icon={<GitBranch aria-hidden />} tone="neutral" />
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         {connectors.map((c) => (
           <Link key={c.name} href={c.href} className="rp-card flex items-center gap-3 p-3 hover:border-[var(--accent)]">
-            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+            <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent-ink)]">
               <c.icon className="h-5 w-5" aria-hidden />
             </span>
             <span className="min-w-0">
               <span className="block text-[13px] font-bold">{c.name}</span>
               <span className="block text-[11px] text-[var(--muted-fg)]">{c.sub}</span>
-              <span className={cn("mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold", c.ok ? "text-[var(--success)]" : "text-[var(--muted-fg)]")}>
+              <span className={cn("mt-0.5 inline-flex items-center gap-1 text-[11px] font-semibold", c.ok ? "text-[var(--success-ink)]" : "text-[var(--muted-fg)]")}>
                 {c.ok ? <CheckCircle2 className="h-3 w-3" aria-hidden /> : <XCircle className="h-3 w-3" aria-hidden />}
                 {c.state}
               </span>
@@ -183,7 +183,7 @@ export default async function ProjectIntegrationsPage({ params }: { params: Prom
           <ul className="space-y-2 text-[13px]">
             {health.map((h) => (
               <li key={h.label} className="flex items-center gap-2">
-                {h.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden /> : <XCircle className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
+                {h.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden /> : <XCircle className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
                 <span className={h.ok ? "" : "text-[var(--muted-fg)]"}>
                   {h.label}
                   {"na" in h && h.na ? " (no jobs yet)" : ""}

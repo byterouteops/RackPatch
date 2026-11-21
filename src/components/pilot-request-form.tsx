@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { submitPilotRequest } from "@/app/actions/pilot";
 import { Button, Input, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function PilotRequestForm() {
   const [pending, setPending] = useState(false);
@@ -26,7 +27,7 @@ export function PilotRequestForm() {
       setSuccess(result.message);
       form.reset();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Request failed");
+      setError(actionErrorMessage(err, "Request failed"));
     } finally {
       setPending(false);
     }

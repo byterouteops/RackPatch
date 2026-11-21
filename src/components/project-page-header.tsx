@@ -26,7 +26,7 @@ export function ProjectPageHeader({
   /** Optional KPI strip under the title (cables / overview). */
   kpis?: ReactNode;
 }) {
-  const crumb = "text-[var(--muted-fg)] hover:text-[var(--accent)]";
+  const crumb = "text-[var(--muted-fg)] hover:text-[var(--accent-ink)]";
   return (
     <div className="mb-5">
       <nav

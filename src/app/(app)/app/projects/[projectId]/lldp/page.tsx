@@ -125,7 +125,7 @@ export default async function LldpPage({ params }: { params: Promise<{ projectId
       />
 
       {rev && (
-        <div className="mb-4 grid gap-3 sm:grid-cols-4 xl:grid-cols-7">
+        <div className="mb-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-7">
           <StatCard label="Mismatches" value={issues.length} icon={<AlertTriangle aria-hidden />} tone={issues.length ? "danger" : "neutral"} />
           <StatCard label="Swapped" value={byCause.get("swap") ?? 0} icon={<ArrowLeftRight aria-hidden />} tone="warning" />
           <StatCard label="Wrong Port" value={byCause.get("wrong") ?? 0} icon={<Link2Off aria-hidden />} tone="warning" />
@@ -221,7 +221,7 @@ export default async function LldpPage({ params }: { params: Promise<{ projectId
             <section className="rp-card overflow-hidden" aria-label="Mismatch details">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
                 <h2 className="rp-display text-[15px] font-bold">Mismatch Details ({issues.length})</h2>
-                <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent-ink)]">
                   View all {"\u2192"}
                 </Link>
               </div>
@@ -243,12 +243,12 @@ export default async function LldpPage({ params }: { params: Promise<{ projectId
                       {issues.slice(0, 8).map((i) => (
                         <tr key={i.id} className="border-b border-[var(--border)] last:border-0">
                           <td className="px-4 py-2">
-                            <Link href={`/app/projects/${projectId}/exceptions?ex=${i.id}`} className="rp-mono font-semibold text-[var(--accent)]">
+                            <Link href={`/app/projects/${projectId}/exceptions?ex=${i.id}`} className="rp-mono font-semibold text-[var(--accent-ink)]">
                               {i.plannedLink.cableId}
                             </Link>
                           </td>
                           <td className="px-2 py-2 text-xs">{i.expectedSummary}</td>
-                          <td className="px-2 py-2 text-xs text-[var(--danger)]">{i.observedSummary ?? "No neighbor detected"}</td>
+                          <td className="px-2 py-2 text-xs text-[var(--danger-ink)]">{i.observedSummary ?? "No neighbor detected"}</td>
                           <td className="px-2 py-2">
                             <Badge tone={CAUSE[i.cause].tone}>{CAUSE[i.cause].label.split(" ")[0]}</Badge>
                           </td>
@@ -280,7 +280,7 @@ export default async function LldpPage({ params }: { params: Promise<{ projectId
                   </div>
                   <span className="text-center text-xs font-bold text-[var(--muted-fg)]">VS</span>
                   <div className="rounded-lg border border-red-200 bg-[var(--danger-soft)] p-3">
-                    <p className="mb-2 text-center text-xs font-bold text-[var(--danger)]">Observed (Actual)</p>
+                    <p className="mb-2 text-center text-xs font-bold text-[var(--danger-ink)]">Observed (Actual)</p>
                     {[swap, swapPartner].filter(Boolean).map((f) => (
                       <p key={f!.id} className="my-1.5 rounded-md bg-white/70 px-2 py-1.5 text-center text-xs font-medium">
                         {f!.observedSummary ?? "No neighbor"}
@@ -376,7 +376,7 @@ export default async function LldpPage({ params }: { params: Promise<{ projectId
                       <JobStatusBadge status={j.status} />
                     </td>
                     <td className="text-xs">
-                      {j.error ? <span className="text-[var(--danger)]">{j.error}</span> : <span className="text-[var(--muted-fg)]">{j.note ?? "\u2014"}</span>}
+                      {j.error ? <span className="text-[var(--danger-ink)]">{j.error}</span> : <span className="text-[var(--muted-fg)]">{j.note ?? "\u2014"}</span>}
                     </td>
                     <td className="whitespace-nowrap text-right text-xs text-[var(--muted-fg)]">{j.createdAt.toISOString().slice(0, 16).replace("T", " ")}</td>
                   </tr>

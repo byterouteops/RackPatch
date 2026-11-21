@@ -7,6 +7,7 @@ import { recordLabelPrint, saveLabelTemplate } from "@/app/actions/labels";
 import { DEFAULT_LABEL_CONFIG, type LabelConfig } from "@/lib/labels/template";
 import { Button, Input } from "@/components/ui";
 import { cn } from "@/lib/utils";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export type LabelItem = {
   id: string;
@@ -75,7 +76,7 @@ function LabelCard({ item, config, large }: { item: LabelItem; config: LabelConf
           {config.showEnds && (
             <div className="mt-1 space-y-0.5 text-[var(--foreground)]">
               <p className="truncate">
-                <span className="font-semibold text-[var(--accent)]">From:</span> {config.showRack ? `${item.aRack}-` : ""}
+                <span className="font-semibold text-[var(--accent-ink)]">From:</span> {config.showRack ? `${item.aRack}-` : ""}
                 {item.aDevice} <span className="rp-mono">{item.aPort}</span>
               </p>
               <p className="truncate">
@@ -175,20 +176,20 @@ export function LabelDesigner({
                 <span
                   className={cn(
                     "flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-sm font-bold",
-                    step === s.n ? "bg-white text-[var(--accent)]" : step > s.n ? "bg-[var(--success)] text-white" : "bg-[var(--muted)] text-[var(--muted-fg)]",
+                    step === s.n ? "bg-white text-[var(--accent-ink)]" : step > s.n ? "bg-[var(--success)] text-white" : "bg-[var(--muted)] text-[var(--muted-fg)]",
                   )}
                 >
                   {step > s.n ? <Check className="h-4 w-4" /> : s.n}
                 </span>
                 <span>
                   <span className="block text-sm font-bold">{s.title}</span>
-                  <span className={cn("block text-[11px]", step === s.n ? "text-white/80" : "text-[var(--muted-fg)]")}>{s.sub}</span>
+                  <span className={cn("block text-[11px]", step === s.n ? "text-white" : "text-[var(--muted-fg)]")}>{s.sub}</span>
                 </span>
               </button>
             </li>
           ))}
           <li className="flex items-center gap-3 rounded-xl border border-emerald-200 bg-[var(--success-soft)] px-3 py-2.5">
-            <Check className="h-6 w-6 text-[var(--success)]" aria-hidden />
+            <Check className="h-6 w-6 text-[var(--success-ink)]" aria-hidden />
             <span>
               <span className="block text-sm font-bold text-[var(--success-ink)]">{sheet.length} labels ready</span>
               <span className="block text-[11px] text-[var(--muted-fg)]">Browser print / PDF</span>
@@ -235,7 +236,7 @@ export function LabelDesigner({
                           setMessage("Saved as project default.");
                           router.refresh();
                         } catch (err) {
-                          setMessage(err instanceof Error ? err.message : "Save failed");
+                          setMessage(actionErrorMessage(err, "Save failed"));
                         }
                       })
                     }
@@ -359,7 +360,7 @@ export function LabelDesigner({
               <ul className="space-y-2 text-[12px]">
                 {history.map((h) => (
                   <li key={h.id} className="flex items-start gap-2">
-                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success)]" aria-hidden />
+                    <Check className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success-ink)]" aria-hidden />
                     <span className="min-w-0 flex-1">
                       {h.summary}
                       <span className="block text-[11px] text-[var(--muted-fg)]">
@@ -399,10 +400,10 @@ function TemplateRow({ active, title, hint, onClick }: { active: boolean; title:
       >
         <Tag className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />
         <span className="min-w-0 flex-1">
-          <span className={cn("block truncate text-[13px] font-semibold", active && "text-[var(--accent)]")}>{title}</span>
+          <span className={cn("block truncate text-[13px] font-semibold", active && "text-[var(--accent-ink)]")}>{title}</span>
           <span className="block truncate text-[11px] text-[var(--muted-fg)]">{hint}</span>
         </span>
-        {active && <Check className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />}
+        {active && <Check className="h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />}
       </button>
     </li>
   );

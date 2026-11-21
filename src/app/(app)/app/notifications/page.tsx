@@ -98,7 +98,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
         <MarkAllReadButton />
       </div>
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Total Notifications" value={items.length} icon={<Bell aria-hidden />} tone="info" />
         <StatCard label="Unread" value={unread.length} icon={<Info aria-hidden />} tone={unread.length ? "warning" : "neutral"} />
         <StatCard label="Active Alerts" value={alerts.length} icon={<AlertTriangle aria-hidden />} tone={alerts.length ? "danger" : "neutral"} />
@@ -139,7 +139,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                 {alerts.map((a) => (
                   <li key={a.id}>
                     <Link href={`/app/projects/${a.plannedLink.revision.projectId}/exceptions?ex=${a.id}`} className="flex items-start gap-3 px-4 py-2.5 hover:bg-[var(--muted)]/60">
-                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger)]" aria-hidden />
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger-ink)]" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="block font-semibold">Cabling mismatch {"\u2014"} {a.plannedLink.cableId}</span>
                         <span className="block truncate text-xs text-[var(--muted-fg)]">{a.observedSummary ?? a.expectedSummary}</span>
@@ -161,7 +161,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                 {tasks.map((t) => (
                   <li key={t.id}>
                     <Link href={`/app/projects/${t.projectId}/work-orders?wo=${t.id}`} className="flex items-center gap-3 px-4 py-2.5 hover:bg-[var(--muted)]/60">
-                      <ClipboardList className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                      <ClipboardList className="h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className="block font-semibold">
                           {t.code} {"\u2014"} {t.title}
@@ -195,7 +195,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
                         active ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60",
                       )}
                     >
-                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                      <Icon className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                       <span className="min-w-0 flex-1">
                         <span className={cn("block truncate", n.readAt ? "font-medium" : "font-bold")}>{n.title}</span>
                         <span className="block truncate text-xs text-[var(--muted-fg)]">{n.body}</span>
@@ -285,8 +285,8 @@ export default async function NotificationsPage({ searchParams }: { searchParams
             <ul className="space-y-2 text-[13px]">
               {tasks.slice(0, 5).map((t) => (
                 <li key={t.id} className="flex items-center gap-2">
-                  <ClipboardList className="h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
-                  <Link href={`/app/projects/${t.projectId}/work-orders?wo=${t.id}`} className="min-w-0 flex-1 truncate hover:text-[var(--accent)]">
+                  <ClipboardList className="h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
+                  <Link href={`/app/projects/${t.projectId}/work-orders?wo=${t.id}`} className="min-w-0 flex-1 truncate hover:text-[var(--accent-ink)]">
                     {t.code} {"\u2014"} {t.title}
                   </Link>
                   <Badge tone="neutral">{t.status.replace("_", " ")}</Badge>
@@ -305,7 +305,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
               ["Webhooks", "Per project (evidence, install, handover)", true],
             ].map(([t, d, on]) => (
               <li key={t as string} className="flex items-center gap-2">
-                {on ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden /> : <Info className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
+                {on ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden /> : <Info className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />}
                 <span className="flex-1">
                   <span className="font-semibold">{t as string}</span>
                   <span className="block text-[11px] text-[var(--muted-fg)]">{d as string}</span>
@@ -313,7 +313,7 @@ export default async function NotificationsPage({ searchParams }: { searchParams
               </li>
             ))}
           </ul>
-          <Link href="/app/settings" className="mt-3 inline-block text-xs font-semibold text-[var(--accent)]">
+          <Link href="/app/settings" className="mt-3 inline-block text-xs font-semibold text-[var(--accent-ink)]">
             Settings {"\u2192"}
           </Link>
         </section>

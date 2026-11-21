@@ -6,6 +6,7 @@ import type { InstallStatus } from "@prisma/client";
 import { updateInstallStatus } from "@/app/actions/install";
 import { recordPhysicalVerification } from "@/app/actions/verify";
 import { Button, ErrorBanner, Input, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function InstallControls({
   projectId,
@@ -34,9 +35,13 @@ export function InstallControls({
 
   async function setStatus(status: InstallStatus) {
     if (!canUpdateInstall) return;
+    setConflict(null);
+    if (status === "BLOCKED" && !reason.trim()) {
+      setError("A short reason is required when setting Blocked");
+      return;
+    }
     setPending(true);
     setError(null);
-    setConflict(null);
     try {
       const result = await updateInstallStatus({
         projectId,
@@ -53,7 +58,7 @@ export function InstallControls({
         router.refresh();
       }
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Update failed");
+      setError(actionErrorMessage(err, "Update failed"));
     } finally {
       setPending(false);
     }
@@ -77,7 +82,7 @@ export function InstallControls({
       setVerifyNote("");
       router.refresh();
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Verification failed");
+      setError(actionErrorMessage(err, "Verification failed"));
     } finally {
       setPending(false);
     }

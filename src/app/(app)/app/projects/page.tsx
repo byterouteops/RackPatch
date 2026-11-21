@@ -16,7 +16,7 @@ const FILTERS: Array<{ id: "all" | ProjectPhase; label: string }> = [
 
 const PHASE_TONE: Record<ProjectPhase, string> = {
   "no-plan": "bg-slate-100 text-slate-600",
-  "in-progress": "bg-[var(--accent-soft)] text-[var(--accent)]",
+  "in-progress": "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
   verifying: "bg-violet-50 text-violet-700",
   completed: "bg-[var(--success-soft)] text-[var(--success-ink)]",
 };
@@ -86,7 +86,7 @@ export default async function ProjectsPage({
                 className={cn(
                   "flex items-center gap-2 border-b-2 px-3 py-3 text-sm font-semibold",
                   active
-                    ? "border-[var(--accent)] text-[var(--accent)]"
+                    ? "border-[var(--accent)] text-[var(--accent-ink)]"
                     : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
                 )}
               >

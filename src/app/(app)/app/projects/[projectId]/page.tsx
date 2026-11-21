@@ -37,7 +37,7 @@ const PHASE_TONE: Record<ProjectPhase, string> = {
   "no-plan": "bg-slate-100 text-slate-600",
   "in-progress": "bg-[var(--success-soft)] text-[var(--success-ink)]",
   verifying: "bg-violet-50 text-violet-700",
-  completed: "bg-[var(--accent-soft)] text-[var(--accent)]",
+  completed: "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
 };
 
 export default async function ProjectOverviewPage({ params }: { params: Promise<{ projectId: string }> }) {
@@ -179,10 +179,10 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
     );
 
     const kpis = [
-      { label: "Total Cables", value: total, icon: Cable, cls: "bg-[var(--accent-soft)] text-[var(--accent)]", href: "/cables" },
+      { label: "Total Cables", value: total, icon: Cable, cls: "bg-[var(--accent-soft)] text-[var(--accent-ink)]", href: "/cables" },
       { label: "Matched", value: matched, hint: pct(matched), icon: CheckCircle2, cls: "bg-[var(--success-soft)] text-[var(--success-ink)]", href: "/verify?result=match" },
       { label: "Swapped", value: swaps, hint: pct(swaps), icon: ArrowLeftRight, cls: "bg-orange-50 text-orange-600", href: "/exceptions" },
-      { label: "Mismatch", value: mismatch, hint: pct(mismatch), icon: XCircle, cls: "bg-[var(--danger-soft)] text-[var(--danger)]", href: "/verify?result=mismatch" },
+      { label: "Mismatch", value: mismatch, hint: pct(mismatch), icon: XCircle, cls: "bg-[var(--danger-soft)] text-[var(--danger-ink)]", href: "/verify?result=mismatch" },
       { label: "Needs review", value: review, hint: pct(review), icon: HelpCircle, cls: "bg-violet-50 text-violet-700", href: "/verify?result=review" },
       { label: "Awaiting evidence", value: awaiting, hint: pct(awaiting), icon: Clock, cls: "bg-slate-100 text-slate-600", href: "/verify?result=pending" },
       { label: "Installed", value: installed, hint: pct(installed), icon: Wrench, cls: "bg-teal-50 text-teal-700", href: "/work-orders" },
@@ -210,7 +210,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
               </Button>
             </div>
           </div>
-          <div className="grid grid-cols-2 gap-2 border-b border-[var(--border)] p-3 sm:grid-cols-4 min-[1800px]:grid-cols-8">
+          <div className="grid grid-cols-2 gap-2 border-b border-[var(--border)] p-3 sm:grid-cols-4">
             {kpis.map((k) => (
               <Link
                 key={k.label}
@@ -246,7 +246,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                   return (
                     <tr key={l.id} className={cn("border-b border-[var(--border)] last:border-0", bad ? "bg-orange-50/60" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="rp-mono font-bold text-[var(--accent)] hover:underline">
+                        <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="rp-mono font-bold text-[var(--accent-ink)] hover:underline">
                           {l.cableId}
                         </Link>
                       </td>
@@ -256,7 +256,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                       <td className="px-2 py-2">
                         <span className="font-semibold">{l.zDevice}</span> <span className="rp-mono text-xs text-[var(--muted-fg)]">{l.zPort}</span>
                       </td>
-                      <td className={cn("px-2 py-2 text-xs", bad ? "font-medium text-[var(--danger)]" : "text-[var(--muted-fg)]")}>{f?.observedSummary ?? "\u2014"}</td>
+                      <td className={cn("px-2 py-2 text-xs", bad ? "font-medium text-[var(--danger-ink)]" : "text-[var(--muted-fg)]")}>{f?.observedSummary ?? "\u2014"}</td>
                       <td className="px-2 py-2">
                         <VerificationBadge state={f?.state ?? "AWAITING"} compact />
                       </td>
@@ -269,7 +269,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
           {total > preview.length && (
             <div className="border-t border-[var(--border)] px-4 py-2.5 text-xs text-[var(--muted-fg)]">
               Showing {preview.length} of {total.toLocaleString("en-US")} cables {"\u00b7"}{" "}
-              <Link href={`/app/projects/${projectId}/cables`} className="font-semibold text-[var(--accent)]">
+              <Link href={`/app/projects/${projectId}/cables`} className="font-semibold text-[var(--accent-ink)]">
                 Open cable plans
               </Link>
             </div>
@@ -281,7 +281,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
             <section className="rp-card overflow-hidden" aria-label="Fabric readiness">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
                 <h2 className="rp-display text-[15px] font-bold">Fabric readiness</h2>
-                <Link href={`/app/projects/${projectId}/fabric`} className="text-xs font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/fabric`} className="text-xs font-semibold text-[var(--accent-ink)]">
                   Open topology {"\u2192"}
                 </Link>
               </div>
@@ -301,18 +301,18 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                     {fabricRows.map((r) => (
                       <tr key={r.fabric} className="border-b border-[var(--border)] last:border-0">
                         <td className="px-4 py-2 font-semibold">
-                          <Link href={`/app/projects/${projectId}/cables?fabric=${encodeURIComponent(r.fabric)}`} className="hover:text-[var(--accent)]">
+                          <Link href={`/app/projects/${projectId}/cables?fabric=${encodeURIComponent(r.fabric)}`} className="hover:text-[var(--accent-ink)]">
                             {r.fabric}
                           </Link>
                         </td>
                         <td className="rp-mono px-2 py-2 text-right">{r.total}</td>
                         <td className="w-36 px-2 py-2">
-                          <ProgressBar label="" value={r.installed} max={r.total} />
+                          <ProgressBar ariaLabel={`${r.fabric} installed`} value={r.installed} max={r.total} />
                         </td>
                         <td className="w-36 px-2 py-2">
-                          <ProgressBar label="" value={r.verified} max={r.total} />
+                          <ProgressBar ariaLabel={`${r.fabric} verified`} value={r.verified} max={r.total} />
                         </td>
-                        <td className={cn("rp-mono px-2 py-2 text-right", r.issues ? "font-bold text-[var(--danger)]" : "text-[var(--muted-fg)]")}>{r.issues}</td>
+                        <td className={cn("rp-mono px-2 py-2 text-right", r.issues ? "font-bold text-[var(--danger-ink)]" : "text-[var(--muted-fg)]")}>{r.issues}</td>
                         <td className="rp-mono px-4 py-2 text-right text-[var(--muted-fg)]">{r.unobservable}</td>
                       </tr>
                     ))}
@@ -325,7 +325,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
             </section>
             <section className="rp-card p-4" aria-label="Handover gate">
               <h2 className="rp-display mb-3 text-[15px] font-bold">Handover gate</h2>
-              <p className={cn("mb-3 text-sm font-semibold", blockingExceptions ? "text-[var(--danger)]" : "text-[var(--success-ink)]")}>
+              <p className={cn("mb-3 text-sm font-semibold", blockingExceptions ? "text-[var(--danger-ink)]" : "text-[var(--success-ink)]")}>
                 {blockingExceptions
                   ? `${blockingExceptions} critical exception(s) open without a waiver; owner acceptance is blocked.`
                   : "No unwaived critical exceptions."}
@@ -334,7 +334,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                 {HANDOVER_STAGES.map((s) => (
                   <li key={s} className="flex items-center gap-2">
                     {signedStages.has(s) ? (
-                      <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
+                      <CheckCircle2 className="h-4 w-4 text-[var(--success-ink)]" aria-hidden />
                     ) : (
                       <Clock className="h-4 w-4 text-[var(--muted-fg)]" aria-hidden />
                     )}
@@ -344,7 +344,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
               </ol>
               <p className="mt-3 text-xs text-[var(--muted-fg)]">
                 {latestSnap ? `Latest snapshot: ${latestSnap.title}` : "No handover snapshot yet."}{" "}
-                <Link href={`/app/projects/${projectId}/handover`} className="font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/handover`} className="font-semibold text-[var(--accent-ink)]">
                   Go to handover
                 </Link>
               </p>
@@ -378,7 +378,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
           <section className="rp-card p-4" aria-label="Exceptions requiring attention">
             <div className="mb-3 flex items-center justify-between">
               <h2 className="rp-display text-[15px] font-bold">Exceptions requiring attention ({openFindings.length})</h2>
-              <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent)]">
+              <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent-ink)]">
                 View all {"\u2192"}
               </Link>
             </div>
@@ -394,11 +394,11 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
                       href={`/app/projects/${projectId}/exceptions?ex=${f.id}`}
                       className="flex items-start gap-2.5 rounded-lg border border-[var(--border)] border-l-4 border-l-[var(--warning)] px-3 py-2 hover:bg-[var(--accent-soft)]"
                     >
-                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger)]" aria-hidden />
-                      <span className="min-w-0 text-[13px]">
+                      <AlertTriangle className="mt-0.5 h-4 w-4 shrink-0 text-[var(--danger-ink)]" aria-hidden />
+                      <span className="block min-w-0 flex-1 text-[13px]">
                         <span className="rp-mono font-semibold">{f.plannedLink.cableId}</span>
                         <span className="block truncate text-xs text-[var(--muted-fg)]">{f.expectedSummary}</span>
-                        {f.observedSummary && <span className="block truncate text-xs text-[var(--danger)]">Observed: {f.observedSummary}</span>}
+                        {f.observedSummary && <span className="block truncate text-xs text-[var(--danger-ink)]">Observed: {f.observedSummary}</span>}
                       </span>
                     </Link>
                   </li>
@@ -489,7 +489,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
 
       <div className="min-w-0">
         <nav aria-label="Breadcrumb" className="mb-2 flex items-center gap-1 text-xs font-medium text-[var(--muted-fg)]">
-          <Link href="/app/projects" className="hover:text-[var(--accent)]">
+          <Link href="/app/projects" className="hover:text-[var(--accent-ink)]">
             Projects
           </Link>
           <span aria-hidden>/</span>

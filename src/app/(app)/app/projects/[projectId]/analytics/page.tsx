@@ -96,7 +96,7 @@ export default async function AnalyticsPage({
         hideSubnav={!access}
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label={`Events (${WINDOW_DAYS}d)`} value={total} icon={<BarChart3 aria-hidden />} tone="info" />
         <StatCard label="Product Events" value={productEvents.length} icon={<Radio aria-hidden />} tone="neutral" />
         <StatCard label="Active Users" value={activeUsers} icon={<Users aria-hidden />} tone="neutral" />
@@ -140,19 +140,19 @@ export default async function AnalyticsPage({
         <Panel title="Test Automation" icon={FlaskConical}>
           <ul className="space-y-2 text-[13px]">
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
               <span>
                 Unit suite (Vitest) {"\u2014"} <code className="rp-mono text-xs">npm test</code>
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
               <span>
                 Smoke E2E (Playwright) {"\u2014"} <code className="rp-mono text-xs">npx playwright test e2e/smoke.spec.ts</code>
               </span>
             </li>
             <li className="flex items-start gap-2">
-              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+              <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
               <span>
                 UI audit across every page {"\u2014"} <code className="rp-mono text-xs">UI_AUDIT=1</code>
               </span>
@@ -165,7 +165,7 @@ export default async function AnalyticsPage({
           <ul className="space-y-2 text-[13px]">
             {gates.map((g) => (
               <li key={g.label} className="flex items-center gap-2">
-                {g.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden /> : <CircleDashed className="h-4 w-4 shrink-0 text-[var(--warning)]" aria-hidden />}
+                {g.ok ? <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden /> : <CircleDashed className="h-4 w-4 shrink-0 text-[var(--warning-ink)]" aria-hidden />}
                 <span className="flex-1">{g.label}</span>
                 {g.detail && <span className="text-xs text-[var(--muted-fg)]">{g.detail}</span>}
               </li>
@@ -182,7 +182,7 @@ export default async function AnalyticsPage({
               "Activity also comes from the project audit log",
             ].map((t) => (
               <li key={t} className="flex items-start gap-2">
-                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                 {t}
               </li>
             ))}
@@ -227,7 +227,7 @@ export default async function AnalyticsPage({
                 <tr key={e.id} className="border-b border-[var(--border)] last:border-0">
                   <td className="whitespace-nowrap px-4 py-2 text-xs">{e.at.toLocaleString("en-US", { month: "short", day: "numeric", hour: "2-digit", minute: "2-digit" })}</td>
                   <td className="px-2 py-2">
-                    <code className="rp-mono rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-xs text-[var(--accent)]">{e.name}</code>
+                    <code className="rp-mono rounded bg-[var(--accent-soft)] px-1.5 py-0.5 text-xs text-[var(--accent-ink)]">{e.name}</code>
                   </td>
                   <td className="px-2 py-2 text-xs">{e.source}</td>
                   <td className="max-w-[120px] truncate px-2 py-2 text-xs">{e.who}</td>

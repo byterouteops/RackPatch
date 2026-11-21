@@ -11,6 +11,7 @@ import {
 } from "@/app/actions/integrations";
 import type { NetBoxPreview } from "@/lib/netbox";
 import { AlertBanner, Badge, Button, ErrorBanner, Input, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 const FIXTURE_EXAMPLE = `{
   "devices": [
@@ -58,7 +59,7 @@ export function NetBoxPanel({
     try {
       after?.(await fn());
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Request failed");
+      setError(actionErrorMessage(e, "Request failed"));
     } finally {
       setBusy(false);
     }
@@ -281,7 +282,7 @@ function PreviewResult({
         </Badge>
       </div>
       {preview.errors.length > 0 && (
-        <ul className="list-disc pl-5 text-[var(--danger)]">
+        <ul className="list-disc pl-5 text-[var(--danger-ink)]">
           {preview.errors.slice(0, 20).map((e, i) => (
             <li key={i}>
               {e.cableId ? `${e.cableId}: ` : ""}

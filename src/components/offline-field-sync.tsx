@@ -3,6 +3,7 @@
 import { useCallback, useEffect, useState } from "react";
 import { syncOfflineFieldQueue } from "@/app/actions/field-evidence";
 import {
+  FIELD_QUEUE_CHANGED,
   clearFieldQueueItems,
   createOfflineItem,
   enqueueFieldItem,
@@ -10,6 +11,7 @@ import {
   type OfflineFieldItem,
 } from "@/lib/offline/field-queue";
 import { AlertBanner, Button, ErrorBanner } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function OfflineFieldSync({ projectId }: { projectId: string }) {
   const [online, setOnline] = useState(true);
@@ -31,20 +33,26 @@ export function OfflineFieldSync({ projectId }: { projectId: string }) {
     setOnline(typeof navigator !== "undefined" ? navigator.onLine : true);
     const on = () => setOnline(true);
     const off = () => setOnline(false);
+    const changed = () => void refresh();
     window.addEventListener("online", on);
     window.addEventListener("offline", off);
+    window.addEventListener(FIELD_QUEUE_CHANGED, changed);
     void refresh();
     return () => {
       window.removeEventListener("online", on);
       window.removeEventListener("offline", off);
+      window.removeEventListener(FIELD_QUEUE_CHANGED, changed);
     };
   }, [refresh]);
 
   useEffect(() => {
-    if (online && queue.length > 0) {
-      // auto-attempt sync when connectivity returns
-      void doSync();
-    }
+    if (!online) return;
+    // Auto-attempt sync when connectivity returns; read IndexedDB, not possibly stale state.
+    listFieldQueue(projectId)
+      .then((items) => {
+        if (items.length > 0) void doSync();
+      })
+      .catch(() => {});
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [online]);
 
@@ -64,7 +72,7 @@ export function OfflineFieldSync({ projectId }: { projectId: string }) {
       await refresh();
       setMessage(`Synced ${res.okCount}/${items.length} items (${res.photoCount} photos)`);
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Sync failed");
+      setError(actionErrorMessage(e, "Sync failed"));
     } finally {
       setBusy(false);
     }

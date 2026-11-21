@@ -106,7 +106,7 @@ export default async function WorkspaceSitesPage({
       <div className="mb-4 flex flex-col gap-3 sm:flex-row sm:items-start sm:justify-between">
         <div>
           <nav aria-label="Breadcrumb" className="mb-1 text-xs font-medium text-[var(--muted-fg)]">
-            <Link href="/app" className="hover:text-[var(--accent)]">
+            <Link href="/app" className="hover:text-[var(--accent-ink)]">
               Workspaces
             </Link>{" "}
             / <span className="text-[var(--foreground)]">{workspace.name}</span>
@@ -147,7 +147,7 @@ export default async function WorkspaceSitesPage({
                           active ? "border-[var(--accent)] bg-[var(--accent-soft)]" : "border-[var(--border)] hover:border-[var(--accent)]",
                         )}
                       >
-                        <Building2 className="mt-0.5 h-6 w-6 shrink-0 text-[var(--accent)]" aria-hidden />
+                        <Building2 className="mt-0.5 h-6 w-6 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                         <span className="min-w-0 flex-1">
                           <span className="flex items-center justify-between gap-2">
                             <span className="rp-display truncate text-[14px] font-bold">{s.site.name}</span>
@@ -193,7 +193,7 @@ export default async function WorkspaceSitesPage({
                     return (
                       <tr key={r.rack} className={cn("border-b border-[var(--border)] last:border-0", active ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                         <td className="px-4 py-2">
-                          <Link href={href(selectedSite!.site.id, r.rack)} scroll={false} className="font-bold text-[var(--accent)] hover:underline">
+                          <Link href={href(selectedSite!.site.id, r.rack)} scroll={false} className="font-bold text-[var(--accent-ink)] hover:underline">
                             {r.rack}
                           </Link>
                         </td>
@@ -286,10 +286,10 @@ export default async function WorkspaceSitesPage({
                   <h2 className="rp-display mb-3 text-[15px] font-bold">Cabling Summary (Rack {selectedRack.rack})</h2>
                   <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
                     {[
-                      { label: "Total Cables", value: rs.total, icon: Cable, cls: "text-[var(--accent)]" },
-                      { label: "Verified", value: rs.verified, icon: CheckCircle2, cls: "text-[var(--success)]" },
+                      { label: "Total Cables", value: rs.total, icon: Cable, cls: "text-[var(--accent-ink)]" },
+                      { label: "Verified", value: rs.verified, icon: CheckCircle2, cls: "text-[var(--success-ink)]" },
                       { label: "Pending", value: rs.pending, icon: Clock, cls: "text-amber-500" },
-                      { label: "Exceptions", value: rs.exceptions, icon: AlertTriangle, cls: "text-[var(--danger)]" },
+                      { label: "Exceptions", value: rs.exceptions, icon: AlertTriangle, cls: "text-[var(--danger-ink)]" },
                     ].map((k) => (
                       <div key={k.label} className="rounded-lg border border-[var(--border)] p-3 text-center">
                         <k.icon className={cn("mx-auto h-6 w-6", k.cls)} aria-hidden />
@@ -298,7 +298,7 @@ export default async function WorkspaceSitesPage({
                       </div>
                     ))}
                   </div>
-                  <Link href={`/app/projects/${rackProject.id}/cables`} className="mt-3 inline-block text-xs font-semibold text-[var(--accent)]">
+                  <Link href={`/app/projects/${rackProject.id}/cables`} className="mt-3 inline-block text-xs font-semibold text-[var(--accent-ink)]">
                     Open cable plans {"\u2192"}
                   </Link>
                 </section>

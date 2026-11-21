@@ -76,11 +76,11 @@ export function DonutWithLegend({ segments, total, label }: { segments: DonutSeg
   return (
     <div className="flex items-center gap-5">
       <Donut segments={segments} total={total} label={label} />
-      <ul className="flex-1 space-y-2 text-[13px]">
+      <ul className="min-w-0 flex-1 space-y-2 text-[13px]">
         {segments.map((s) => (
           <li key={s.label} className="flex items-center gap-2">
             <span className="h-2.5 w-2.5 rounded-sm" style={{ background: s.color }} aria-hidden />
-            <span className="flex-1">{s.label}</span>
+            <span className="min-w-0 flex-1 truncate" title={s.label}>{s.label}</span>
             <span className="font-semibold">{s.value.toLocaleString("en-US")}</span>
             <span className="w-12 text-right text-xs text-[var(--muted-fg)]">{pct(s.value, total).toFixed(1)}%</span>
           </li>

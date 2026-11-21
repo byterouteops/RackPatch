@@ -7,6 +7,8 @@ export type ProjectDashStat = {
   cables: number;
   installed: number;
   verified: number;
+  /** Verified by an LLDP/CDP neighbor observation only (excludes physical checks). */
+  lldpMatched: number;
   exceptions: number;
   mismatch: number;
   needsReview: number;
@@ -67,6 +69,7 @@ export async function loadProjectDashStats(
     if (!rev) return emptyStat(p);
 
     let verified = 0;
+    let lldpMatched = 0;
     let exceptions = 0;
     let mismatch = 0;
     let needsReview = 0;
@@ -74,6 +77,7 @@ export async function loadProjectDashStats(
       if (g.revisionId !== rev) continue;
       const n = g._count._all;
       if (g.state === "VERIFIED_LLDP" || g.state === "VERIFIED_PHYSICAL") verified += n;
+      if (g.state === "VERIFIED_LLDP") lldpMatched += n;
       if (g.state === "MISMATCH") mismatch += n;
       if (g.state === "NEEDS_REVIEW") needsReview += n;
       if (
@@ -91,6 +95,7 @@ export async function loadProjectDashStats(
       cables: cableMap.get(rev) ?? 0,
       installed: installedMap.get(rev) ?? 0,
       verified,
+      lldpMatched,
       exceptions,
       mismatch,
       needsReview,
@@ -106,6 +111,7 @@ function emptyStat(p: { id: string; name: string; site: string }): ProjectDashSt
     cables: 0,
     installed: 0,
     verified: 0,
+    lldpMatched: 0,
     exceptions: 0,
     mismatch: 0,
     needsReview: 0,

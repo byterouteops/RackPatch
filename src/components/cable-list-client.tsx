@@ -190,7 +190,7 @@ export function CableListClient({
               className={cn(
                 "-mb-px flex items-center gap-2 rounded-t-lg border-b-[3px] px-4 py-2.5 text-sm font-semibold",
                 view === id
-                  ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent)]"
+                  ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-ink)]"
                   : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
               )}
             >
@@ -266,7 +266,7 @@ export function CableListClient({
           {filtersActive && (
             <button
               type="button"
-              className="text-xs font-semibold text-[var(--accent)] hover:underline"
+              className="text-xs font-semibold text-[var(--accent-ink)] hover:underline"
               onClick={() => {
                 setSearch("");
                 setRack("");
@@ -283,15 +283,15 @@ export function CableListClient({
 
         {checked.size > 0 && (
           <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--accent-soft)] px-4 py-2 text-sm">
-            <span className="font-semibold text-[var(--accent)]">{checked.size} selected</span>
-            <button type="button" onClick={() => void copyChecked()} className="inline-flex items-center gap-1 font-semibold text-[var(--foreground)] hover:text-[var(--accent)]">
+            <span className="font-semibold text-[var(--accent-ink)]">{checked.size} selected</span>
+            <button type="button" onClick={() => void copyChecked()} className="inline-flex items-center gap-1 font-semibold text-[var(--foreground)] hover:text-[var(--accent-ink)]">
               <Copy className="h-3.5 w-3.5" aria-hidden />
               {copied ? "Copied" : "Copy cable IDs"}
             </button>
-            <Link href={`/app/projects/${projectId}/labels`} className="font-semibold text-[var(--foreground)] hover:text-[var(--accent)]">
+            <Link href={`/app/projects/${projectId}/labels`} className="font-semibold text-[var(--foreground)] hover:text-[var(--accent-ink)]">
               Print labels
             </Link>
-            <Link href={`/app/projects/${projectId}/work-orders`} className="font-semibold text-[var(--foreground)] hover:text-[var(--accent)]">
+            <Link href={`/app/projects/${projectId}/work-orders`} className="font-semibold text-[var(--foreground)] hover:text-[var(--accent-ink)]">
               Create work order
             </Link>
             <button type="button" onClick={() => setChecked(new Set())} className="ml-auto inline-flex items-center gap-1 text-[var(--muted-fg)] hover:text-[var(--foreground)]">
@@ -353,8 +353,8 @@ export function CableListClient({
                         aria-label={`Select ${r.cableId}`}
                       />
                     </td>
-                    <td className="px-2 py-2">
-                      <span className="rp-mono font-bold text-[var(--accent)]">{r.cableId}</span>
+                    <td className="whitespace-nowrap px-2 py-2">
+                      <span className="rp-mono font-bold text-[#005fb0]">{r.cableId}</span>
                       {r.retired && (
                         <Badge tone="neutral" className="ml-1.5">
                           Retired
@@ -399,7 +399,7 @@ export function CableListClient({
             <li key={r.id}>
               <Link href={`/app/projects/${projectId}/cables/${r.id}`} className="rp-focus block p-3 active:bg-[var(--muted)]">
                 <div className="flex items-start justify-between gap-2">
-                  <span className="rp-mono text-base font-bold text-[var(--accent)]">{r.cableId}</span>
+                  <span className="rp-mono text-base font-bold text-[var(--accent-ink)]">{r.cableId}</span>
                   <InstallStatusBadge status={r.installStatus} />
                 </div>
                 <p className="mt-2 text-sm">
@@ -555,7 +555,7 @@ function CableDetailsPanel({
         </dl>
         <div className="flex w-[92px] flex-col items-center text-center text-[11px]">
           <div className="w-full rounded-md border border-[var(--border)] bg-[var(--muted)] px-1.5 py-1.5">
-            <Server className="mx-auto h-4 w-4 text-[var(--accent)]" aria-hidden />
+            <Server className="mx-auto h-4 w-4 text-[var(--accent-ink)]" aria-hidden />
             <p className="truncate font-bold">{cable.aDevice}</p>
             <p className="truncate text-[var(--muted-fg)]">{cable.aPort}</p>
           </div>
@@ -564,7 +564,7 @@ function CableDetailsPanel({
             aria-hidden
           />
           <div className="w-full rounded-md border border-[var(--border)] bg-[var(--muted)] px-1.5 py-1.5">
-            <Server className="mx-auto h-4 w-4 text-[var(--accent)]" aria-hidden />
+            <Server className="mx-auto h-4 w-4 text-[var(--accent-ink)]" aria-hidden />
             <p className="truncate font-bold">{cable.zDevice}</p>
             <p className="truncate text-[var(--muted-fg)]">{cable.zPort}</p>
           </div>
@@ -573,7 +573,7 @@ function CableDetailsPanel({
 
       {(problem || cable.blockedReason) && (
         <div className="mx-4 mb-4 rounded-lg border border-red-200 bg-[var(--danger-soft)] p-3 text-[13px]">
-          <p className="flex items-center gap-1.5 font-bold text-[var(--danger)]">
+          <p className="flex items-center gap-1.5 font-bold text-[var(--danger-ink)]">
             <AlertTriangle className="h-4 w-4" aria-hidden />
             {cable.blockedReason && !problem ? "Blocked" : "Exception Details"}
           </p>

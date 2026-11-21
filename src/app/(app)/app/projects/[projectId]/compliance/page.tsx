@@ -126,7 +126,7 @@ export default async function CompliancePage({
         }
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Rules" value={rules.length} icon={<ShieldCheck aria-hidden />} tone="info" />
         <StatCard label="Compliant" value={counts.Compliant} icon={<CheckCircle2 aria-hidden />} tone="success" />
         <StatCard label="Non-compliant" value={counts["Non-compliant"]} icon={<XCircle aria-hidden />} tone={counts["Non-compliant"] ? "danger" : "neutral"} />
@@ -172,7 +172,7 @@ export default async function CompliancePage({
                   return (
                     <tr key={r.id} className={cn("border-b border-[var(--border)] last:border-0", selected.id === r.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={href({ rule: r.id })} scroll={false} className="font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={href({ rule: r.id })} scroll={false} className="font-semibold text-[var(--accent-ink)] hover:underline">
                           {r.name}
                         </Link>
                         <span className="block text-[11px] text-[var(--muted-fg)]">{r.scheduled ? "Scheduled check + email" : "Live check (this page)"}</span>
@@ -205,9 +205,9 @@ export default async function CompliancePage({
               ]}
             />
           </Panel>
-          <Panel title={`Affected \u2014 ${selected.name}`} icon={AlertTriangle} action={<Link href={selected.href} className="text-xs font-semibold text-[var(--accent)]">Fix {"\u2192"}</Link>}>
+          <Panel title={`Affected \u2014 ${selected.name}`} icon={AlertTriangle} action={<Link href={selected.href} className="text-xs font-semibold text-[var(--accent-ink)]">Fix {"\u2192"}</Link>}>
             {selected.affected.length === 0 ? (
-              <p className="flex items-center gap-2 text-sm text-[var(--success)]">
+              <p className="flex items-center gap-2 text-sm text-[var(--success-ink)]">
                 <CheckCircle2 className="h-4 w-4" aria-hidden /> Nothing affected.
               </p>
             ) : (
@@ -224,17 +224,17 @@ export default async function CompliancePage({
         </div>
 
         <Panel title="External Cron (Required)" icon={Terminal}>
-          <p className="mb-2 rounded-md bg-[var(--accent-soft)] px-3 py-2 text-xs text-[var(--accent)]">Scheduled checks need an external cron; RackPatch does not run a scheduler itself.</p>
-          <pre className="rp-mono mb-3 overflow-x-auto rounded-md bg-slate-900 p-2.5 text-[11px] leading-relaxed text-slate-100">
+          <p className="mb-2 rounded-md bg-[var(--accent-soft)] px-3 py-2 text-xs text-[var(--accent-ink)]">Scheduled checks need an external cron; RackPatch does not run a scheduler itself.</p>
+          <pre tabIndex={0} className="rp-mono mb-3 overflow-x-auto rounded-md bg-slate-900 p-2.5 text-[11px] leading-relaxed text-slate-100">
             {`*/30 * * * * curl -X POST \\\n  -H "x-compliance-secret: $SECRET" \\\n  ${appUrl}/api/internal/compliance-check`}
           </pre>
           <ul className="space-y-1.5 text-[13px]">
             <li className="flex items-center gap-2">
-              {cronConfigured ? <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden /> : <XCircle className="h-4 w-4 text-[var(--warning)]" aria-hidden />}
+              {cronConfigured ? <CheckCircle2 className="h-4 w-4 text-[var(--success-ink)]" aria-hidden /> : <XCircle className="h-4 w-4 text-[var(--warning-ink)]" aria-hidden />}
               COMPLIANCE_CRON_SECRET {cronConfigured ? "set" : "not set"}
             </li>
             <li className="flex items-center gap-2">
-              {policy?.enabled ? <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden /> : <XCircle className="h-4 w-4 text-[var(--warning)]" aria-hidden />}
+              {policy?.enabled ? <CheckCircle2 className="h-4 w-4 text-[var(--success-ink)]" aria-hidden /> : <XCircle className="h-4 w-4 text-[var(--warning-ink)]" aria-hidden />}
               Policy {policy ? (policy.enabled ? "enabled for this project" : "disabled") : "not saved yet"}
             </li>
             <li className="flex items-center gap-2">

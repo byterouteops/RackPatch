@@ -10,6 +10,7 @@ import {
   unmapPanelPort,
 } from "@/app/actions/panels";
 import { Button, ErrorBanner, Input, Select } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 type Option = { id: string; label: string };
 
@@ -24,7 +25,7 @@ function useRunner() {
         await fn();
         router.refresh();
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Action failed");
+        setError(actionErrorMessage(e, "Action failed"));
       }
     });
   }
@@ -102,21 +103,21 @@ export function PortMapForm({
           <ErrorBanner message={error} />
         </div>
       )}
-      <Select name="portId" required defaultValue={freePorts[0].id}>
+      <Select name="portId" aria-label="Panel port" required defaultValue={freePorts[0].id}>
         {freePorts.map((p) => (
           <option key={p.id} value={p.id}>
             {p.label}
           </option>
         ))}
       </Select>
-      <Select name="plannedLinkId" required defaultValue={links[0].id}>
+      <Select name="plannedLinkId" aria-label="Planned cable" required defaultValue={links[0].id}>
         {links.map((l) => (
           <option key={l.id} value={l.id}>
             {l.label}
           </option>
         ))}
       </Select>
-      <Select name="side" defaultValue="A">
+      <Select name="side" aria-label="Panel side" defaultValue="A">
         <option value="A">Cable end A</option>
         <option value="Z">Cable end Z</option>
       </Select>
@@ -161,7 +162,7 @@ export function CircuitForm({
         </div>
       )}
       <Input name="name" required placeholder="Circuit name" />
-      <Select name="mediaType" defaultValue={mediaTypes[0]}>
+      <Select name="mediaType" aria-label="Media type" defaultValue={mediaTypes[0]}>
         {mediaTypes.map((m) => (
           <option key={m} value={m}>
             {m}
@@ -169,14 +170,14 @@ export function CircuitForm({
         ))}
       </Select>
       <span />
-      <Select name="panelPortAId" required defaultValue={ports[0].id}>
+      <Select name="panelPortAId" aria-label="Panel port A" required defaultValue={ports[0].id}>
         {ports.map((p) => (
           <option key={p.id} value={p.id}>
             A: {p.label}
           </option>
         ))}
       </Select>
-      <Select name="panelPortZId" defaultValue="">
+      <Select name="panelPortZId" aria-label="Panel port Z" defaultValue="">
         <option value="">Z: (none)</option>
         {ports.map((p) => (
           <option key={p.id} value={p.id}>
@@ -195,7 +196,7 @@ export function UnmapPortButton({ projectId, portId }: { projectId: string; port
   const { error, pending, run } = useRunner();
   return (
     <span className="inline-flex items-center gap-2">
-      {error && <span className="text-xs text-[var(--danger)]">{error}</span>}
+      {error && <span className="text-xs text-[var(--danger-ink)]">{error}</span>}
       <Button
         type="button"
         size="sm"
@@ -219,7 +220,7 @@ export function DeleteCircuitButton({
   const { error, pending, run } = useRunner();
   return (
     <span className="inline-flex items-center gap-2">
-      {error && <span className="text-xs text-[var(--danger)]">{error}</span>}
+      {error && <span className="text-xs text-[var(--danger-ink)]">{error}</span>}
       <Button
         type="button"
         size="sm"

@@ -34,7 +34,7 @@ const TASK_FILTERS: Array<{ id: string; label: string; status?: InstallStatus }>
 const STATUS_TONE: Record<string, string> = {
   DRAFT: "bg-slate-100 text-slate-600",
   OPEN: "bg-violet-50 text-violet-700",
-  IN_PROGRESS: "bg-[var(--accent-soft)] text-[var(--accent)]",
+  IN_PROGRESS: "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
   DONE: "bg-[var(--success-soft)] text-[var(--success-ink)]",
   CANCELLED: "bg-slate-100 text-slate-500",
 };
@@ -215,13 +215,13 @@ export default async function WorkOrdersPage({
         }
       />
 
-      <div className="grid items-start gap-4 xl:grid-cols-[290px_minmax(0,1fr)_300px]">
+      <div className="grid grid-cols-1 items-start gap-4 xl:grid-cols-[290px_minmax(0,1fr)_300px]">
         {/* Work order list */}
         <section className="rp-card overflow-hidden" aria-label="Work orders">
           <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
             <h2 className="rp-display text-[15px] font-bold">Work Orders ({orders.length})</h2>
             {access.canManageProject && (
-              <Link href={`${base}?new=1`} className="flex items-center gap-1 text-sm font-semibold text-[var(--accent)]">
+              <Link href={`${base}?new=1`} className="flex items-center gap-1 text-sm font-semibold text-[var(--accent-ink)]">
                 <Plus className="h-4 w-4" aria-hidden />
                 New
               </Link>
@@ -274,7 +274,7 @@ export default async function WorkOrdersPage({
         </section>
 
         {/* Selected work order + cable tasks */}
-        <section className="space-y-4">
+        <section className="min-w-0 space-y-4">
           {selected && selProgress && (
             <div className="rp-card">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
@@ -327,7 +327,7 @@ export default async function WorkOrdersPage({
                       "rounded-full border px-2.5 py-1 text-xs font-semibold",
                       filter.id === f.id
                         ? "border-[var(--accent)] bg-[var(--accent)] text-white"
-                        : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent)]",
+                        : "border-[var(--border)] text-[var(--muted-fg)] hover:border-[var(--accent)] hover:text-[var(--accent-ink)]",
                     )}
                   >
                     {f.label} ({counts[f.id as keyof typeof counts]})
@@ -359,7 +359,7 @@ export default async function WorkOrdersPage({
                         <td className="px-4 py-2">
                           <Link
                             href={`/app/projects/${projectId}/cables/${t.id}`}
-                            className="rp-mono font-bold text-[var(--accent)] hover:underline"
+                            className="rp-mono font-bold text-[var(--accent-ink)] hover:underline"
                           >
                             {t.cableId}
                           </Link>
@@ -389,7 +389,7 @@ export default async function WorkOrdersPage({
                 {counts.all > TASK_LIMIT && (
                   <p className="border-t border-[var(--border)] px-4 py-2 text-xs text-[var(--muted-fg)]">
                     Showing first {TASK_LIMIT}. Use the{" "}
-                    <Link href={`/app/projects/${projectId}/cables`} className="font-semibold text-[var(--accent)]">
+                    <Link href={`/app/projects/${projectId}/cables`} className="font-semibold text-[var(--accent-ink)]">
                       cable plan
                     </Link>{" "}
                     for full search and paging.
@@ -401,7 +401,7 @@ export default async function WorkOrdersPage({
         </section>
 
         {/* Right rail */}
-        <aside className="space-y-4">
+        <aside className="min-w-0 space-y-4">
           {creating && (
             <WorkOrderCreateForm projectId={projectId} members={members.map((m) => m.user)} linkOptions={linkOptions} />
           )}
@@ -413,7 +413,7 @@ export default async function WorkOrdersPage({
             </h2>
             <div className="flex items-center gap-3">
               <div className="flex h-20 w-20 shrink-0 items-center justify-center rounded-lg border-2 border-dashed border-[var(--accent)]/50 bg-[var(--accent-soft)]">
-                <QrCode className="h-10 w-10 text-[var(--accent)]" aria-hidden />
+                <QrCode className="h-10 w-10 text-[var(--accent-ink)]" aria-hidden />
               </div>
               <p className="text-xs text-[var(--muted-fg)]">
                 Scan a cable label to open its install and verify record. Works offline; changes sync later.
@@ -430,7 +430,7 @@ export default async function WorkOrdersPage({
                 <Camera className="h-4 w-4" aria-hidden />
                 Installation Evidence
               </h2>
-              <Link href={`/app/projects/${projectId}/evidence`} className="text-sm font-semibold text-[var(--accent)]">
+              <Link href={`/app/projects/${projectId}/evidence`} className="text-sm font-semibold text-[var(--accent-ink)]">
                 View
               </Link>
             </div>

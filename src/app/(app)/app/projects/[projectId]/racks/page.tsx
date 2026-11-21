@@ -32,7 +32,7 @@ export default async function RacksPage({ params }: { params: Promise<{ projectI
           icon={<Server className="h-5 w-5" aria-hidden />}
           title="No racks yet"
           description="Racks appear when devices have a rack and rack unit. Sync port inventory from the plan, then set rack units on the Inventory page."
-          action={<Link className="text-sm font-semibold text-[var(--accent)]" href={`/app/projects/${projectId}/inventory`}>Open inventory</Link>}
+          action={<Link className="text-sm font-semibold text-[var(--accent-ink)]" href={`/app/projects/${projectId}/inventory`}>Open inventory</Link>}
         />
       ) : (
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-7">

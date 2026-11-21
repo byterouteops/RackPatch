@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createApiToken } from "@/app/actions/api-tokens";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function ApiTokenCreateForm({ projectId }: { projectId: string }) {
   const [name, setName] = useState("Script access");
@@ -19,7 +20,7 @@ export function ApiTokenCreateForm({ projectId }: { projectId: string }) {
       setToken(res.token);
       setName("Script access");
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Could not create token");
+      setError(actionErrorMessage(e, "Could not create token"));
     } finally {
       setBusy(false);
     }

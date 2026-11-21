@@ -125,7 +125,7 @@ export default async function InventoryPage({
         }
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-4 xl:grid-cols-7">
+      <div className="mb-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-7">
         <StatCard label="Total Devices" value={devices.length} icon={<Server aria-hidden />} tone="info" />
         <StatCard label="Racks" value={racks} icon={<Layers aria-hidden />} tone="neutral" />
         <StatCard label="Total Interfaces" value={allPorts.length} icon={<Network aria-hidden />} tone="info" />
@@ -165,7 +165,7 @@ export default async function InventoryPage({
                       return (
                         <tr key={d.id} className={cn("border-b border-[var(--border)] last:border-0", active ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                           <td className="px-4 py-2">
-                            <Link href={`${base}?dev=${d.id}`} scroll={false} className="flex items-center gap-2 font-semibold text-[var(--accent)] hover:underline">
+                            <Link href={`${base}?dev=${d.id}`} scroll={false} className="flex items-center gap-2 font-semibold text-[var(--accent-ink)] hover:underline">
                               <Server className="h-3.5 w-3.5 shrink-0 text-[var(--muted-fg)]" aria-hidden />
                               {d.name}
                             </Link>
@@ -207,12 +207,12 @@ export default async function InventoryPage({
                           {r.port.speed && <span className="ml-1 text-[11px] text-[var(--muted-fg)]">{r.port.speed}</span>}
                         </td>
                         <td className="px-2 py-2 text-xs">{r.peer ?? "\u2014"}</td>
-                        <td className={cn("px-2 py-2 text-xs", r.mapping.label === "Mismatch" && "font-medium text-[var(--danger)]")}>
+                        <td className={cn("px-2 py-2 text-xs", r.mapping.label === "Mismatch" && "font-medium text-[var(--danger-ink)]")}>
                           {r.obs ? `${r.obs.remoteSystemName ?? "?"} ${r.obs.remotePortId ?? ""}` : "\u2014"}
                         </td>
                         <td className="px-2 py-2">
                           {r.link ? (
-                            <Link href={`/app/projects/${projectId}/cables/${r.link.id}`} className="rp-mono text-xs font-semibold text-[var(--accent)] hover:underline">
+                            <Link href={`/app/projects/${projectId}/cables/${r.link.id}`} className="rp-mono text-xs font-semibold text-[var(--accent-ink)] hover:underline">
                               {r.link.cableId}
                             </Link>
                           ) : (
@@ -279,7 +279,7 @@ export default async function InventoryPage({
             <section className="rp-card overflow-hidden" aria-label="LLDP CDP neighbor details">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
                 <h2 className="rp-display text-[15px] font-bold">LLDP / CDP Neighbor Details</h2>
-                <Link href={`/app/projects/${projectId}/evidence?type=lldp`} className="text-xs font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/evidence?type=lldp`} className="text-xs font-semibold text-[var(--accent-ink)]">
                   View all {"\u2192"}
                 </Link>
               </div>
@@ -312,7 +312,7 @@ export default async function InventoryPage({
             <section className="rp-card overflow-hidden" aria-label="Port to cable map">
               <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
                 <h2 className="rp-display text-[15px] font-bold">Port-to-Cable Map</h2>
-                <Link href={`/app/projects/${projectId}/cables`} className="text-xs font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/cables`} className="text-xs font-semibold text-[var(--accent-ink)]">
                   View all {"\u2192"}
                 </Link>
               </div>
@@ -334,7 +334,7 @@ export default async function InventoryPage({
                       return (
                         <tr key={l.id} className="border-b border-[var(--border)] last:border-0">
                           <td className="px-4 py-2">
-                            <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="rp-mono font-semibold text-[var(--accent)]">
+                            <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="rp-mono font-semibold text-[var(--accent-ink)]">
                               {l.cableId}
                             </Link>
                           </td>
@@ -390,7 +390,7 @@ export default async function InventoryPage({
                       <li key={a.cableId} className="flex flex-wrap justify-between gap-2 py-1.5">
                         <span>
                           {l ? (
-                            <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="font-semibold text-[var(--accent)] hover:underline">
+                            <Link href={`/app/projects/${projectId}/cables/${l.id}`} className="font-semibold text-[var(--accent-ink)] hover:underline">
                               {a.cableId}
                             </Link>
                           ) : (

@@ -1,0 +1,236 @@
+{
+  "measuredAt": "2026-11-21T23:04:51.614Z",
+  "runsPerPage": 3,
+  "scaleCables": 5000,
+  "pages": [
+    {
+      "name": "Dashboard",
+      "url": "/app",
+      "coldLoadMs": 607.7,
+      "lcpMs": 332,
+      "ttfbMs": 13.8,
+      "dclMs": 300,
+      "loadMs": 300.1,
+      "cls": 0
+    },
+    {
+      "name": "Project overview",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr",
+      "coldLoadMs": 158.4,
+      "lcpMs": 184,
+      "ttfbMs": 19.1,
+      "dclMs": 121.5,
+      "loadMs": 153.1,
+      "cls": 0
+    },
+    {
+      "name": "Cable list (172)",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/cables",
+      "coldLoadMs": 123,
+      "lcpMs": 164,
+      "ttfbMs": 18.2,
+      "dclMs": 117.6,
+      "loadMs": 123,
+      "cls": 0
+    },
+    {
+      "name": "Cable list (5000)",
+      "url": "/app/projects/cmwqul8tm000197yw2c60wigs/cables",
+      "coldLoadMs": 619.6,
+      "lcpMs": 944,
+      "ttfbMs": 20.6,
+      "dclMs": 618.9,
+      "loadMs": 619.6,
+      "cls": 0
+    },
+    {
+      "name": "Verification",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/verify",
+      "coldLoadMs": 90.1,
+      "lcpMs": 136,
+      "ttfbMs": 19.5,
+      "dclMs": 86.3,
+      "loadMs": 90.5,
+      "cls": 0
+    },
+    {
+      "name": "Exceptions",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/exceptions",
+      "coldLoadMs": 120.3,
+      "lcpMs": 128,
+      "ttfbMs": 20.5,
+      "dclMs": 91.5,
+      "loadMs": 95.2,
+      "cls": 0
+    },
+    {
+      "name": "QC",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/qc",
+      "coldLoadMs": 133,
+      "lcpMs": 140,
+      "ttfbMs": 16.2,
+      "dclMs": 103.6,
+      "loadMs": 107.9,
+      "cls": 0
+    },
+    {
+      "name": "Handover",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover",
+      "coldLoadMs": 91.5,
+      "lcpMs": 128,
+      "ttfbMs": 20.5,
+      "dclMs": 92.5,
+      "loadMs": 97,
+      "cls": 0
+    },
+    {
+      "name": "Fabric topology",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric",
+      "coldLoadMs": 91.4,
+      "lcpMs": 104,
+      "ttfbMs": 19.1,
+      "dclMs": 70.2,
+      "loadMs": 76.6,
+      "cls": 0
+    },
+    {
+      "name": "Racks",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/racks",
+      "coldLoadMs": 99.5,
+      "lcpMs": 116,
+      "ttfbMs": 13.8,
+      "dclMs": 84.5,
+      "loadMs": 99.5,
+      "cls": 0
+    },
+    {
+      "name": "Evidence explorer",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence/explorer",
+      "coldLoadMs": 204.8,
+      "lcpMs": 148,
+      "ttfbMs": 33.3,
+      "dclMs": 110.3,
+      "loadMs": 114.8,
+      "cls": 0
+    },
+    {
+      "name": "Trace",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/trace?from=BE-SPINE-01",
+      "coldLoadMs": 105.9,
+      "lcpMs": 116,
+      "ttfbMs": 18.5,
+      "dclMs": 76.2,
+      "loadMs": 92.6,
+      "cls": 0
+    },
+    {
+      "name": "Integrations",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/integrations",
+      "coldLoadMs": 213,
+      "lcpMs": 140,
+      "ttfbMs": 24.4,
+      "dclMs": 103.6,
+      "loadMs": 213,
+      "cls": 0
+    }
+  ],
+  "navs": [
+    {
+      "to": "Cable Plan",
+      "ms": 569
+    },
+    {
+      "to": "Verification",
+      "ms": 90
+    },
+    {
+      "to": "Evidence",
+      "ms": 80
+    },
+    {
+      "to": "Handover",
+      "ms": 91
+    },
+    {
+      "to": "Reports",
+      "ms": 385
+    },
+    {
+      "to": "Overview",
+      "ms": 408
+    }
+  ],
+  "filters": [
+    {
+      "action": "search exact cable (5k rows)",
+      "ms": 81
+    },
+    {
+      "action": "install-status filter (5k rows)",
+      "ms": 146
+    },
+    {
+      "action": "rack filter (5k rows)",
+      "ms": 111
+    },
+    {
+      "action": "next page (5k rows)",
+      "ms": 91
+    }
+  ],
+  "inp": {
+    "scaleListMs": 48,
+    "aiListMs": 64
+  },
+  "api": [
+    {
+      "endpoint": "/api/v1/projects/:ai/summary",
+      "n": 40,
+      "p50": 25.1,
+      "p95": 34.7,
+      "max": 80.9
+    },
+    {
+      "endpoint": "/api/v1/projects/:ai/cables",
+      "n": 40,
+      "p50": 27.7,
+      "p95": 31.5,
+      "max": 40.2
+    },
+    {
+      "endpoint": "/api/v1/projects/:scale/summary",
+      "n": 40,
+      "p50": 207.1,
+      "p95": 305.6,
+      "max": 503.6
+    },
+    {
+      "endpoint": "/api/v1/projects/:scale/cables",
+      "n": 40,
+      "p50": 375.6,
+      "p95": 537.6,
+      "max": 675.5
+    },
+    {
+      "endpoint": "/api/me/search?q=CBL-BE&projectId=:ai",
+      "n": 40,
+      "p50": 14.6,
+      "p95": 21,
+      "max": 31.8
+    },
+    {
+      "endpoint": "/api/me/notifications",
+      "n": 40,
+      "p50": 8.5,
+      "p95": 10.7,
+      "max": 13.4
+    },
+    {
+      "endpoint": "/api/health",
+      "n": 40,
+      "p50": 7.3,
+      "p95": 8.8,
+      "max": 9.5
+    }
+  ]
+}

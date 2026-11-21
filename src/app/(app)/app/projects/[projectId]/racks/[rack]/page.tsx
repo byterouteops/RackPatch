@@ -100,7 +100,7 @@ export default async function RackDetailPage({
                   <span className="text-xs text-[var(--muted-fg)]">
                     {[selected.vendor, selected.model, selected.role, selected.rackUnit ? `U${selected.rackUnit}` : null].filter(Boolean).join(" \u00b7 ")}
                   </span>
-                  <Link href={`/app/projects/${projectId}/trace?from=${encodeURIComponent(selected.name)}`} className="ml-auto text-xs font-semibold text-[var(--accent)]">
+                  <Link href={`/app/projects/${projectId}/trace?from=${encodeURIComponent(selected.name)}`} className="ml-auto text-xs font-semibold text-[var(--accent-ink)]">
                     Trace from this device
                   </Link>
                 </div>
@@ -124,7 +124,7 @@ export default async function RackDetailPage({
                             <td className="py-1 pr-2 font-mono">{p.portLabel}</td>
                             <td className="py-1 pr-2">{p.speed ?? "\u2014"}</td>
                             <td className="py-1 pr-2 font-mono">
-                              {l ? <Link className="text-[var(--accent)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link> : <span className="text-[var(--muted-fg)]">free</span>}
+                              {l ? <Link className="text-[var(--accent-ink)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link> : <span className="text-[var(--muted-fg)]">free</span>}
                             </td>
                             <td className="py-1 pr-2">{peer ? `${peer.peer} ${peer.peerPort}` : ""}</td>
                             <td className="py-1">{l ? (l.state === "NONE" ? null : <VerificationBadge state={l.state} />) : null}</td>
@@ -156,7 +156,7 @@ export default async function RackDetailPage({
                     <ul className="divide-y divide-[var(--border)] border-t border-[var(--border)] text-xs">
                       {ls.map((l) => (
                         <li key={l.cableId} className="flex flex-wrap items-center gap-2 px-3 py-1.5">
-                          <Link className="font-mono font-semibold text-[var(--accent)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link>
+                          <Link className="font-mono font-semibold text-[var(--accent-ink)]" href={`/app/projects/${projectId}/cables/${l.id}`}>{l.cableId}</Link>
                           <span className="font-mono">{l.aDevice} {l.aPort}</span>
                           <span aria-hidden>{"\u2192"}</span>
                           <span className="font-mono">{l.zDevice} {l.zPort}</span>

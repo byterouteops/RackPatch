@@ -120,7 +120,7 @@ export default async function PanelsPage({
         ? "border-blue-400 bg-[var(--accent)] text-white"
         : port.plannedLinkId
           ? GOOD.has(stateByLink.get(port.plannedLinkId) ?? "")
-            ? "border-emerald-400 bg-emerald-500 text-white"
+            ? "border-emerald-600 bg-emerald-700 text-white"
             : "border-amber-300 bg-amber-400 text-slate-900"
           : "border-slate-600 bg-slate-800 text-slate-400";
 
@@ -134,7 +134,7 @@ export default async function PanelsPage({
         description="Patch panels, port assignments against the active plan, and panel-to-panel circuits."
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-4 xl:grid-cols-7">
+      <div className="mb-4 grid grid-cols-1 gap-3 min-[480px]:grid-cols-2 md:grid-cols-3 xl:grid-cols-4 min-[1800px]:grid-cols-7">
         <StatCard label="Patch Panels" value={panels.length} icon={<PanelTop aria-hidden />} tone="info" />
         <StatCard label="Total Ports" value={totalPorts} icon={<Network aria-hidden />} tone="neutral" />
         <StatCard label="Connected" value={connected} icon={<Link2 aria-hidden />} tone="success" />
@@ -193,7 +193,7 @@ export default async function PanelsPage({
               </div>
               <div className="mt-3 flex flex-wrap gap-3 text-[11px] text-[var(--muted-fg)]">
                 {[
-                  ["Verified cable", "bg-emerald-500"],
+                  ["Verified cable", "bg-emerald-700"],
                   ["Mapped cable", "bg-amber-400"],
                   ["Circuit", "bg-[var(--accent)]"],
                   ["Exception", "bg-red-500"],
@@ -226,7 +226,7 @@ export default async function PanelsPage({
                     <dd>
                       {selPort.plannedLink ? (
                         <>
-                          <Link href={`/app/projects/${projectId}/cables/${selPort.plannedLink.id}`} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                          <Link href={`/app/projects/${projectId}/cables/${selPort.plannedLink.id}`} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                             {selPort.plannedLink.cableId}
                           </Link>{" "}
                           end {selPort.side}
@@ -301,7 +301,7 @@ export default async function PanelsPage({
                   {circuits.map((c) => (
                     <tr key={c.id} className={cn("border-b border-[var(--border)] last:border-0", circuit?.id === c.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={href({ circuit: c.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={href({ circuit: c.id })} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                           {c.name}
                         </Link>
                       </td>
@@ -327,7 +327,7 @@ export default async function PanelsPage({
                 <span className="h-0.5 flex-1 bg-[var(--accent)]" aria-hidden />
                 <span className="rounded-lg border border-[var(--accent)] bg-[var(--accent-soft)] px-2 py-1.5 font-semibold">{circuit.mediaType}</span>
                 <span className={cn("h-0.5 flex-1", circuit.portZ ? "bg-[var(--accent)]" : "border-t-2 border-dashed border-[var(--warning)]")} aria-hidden />
-                {circuit.portZ ? <TraceEnd rack={circuit.portZ.panel.rack} panel={circuit.portZ.panel.name} port={circuit.portZ.portIndex} /> : <span className="rounded-lg border border-dashed border-[var(--warning)] px-2 py-3 text-[var(--warning)]">Z open</span>}
+                {circuit.portZ ? <TraceEnd rack={circuit.portZ.panel.rack} panel={circuit.portZ.panel.name} port={circuit.portZ.portIndex} /> : <span className="rounded-lg border border-dashed border-[var(--warning)] px-2 py-3 text-[var(--warning-ink)]">Z open</span>}
               </div>
               <dl className="grid grid-cols-[110px_minmax(0,1fr)] gap-x-3 gap-y-1.5 text-[13px]">
                 <dt className="text-[var(--muted-fg)]">Status</dt>
@@ -361,14 +361,14 @@ export default async function PanelsPage({
             <ul className="space-y-2 text-[13px]">
               {[...rackPairs].map(([pair, n]) => (
                 <li key={pair} className="flex items-center gap-2">
-                  <Server className="h-4 w-4 text-[var(--accent)]" aria-hidden />
+                  <Server className="h-4 w-4 text-[var(--accent-ink)]" aria-hidden />
                   <span className="flex-1 font-medium">{pair}</span>
                   <Badge tone="info">
                     {n} circuit{n === 1 ? "" : "s"}
                   </Badge>
                 </li>
               ))}
-              {openZ > 0 && <li className="text-xs text-[var(--warning)]">{openZ} circuit(s) with an open Z-end.</li>}
+              {openZ > 0 && <li className="text-xs text-[var(--warning-ink)]">{openZ} circuit(s) with an open Z-end.</li>}
             </ul>
           )}
         </Panel>
@@ -380,7 +380,7 @@ export default async function PanelsPage({
             <ul className="space-y-2 text-[13px]">
               {audit.map((a) => (
                 <li key={a.id} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                   <span className="min-w-0 flex-1">
                     <span className="line-clamp-2">{a.summary}</span>
                     <span className="block text-xs text-[var(--muted-fg)]">

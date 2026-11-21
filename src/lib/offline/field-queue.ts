@@ -6,6 +6,8 @@
 export const FIELD_QUEUE_DB = "rackpatch-field-queue";
 export const FIELD_QUEUE_STORE = "items";
 export const MAX_PHOTO_BYTES = 1_500_000;
+/** Window event fired after the queue changes, so open sync panels re-read it. */
+export const FIELD_QUEUE_CHANGED = "rackpatch:field-queue-changed";
 
 export type OfflineFieldItem = {
   clientId: string;
@@ -115,6 +117,7 @@ export async function enqueueFieldItem(item: OfflineFieldItem): Promise<void> {
     tx.onerror = () => reject(tx.error ?? new Error("enqueue failed"));
   });
   db.close();
+  window.dispatchEvent(new Event(FIELD_QUEUE_CHANGED));
 }
 
 export async function listFieldQueue(projectId: string): Promise<OfflineFieldItem[]> {

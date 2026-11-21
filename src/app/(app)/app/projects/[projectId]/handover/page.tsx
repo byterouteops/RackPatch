@@ -161,7 +161,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
         aside={<StripFact icon={<Package />} label="Latest snapshot" value={latest ? fmt(latest.createdAt) : "None yet"} />}
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="Total Links" value={total} icon={<Link2 aria-hidden />} tone="info" />
         <StatCard label="Verified" value={verified} hint={`${ratio(verified, total).toFixed(1)}%`} icon={<CheckCircle2 aria-hidden />} tone="success" />
         <StatCard label="Pending" value={awaiting} hint={`${ratio(awaiting, total).toFixed(1)}%`} icon={<Clock aria-hidden />} tone="warning" />
@@ -191,7 +191,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
               {areas.map((a) => (
                 <tr key={a.label} className="border-b border-[var(--border)] last:border-0">
                   <td className="py-2 pr-2">
-                    <Link href={`/app/projects/${projectId}${a.href}`} className="hover:text-[var(--accent)]">
+                    <Link href={`/app/projects/${projectId}${a.href}`} className="hover:text-[var(--accent-ink)]">
                       {a.label}
                     </Link>
                   </td>
@@ -218,7 +218,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
               <AlertTriangle className="h-4 w-4" aria-hidden />
               Open Exceptions ({unresolved})
             </h2>
-            <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent)]">
+            <Link href={`/app/projects/${projectId}/exceptions`} className="text-xs font-semibold text-[var(--accent-ink)]">
               View all {"\u2192"}
             </Link>
           </div>
@@ -237,7 +237,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
                 {openList.map((f) => (
                   <tr key={f.id} className="border-b border-[var(--border)] last:border-0">
                     <td className="px-4 py-2">
-                      <Link href={`/app/projects/${projectId}/exceptions?ex=${f.id}`} className="rp-mono font-semibold text-[var(--accent)]">
+                      <Link href={`/app/projects/${projectId}/exceptions?ex=${f.id}`} className="rp-mono font-semibold text-[var(--accent-ink)]">
                         {f.plannedLink.cableId}
                       </Link>
                     </td>
@@ -266,7 +266,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
             {checklist.map((c) => (
               <li key={c.label} className="flex items-center gap-2">
                 {c.done ? (
-                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                 ) : (
                   <Circle className="h-4 w-4 shrink-0 text-[var(--muted-fg)]" aria-hidden />
                 )}
@@ -299,7 +299,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
                 >
                   {s.done ? <CheckCircle2 className="h-4 w-4" aria-hidden /> : i + 1}
                 </span>
-                <span className={cn("mt-2 text-xs", i === current ? "font-bold text-[var(--accent)]" : "font-medium")}>{s.label}</span>
+                <span className={cn("mt-2 text-xs", i === current ? "font-bold text-[var(--accent-ink)]" : "font-medium")}>{s.label}</span>
               </li>
             ))}
           </ol>
@@ -361,7 +361,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
                 <p className="mb-2 text-[11px] text-[var(--muted-fg)]">{STAGE_META[stage].who}</p>
                 {signed ? (
                   <p className="mt-auto text-xs">
-                    <CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-[var(--success)]" aria-hidden />
+                    <CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-[var(--success-ink)]" aria-hidden />
                     {signed.approver.name || signed.approver.email} · {fmt(signed.createdAt)}
                     {signed.note && <span className="mt-1 block text-[var(--muted-fg)]">{signed.note}</span>}
                   </p>
@@ -411,7 +411,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
                         {s.hasUnresolvedExceptions ? <Badge tone="warning">Unresolved exceptions</Badge> : <Badge tone="success">Clear</Badge>}
                       </td>
                       <td className="px-4 py-2 text-right">
-                        <Link href={`/app/projects/${projectId}/handover/${s.id}`} className="font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={`/app/projects/${projectId}/handover/${s.id}`} className="font-semibold text-[var(--accent-ink)] hover:underline">
                           Print report {"\u2192"}
                         </Link>
                         {access.canExport && (
@@ -439,7 +439,7 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
             <ul className="space-y-2 text-[13px]">
               {activity.map((a) => (
                 <li key={a.id} className="flex items-start gap-2">
-                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="mt-0.5 h-3.5 w-3.5 shrink-0 text-[var(--success-ink)]" aria-hidden />
                   <span className="min-w-0 flex-1">{a.summary}</span>
                   <span className="whitespace-nowrap text-[11px] text-[var(--muted-fg)]">{fmt(a.createdAt).slice(5)}</span>
                 </li>

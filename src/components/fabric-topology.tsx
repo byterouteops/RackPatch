@@ -59,7 +59,7 @@ export function FabricTopology({
 
   return (
     <div className="overflow-x-auto rounded-lg border border-[var(--border)] bg-white p-2">
-      <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[900px]" role="img" aria-label={`Topology of ${fabrics.join(", ")}`}>
+      <svg viewBox={`0 0 ${W} ${H}`} className="min-w-[900px]" role="group" aria-label={`Topology of ${fabrics.join(", ")}`}>
         {usedRows.map(({ i }, row) => (
           <text key={i} x={6} y={40 + row * rowH + 4} className="fill-slate-400 text-[11px] font-semibold uppercase">
             {TIERS[i].label}

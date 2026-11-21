@@ -4,6 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { retireCable, updateCableAsset } from "@/app/actions/lifecycle";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function CableAssetForm({
   projectId,
@@ -46,7 +47,7 @@ export function CableAssetForm({
       if (res.conflict) setError(res.message ?? "Conflict");
       else router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Save failed");
+      setError(actionErrorMessage(e, "Save failed"));
     } finally {
       setBusy(false);
     }
@@ -66,7 +67,7 @@ export function CableAssetForm({
       if (res.conflict) setError("message" in res ? res.message : "Conflict");
       else router.refresh();
     } catch (e) {
-      setError(e instanceof Error ? e.message : "Retire failed");
+      setError(actionErrorMessage(e, "Retire failed"));
     } finally {
       setBusy(false);
     }

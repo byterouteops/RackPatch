@@ -7,7 +7,7 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
 import { canAcknowledgeFinding } from "@/lib/authz-capabilities";
-import { assertPaidOrThrow } from "@/app/actions/workspace";
+import { assertPaidOrThrow } from "@/lib/commercial-gate";
 import { recordAudit } from "@/lib/audit";
 import { formatQcNote, isQcAcknowledgeable } from "@/lib/qc";
 

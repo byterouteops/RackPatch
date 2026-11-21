@@ -1,0 +1,181 @@
+{
+  "report": {
+    "1820x1024 /app": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/cables": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/verify": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/exceptions": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/qc": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/handover": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/racks": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/projects/cmwqul8tm000197yw2c60wigs/fabric": {
+      "status": 200,
+      "issues": []
+    },
+    "1820x1024 /app/settings": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/cables": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/verify": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/exceptions": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/qc": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/handover": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/racks": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/projects/cmwqul8tm000197yw2c60wigs/fabric": {
+      "status": 200,
+      "issues": []
+    },
+    "1440x900 /app/settings": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/cables": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/verify": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/exceptions": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/qc": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/handover": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/racks": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/projects/cmwqul8tm000197yw2c60wigs/fabric": {
+      "status": 200,
+      "issues": []
+    },
+    "1366x768 /app/settings": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/cables": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/verify": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/exceptions": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/qc": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/handover": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/racks": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/projects/cmwqul8tm000197yw2c60wigs/fabric": {
+      "status": 200,
+      "issues": []
+    },
+    "390x844 /app/settings": {
+      "status": 200,
+      "issues": []
+    }
+  },
+  "consoleErrors": []
+}

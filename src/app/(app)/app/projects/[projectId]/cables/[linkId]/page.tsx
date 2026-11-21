@@ -327,7 +327,7 @@ function EndpointCard({
         <p
           className={cn(
             "rp-mono mt-2 text-xl font-semibold sm:text-2xl",
-            isA ? "text-[var(--accent)]" : "text-[var(--z-end)]",
+            isA ? "text-[var(--accent-ink)]" : "text-[var(--z-end)]",
           )}
         >
           {port}

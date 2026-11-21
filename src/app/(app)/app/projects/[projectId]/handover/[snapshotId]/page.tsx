@@ -49,14 +49,14 @@ export default async function HandoverReportPage({
       <div className="no-print mb-4">
         <Link
           href={`/app/projects/${projectId}/handover`}
-          className="rp-focus text-sm font-semibold text-[var(--accent)] hover:underline"
+          className="rp-focus text-sm font-semibold text-[var(--accent-ink)] hover:underline"
         >
           ← Back to handover
         </Link>
       </div>
       <article className="rp-card mx-auto max-w-4xl p-8 text-[var(--foreground)] print:border-0 print:p-0 print:shadow-none">
         <header className="border-b-2 border-b-[var(--accent-line)] pb-6">
-          <p className="rp-panel-title text-[var(--accent)]">RackPatch handover</p>
+          <p className="rp-panel-title text-[var(--accent-ink)]">RackPatch handover</p>
           <h1 className="rp-display mt-2 text-3xl font-semibold">{payload.project.name}</h1>
           <p className="text-[var(--muted-fg)]">
             {payload.project.site}
@@ -77,7 +77,7 @@ export default async function HandoverReportPage({
 
         {payload.unresolvedExceptions.length > 0 && (
           <section className="mt-8">
-            <h2 className="rp-display text-lg font-semibold text-[var(--danger)]">Unresolved exceptions</h2>
+            <h2 className="rp-display text-lg font-semibold text-[var(--danger-ink)]">Unresolved exceptions</h2>
             <ul className="mt-2 space-y-2 text-sm">
               {payload.unresolvedExceptions.map((e, i) => (
                 <li key={i} className="rounded-[var(--radius)] border border-[#efb4b7] border-l-4 border-l-[var(--danger)] bg-[var(--danger-soft)] p-3">

@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { qcAcknowledgeFinding } from "@/app/actions/qc";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function QcAckForm({ projectId, findingId }: { projectId: string; findingId: string }) {
   const router = useRouter();
@@ -23,7 +24,7 @@ export function QcAckForm({ projectId, findingId }: { projectId: string; finding
             setNote("");
             router.refresh();
           } catch (err) {
-            setError(err instanceof Error ? err.message : "Could not acknowledge");
+            setError(actionErrorMessage(err, "Could not acknowledge"));
           }
         });
       }}

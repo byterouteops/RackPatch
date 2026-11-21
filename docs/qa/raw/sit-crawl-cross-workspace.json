@@ -1,0 +1,355 @@
+{
+  "visits": [
+    {
+      "route": "/app/projects/[projectId]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 834
+    },
+    {
+      "route": "/app/projects/[projectId]/analytics",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/analytics",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/analytics",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 715
+    },
+    {
+      "route": "/app/projects/[projectId]/api",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/api",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/api",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 694
+    },
+    {
+      "route": "/app/projects/[projectId]/assistant",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/assistant",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/assistant",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 725
+    },
+    {
+      "route": "/app/projects/[projectId]/cables",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/cables",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/cables",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 696
+    },
+    {
+      "route": "/app/projects/[projectId]/cables/[linkId]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/cables/cmwqsu4zj002z97swrewik2cr",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/cables/cmwqsu4zj002z97swrewik2cr",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 695
+    },
+    {
+      "route": "/app/projects/[projectId]/capacity",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/capacity",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/capacity",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 724
+    },
+    {
+      "route": "/app/projects/[projectId]/collection",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/collection",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/collection",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 694
+    },
+    {
+      "route": "/app/projects/[projectId]/compliance",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/compliance",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/compliance",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 698
+    },
+    {
+      "route": "/app/projects/[projectId]/evidence",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 682
+    },
+    {
+      "route": "/app/projects/[projectId]/evidence/explorer",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence/explorer",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence/explorer",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 727
+    },
+    {
+      "route": "/app/projects/[projectId]/exceptions",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/exceptions",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/exceptions",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 685
+    },
+    {
+      "route": "/app/projects/[projectId]/fabric",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 691
+    },
+    {
+      "route": "/app/projects/[projectId]/fabric/[fabric]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 694
+    },
+    {
+      "route": "/app/projects/[projectId]/handover",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 713
+    },
+    {
+      "route": "/app/projects/[projectId]/handover/[snapshotId]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwqyom9x01e7970slfmwmr0e",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwqyom9x01e7970slfmwmr0e",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 793
+    },
+    {
+      "route": "/app/projects/[projectId]/integrations",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/integrations",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/integrations",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 1043
+    },
+    {
+      "route": "/app/projects/[projectId]/inventory",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/inventory",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/inventory",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 703
+    },
+    {
+      "route": "/app/projects/[projectId]/labels",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/labels",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/labels",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 693
+    },
+    {
+      "route": "/app/projects/[projectId]/lldp",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/lldp",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/lldp",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 676
+    },
+    {
+      "route": "/app/projects/[projectId]/panels",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/panels",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/panels",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 768
+    },
+    {
+      "route": "/app/projects/[projectId]/plan",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/plan",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/plan",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 694
+    },
+    {
+      "route": "/app/projects/[projectId]/qc",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/qc",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/qc",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 687
+    },
+    {
+      "route": "/app/projects/[projectId]/racks",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/racks",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/racks",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 684
+    },
+    {
+      "route": "/app/projects/[projectId]/racks/[rack]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/racks/R01",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/racks/R01",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 690
+    },
+    {
+      "route": "/app/projects/[projectId]/reports",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/reports",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/reports",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 685
+    },
+    {
+      "route": "/app/projects/[projectId]/scan",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/scan",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/scan",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 730
+    },
+    {
+      "route": "/app/projects/[projectId]/spares",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/spares",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/spares",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 673
+    },
+    {
+      "route": "/app/projects/[projectId]/trace",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/trace",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/trace",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 726
+    },
+    {
+      "route": "/app/projects/[projectId]/twin",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/twin",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/twin",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 691
+    },
+    {
+      "route": "/app/projects/[projectId]/verify",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/verify",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/verify",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 710
+    },
+    {
+      "route": "/app/projects/[projectId]/work-orders",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 707
+    },
+    {
+      "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders/cmwqsu7aj047l97swsfcl8zj0",
+      "status": 200,
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders/cmwqsu7aj047l97swsfcl8zj0",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 720
+    },
+    {
+      "route": "/app/workspaces/[workspaceId]/sites",
+      "url": "/app/workspaces/cmwqsu4xc000l97swq107nb3t/sites",
+      "status": 200,
+      "finalUrl": "/app/workspaces/cmwqsu4xc000l97swq107nb3t/sites",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 761
+    },
+    {
+      "route": "/app/workspaces/[workspaceId]/team",
+      "url": "/app/workspaces/cmwqsu4xc000l97swq107nb3t/team",
+      "status": 200,
+      "finalUrl": "/app/workspaces/cmwqsu4xc000l97swq107nb3t/team",
+      "errors": [],
+      "denied": true,
+      "appError": false,
+      "ms": 762
+    }
+  ],
+  "leaks": []
+}

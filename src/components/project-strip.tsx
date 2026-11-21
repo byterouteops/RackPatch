@@ -24,7 +24,7 @@ export function ProjectStrip({
 }) {
   const pct = progressMax > 0 ? Math.min(100, (progressValue / progressMax) * 100) : 0;
   const tones = {
-    info: "bg-[var(--accent-soft)] text-[var(--accent)]",
+    info: "bg-[var(--accent-soft)] text-[var(--accent-ink)]",
     success: "bg-[var(--success-soft)] text-[var(--success-ink)]",
     warning: "bg-[var(--warning-soft)] text-[var(--warning-ink)]",
     neutral: "bg-slate-100 text-slate-600",
@@ -32,7 +32,7 @@ export function ProjectStrip({
   return (
     <div className="rp-card mb-4 grid items-center gap-4 px-5 py-4 lg:grid-cols-[minmax(0,1.2fr)_minmax(0,1fr)_auto]">
       <div className="flex min-w-0 items-center gap-3">
-        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent)]">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-lg bg-[var(--accent-soft)] text-[var(--accent-ink)]">
           <Layers className="h-5 w-5" aria-hidden />
         </div>
         <div className="min-w-0">

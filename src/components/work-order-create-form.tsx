@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { createWorkOrder } from "@/app/actions/work-orders";
 import { Button, Input, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function WorkOrderCreateForm({
   projectId,
@@ -43,13 +44,13 @@ export function WorkOrderCreateForm({
             });
             router.push(`/app/projects/${projectId}/work-orders/${res.id}`);
           } catch (err) {
-            setError(err instanceof Error ? err.message : "Failed to create");
+            setError(actionErrorMessage(err, "Failed to create"));
           }
         });
       }}
     >
       <h2 className="text-sm font-semibold">New work order</h2>
-      {error && <p className="text-sm text-[var(--danger)]">{error}</p>}
+      {error && <p className="text-sm text-[var(--danger-ink)]">{error}</p>}
       <Input
         required
         value={title}

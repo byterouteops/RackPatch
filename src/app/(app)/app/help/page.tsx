@@ -152,7 +152,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
         }
       />
 
-      <div className="mb-4 grid gap-3 sm:grid-cols-3 xl:grid-cols-6">
+      <div className="mb-4 grid gap-3 sm:grid-cols-3 min-[1600px]:grid-cols-6">
         <StatCard label="In-app Guides" value={ARTICLES.length} icon={<BookOpen aria-hidden />} tone="info" />
         <StatCard label="Repository Docs" value={REPO_DOCS.length} icon={<FileText aria-hidden />} tone="neutral" />
         <StatCard label="Workflow Steps" value={STEPS.length} icon={<ListOrdered aria-hidden />} tone="neutral" />
@@ -198,7 +198,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
               { href: "/api/health", label: "Health", sub: "/api/health JSON", icon: Activity },
             ].map((l) => (
               <Link key={l.label} href={l.href} className="flex items-center gap-2 rounded-lg border border-[var(--border)] p-2.5 hover:border-[var(--accent)] hover:bg-[var(--accent-soft)]">
-                <l.icon className="h-5 w-5 shrink-0 text-[var(--accent)]" aria-hidden />
+                <l.icon className="h-5 w-5 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                 <span className="min-w-0">
                   <span className="block text-[13px] font-semibold">{l.label}</span>
                   <span className="block truncate text-[11px] text-[var(--muted-fg)]">{l.sub}</span>
@@ -236,7 +236,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
               {articles.map((a, i) => (
                 <li key={a.id}>
                   <Link href={href({ a: a.id })} scroll={false} className={cn("flex items-center gap-3 px-4 py-2.5 text-[13px]", open?.id === a.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
-                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[var(--accent-soft)] text-[11px] font-bold text-[var(--accent)]">{i + 1}</span>
+                    <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded bg-[var(--accent-soft)] text-[11px] font-bold text-[var(--accent-ink)]">{i + 1}</span>
                     <span className="flex-1 font-medium">{a.title}</span>
                     <ChevronRight className="h-4 w-4 text-[var(--muted-fg)]" aria-hidden />
                   </Link>
@@ -294,7 +294,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
           {STEPS.map((s, i) => (
             <li key={s.label} className="flex flex-col items-center rounded-lg border border-[var(--border)] p-3 text-center">
               <span className="mb-1 flex h-7 w-7 items-center justify-center rounded-full bg-[var(--accent)] text-xs font-bold text-white">{i + 1}</span>
-              <s.icon className="mb-1 h-5 w-5 text-[var(--accent)]" aria-hidden />
+              <s.icon className="mb-1 h-5 w-5 text-[var(--accent-ink)]" aria-hidden />
               <span className="text-[13px] font-semibold">{s.label}</span>
               <span className="text-[11px] text-[var(--muted-fg)]">{s.detail}</span>
             </li>
@@ -331,7 +331,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
           <div className="grid gap-x-6 gap-y-2 sm:grid-cols-2">
             {docs.map((d) => (
               <div key={d.file} className="flex items-start gap-2">
-                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent)]" aria-hidden />
+                <FileText className="mt-0.5 h-4 w-4 shrink-0 text-[var(--accent-ink)]" aria-hidden />
                 <span className="min-w-0">
                   <code className="rp-mono text-xs font-semibold">{d.file}</code>
                   <span className="block text-[11px] text-[var(--muted-fg)]">
@@ -346,8 +346,8 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
         <Panel title="System & Resources" icon={Activity}>
           <ul className="space-y-2.5 text-[13px]">
             <li className="flex items-center gap-2">
-              <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
-              System status: <span className="font-semibold text-[var(--success)]">Online</span>
+              <CheckCircle2 className="h-4 w-4 text-[var(--success-ink)]" aria-hidden />
+              System status: <span className="font-semibold text-[var(--success-ink)]">Online</span>
             </li>
             {[
               ["/api/health", "Liveness (JSON)"],
@@ -355,7 +355,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
               ["/demo", "Read-only demo walkthrough"],
             ].map(([p, d]) => (
               <li key={p} className="flex items-center justify-between gap-2">
-                <Link href={p} className="rp-mono text-xs font-semibold text-[var(--accent)] hover:underline">
+                <Link href={p} className="rp-mono text-xs font-semibold text-[var(--accent-ink)] hover:underline">
                   {p}
                 </Link>
                 <span className="text-xs text-[var(--muted-fg)]">{d}</span>

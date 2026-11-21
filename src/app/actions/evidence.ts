@@ -5,7 +5,7 @@ import { z } from "zod";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
-import { assertPaidOrThrow } from "@/app/actions/workspace";
+import { assertPaidOrThrow } from "@/lib/commercial-gate";
 import { parseNeighborEvidence } from "@/lib/lldp/parse-neighbor-evidence";
 import type { EvidenceFormat } from "@/lib/lldp/types";
 import { looksLikeInterfaceStatus, parseInterfaceStatus } from "@/lib/lldp/interface-status";

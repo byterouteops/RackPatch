@@ -65,7 +65,7 @@ export function SnapshotPlayback({
         })}
       </div>
       {!canSwitch && <p className="mt-2 text-xs text-amber-800">Only a project lead can switch playback.</p>}
-      {error && <p className="mt-2 text-xs text-[var(--danger)]">{error}</p>}
+      {error && <p className="mt-2 text-xs text-[var(--danger-ink)]">{error}</p>}
     </div>
   );
 }

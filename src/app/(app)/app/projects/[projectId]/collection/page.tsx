@@ -112,11 +112,11 @@ export default async function CollectionPage({
         <Fact icon={CheckCircle2} label="Last job" value={lastJob ? <JobStatusBadge status={lastJob.status} /> : "None yet"} />
         <Fact icon={Server} label="Targets / planned devices" value={`${targets.length} / ${plannedDevices.size}`} />
         <Fact icon={Clock} label="Last run" value={lastJob ? fmt(lastJob.createdAt) : "\u2014"} />
-        <Fact icon={ShieldCheck} label="Access mode" value={<span className="font-bold text-[var(--success)]">Read-only</span>} />
+        <Fact icon={ShieldCheck} label="Access mode" value={<span className="font-bold text-[var(--success-ink)]">Read-only</span>} />
       </section>
 
       <div className="mb-4 grid items-start gap-4 xl:grid-cols-[minmax(0,1.3fr)_minmax(0,1fr)_minmax(0,1fr)]">
-        <Panel title={`Credential Profiles (${credentials.length})`} icon={KeyRound} flush action={<Link href="#add-credential" className="text-xs font-semibold text-[var(--accent)]">+ Add profile</Link>}>
+        <Panel title={`Credential Profiles (${credentials.length})`} icon={KeyRound} flush action={<Link href="#add-credential" className="text-xs font-semibold text-[var(--accent-ink)]">+ Add profile</Link>}>
           {credentials.length === 0 ? (
             <p className="p-4 text-sm text-[var(--muted-fg)]">No credentials yet.</p>
           ) : (
@@ -149,7 +149,7 @@ export default async function CollectionPage({
           <ul className="space-y-1.5">
             {Array.from(new Set(Object.values(COLLECTION_PROFILES).map((p) => p.command))).map((cmd) => (
               <li key={cmd} className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success)]" aria-hidden />
+                <CheckCircle2 className="h-4 w-4 shrink-0 text-[var(--success-ink)]" aria-hidden />
                 <code className="rp-mono rounded bg-[var(--muted)] px-1.5 py-0.5 text-xs">{cmd}</code>
               </li>
             ))}
@@ -171,7 +171,7 @@ export default async function CollectionPage({
             ].map(([k, v]) => (
               <div key={String(k)} className="flex items-center justify-between gap-2">
                 <dt className="flex items-center gap-2">
-                  <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
+                  <CheckCircle2 className="h-4 w-4 text-[var(--success-ink)]" aria-hidden />
                   {k}
                 </dt>
                 <dd className="text-right text-xs font-semibold">{v}</dd>
@@ -202,7 +202,7 @@ export default async function CollectionPage({
                   {targets.map((t) => (
                     <tr key={t.id} className={cn("border-b border-[var(--border)] last:border-0", target?.id === t.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={`${base}?target=${t.id}`} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={`${base}?target=${t.id}`} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                           {t.name}
                         </Link>
                       </td>
@@ -250,7 +250,7 @@ export default async function CollectionPage({
                   {jobs.map((j) => (
                     <tr key={j.id} className={cn("border-b border-[var(--border)] last:border-0", job?.id === j.id ? "bg-[var(--accent-soft)] shadow-[inset_3px_0_0_var(--accent)]" : "hover:bg-[var(--muted)]/60")}>
                       <td className="px-4 py-2">
-                        <Link href={`${base}?job=${j.id}${sp.target ? `&target=${sp.target}` : ""}`} scroll={false} className="rp-mono font-semibold text-[var(--accent)] hover:underline">
+                        <Link href={`${base}?job=${j.id}${sp.target ? `&target=${sp.target}` : ""}`} scroll={false} className="rp-mono font-semibold text-[var(--accent-ink)] hover:underline">
                           {j.sourceDevice}
                         </Link>
                       </td>
@@ -307,7 +307,7 @@ export default async function CollectionPage({
               <li>No worker fleet or built-in scheduler; runs are started from this page.</li>
               <li>
                 No SSH access? Paste CLI output on{" "}
-                <Link href={`/app/projects/${projectId}/lldp#import`} className="font-semibold text-[var(--accent)]">
+                <Link href={`/app/projects/${projectId}/lldp#import`} className="font-semibold text-[var(--accent-ink)]">
                   LLDP / CDP import
                 </Link>
                 .
@@ -336,7 +336,7 @@ export default async function CollectionPage({
           >
             <Input name="name" required placeholder="Profile name (e.g. Leaf_RO)" />
             <Input name="username" required placeholder="SSH username" />
-            <Select name="authKind" defaultValue="password">
+            <Select name="authKind" aria-label="Authentication method" defaultValue="password">
               <option value="password">Password</option>
               <option value="privateKey">Private key (PEM)</option>
             </Select>
@@ -396,7 +396,7 @@ export default async function CollectionPage({
 function Fact({ icon: Icon, label, value }: { icon: typeof Server; label: string; value: React.ReactNode }) {
   return (
     <div className="flex items-center gap-3">
-      <Icon className="h-6 w-6 text-[var(--accent)]" aria-hidden />
+      <Icon className="h-6 w-6 text-[var(--accent-ink)]" aria-hidden />
       <div>
         <p className="text-xs text-[var(--muted-fg)]">{label}</p>
         <div className="text-[13px] font-semibold">{value}</div>

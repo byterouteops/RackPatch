@@ -1,0 +1,82 @@
+[
+  {
+    "check": "aborted server action shows error, DB unchanged",
+    "pass": true
+  },
+  {
+    "check": "HTTP 500 from server action shows error, DB unchanged",
+    "pass": true
+  },
+  {
+    "check": "retry after failure succeeds",
+    "pass": true
+  },
+  {
+    "check": "no uncaught page errors during injected failures",
+    "pass": true,
+    "detail": ""
+  },
+  {
+    "check": "double-click Mark installed: version +1, one audit row",
+    "pass": true,
+    "detail": "version 1->2, audit +1"
+  },
+  {
+    "check": "stale second-session edit: conflict shown, first writer kept",
+    "pass": true,
+    "detail": "version 1->2"
+  },
+  {
+    "check": "offline QR scan queued in IndexedDB, auto-synced on reconnect, queue cleared",
+    "pass": true
+  },
+  {
+    "check": "handover snapshot failure: alert shown, no snapshot row",
+    "pass": true
+  },
+  {
+    "check": "database outage (after fix): page state",
+    "pass": true,
+    "detail": "health 503; page HTTP 500; body: This page could not load RackPatch could not reach a required service (for example the database). No changes were saved by this request. Try again in a moment; if it keeps happening, contact your administrator. Reference: 3054520238 Try aga"
+  },
+  {
+    "check": "database outage (after fix): recovery via Try again",
+    "pass": true
+  },
+  {
+    "check": "offline click then reconnect: page loads normally",
+    "pass": true
+  },
+  {
+    "check": "CSV without required columns: errors shown, publish disabled",
+    "pass": true
+  },
+  {
+    "check": "1.9 MB LLDP paste (under 2,000,000-char limit) reaches the parser",
+    "pass": true,
+    "detail": "input 76 ms; alert: Unrecognized neighbor evidence format. Supported: Cisco NX-OS LLDP (`show lldp neighbors detail`); Cisco IOS / IOS-XE LLDP (`show lldp neighbors detail`); Cisco CDP (NX-OS / IOS) (`show cdp neighbors detail`); Arista EOS LLDP (`show lldp neighbors detail`); Juniper Junos LLDP (`show lldp neighbors interface <if> detail / show lldp neighbors detail`); Linux / Cumulus lldpd (`lldpcli show neighbors -f keyvalue`).; preview shown: false"
+  },
+  {
+    "check": "2.1 MB LLDP paste (over limit) is refused with a message",
+    "pass": true,
+    "detail": "This capture is larger than 2,000,000 characters. Import one device's output at a time."
+  },
+  {
+    "check": "1.2 MB field photo (within 1.5 MB limit) stored",
+    "pass": true
+  },
+  {
+    "check": "Permissions-Policy allows camera on self (QR scanner)",
+    "pass": true,
+    "detail": "true"
+  },
+  {
+    "check": "unknown project id: no 5xx",
+    "pass": true,
+    "detail": "200"
+  },
+  {
+    "check": "no uncaught page errors",
+    "pass": true
+  }
+]

@@ -16,7 +16,7 @@ function Hop({ l, from, base, panels }: { l: FabricLink; from: string; base: str
         <span className="font-mono font-semibold">{from}</span>
         <span className="font-mono text-[var(--muted-fg)]">{p.port}</span>
         <span aria-hidden className="text-[var(--muted-fg)]">{"\u2192"}</span>
-        <Link className="font-mono font-bold text-[var(--accent)]" href={`${base}/cables/${l.id}`}>{l.cableId}</Link>
+        <Link className="font-mono font-bold text-[var(--accent-ink)]" href={`${base}/cables/${l.id}`}>{l.cableId}</Link>
         <span aria-hidden className="text-[var(--muted-fg)]">{"\u2192"}</span>
         <span className="font-mono font-semibold">{p.peer}</span>
         <span className="font-mono text-[var(--muted-fg)]">{p.peerPort}</span>
@@ -127,7 +127,7 @@ export default async function TracePage({
         </datalist>
       </form>
 
-      {error && <p className="mb-4 rounded-md border border-[var(--danger)]/30 bg-[var(--danger-soft)] px-3 py-2 text-sm text-[var(--danger)]">{error}</p>}
+      {error && <p className="mb-4 rounded-md border border-[var(--danger)]/30 bg-[var(--danger-soft)] px-3 py-2 text-sm text-[var(--danger-ink)]">{error}</p>}
       {!mode && !error && <EmptyState icon={<Route className="h-5 w-5" aria-hidden />} title="Start a trace" description="Enter a device (and optionally a port or destination), or a cable ID. Tip: open a device from a rack elevation and choose 'Trace from this device'." />}
       {mode && (
         <>

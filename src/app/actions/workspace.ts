@@ -6,7 +6,7 @@ import { createHash, randomBytes } from "crypto";
 import { ProjectRole } from "@prisma/client";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
-import { commercialAllowsMutations, requireWorkspaceOwner } from "@/lib/authz";
+import { requireWorkspaceOwner } from "@/lib/authz";
 import { recordAudit } from "@/lib/audit";
 import { ensureSite } from "@/lib/sites";
 import { trackEvent } from "@/lib/analytics";
@@ -191,16 +191,6 @@ export async function acceptInvitation(token: string) {
 
   revalidatePath("/app");
   return { workspaceId: invitation.workspaceId, projectId: invitation.projectId };
-}
-
-export async function assertPaidOrThrow(projectId: string) {
-  const project = await prisma.project.findUniqueOrThrow({ where: { id: projectId } });
-  if (!project.isDemo && !commercialAllowsMutations(project.commercialStatus)) {
-    throw new Error(
-      "This project is not activated for a pilot or paid plan. Ask a platform admin after external payment.",
-    );
-  }
-  return project;
 }
 
 const createSiteSchema = z.object({

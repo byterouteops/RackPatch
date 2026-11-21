@@ -1,0 +1,7 @@
+[
+  {
+    "check": "database outage (before fix): page state",
+    "pass": false,
+    "detail": "health 503; page HTTP 500; body: Application error: a server-side exception has occurred while loading localhost (see the server logs for more information). Digest: 2909853611"
+  }
+]

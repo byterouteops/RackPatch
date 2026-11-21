@@ -3,6 +3,7 @@
 import { useState, useTransition } from "react";
 import { runComplianceNow, saveCompliancePolicy } from "@/app/actions/compliance";
 import { AlertBanner, Button, ErrorBanner, Input, TextArea } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function CompliancePolicyForm({
   projectId,
@@ -38,7 +39,7 @@ export function CompliancePolicyForm({
         });
         setMessage("Policy saved.");
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Could not save policy");
+        setError(actionErrorMessage(e, "Could not save policy"));
       }
     });
   }
@@ -51,7 +52,7 @@ export function CompliancePolicyForm({
         const res = await runComplianceNow(projectId);
         setMessage(`Check complete: ${res.status}. ${res.summary}`);
       } catch (e) {
-        setError(e instanceof Error ? e.message : "Check failed");
+        setError(actionErrorMessage(e, "Check failed"));
       }
     });
   }

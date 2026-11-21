@@ -132,7 +132,7 @@ export default async function CablesPage({
         }
         kpis={
           project.activeRevisionId ? (
-            <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3 min-[1600px]:grid-cols-5">
               <StatCard label="Planned Cables" value={rows.length} icon={<Cable aria-hidden />} tone="info" />
               <StatCard
                 label="Installed"

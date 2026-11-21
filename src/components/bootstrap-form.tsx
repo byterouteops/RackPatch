@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { createFirstAdministrator } from "@/app/actions/bootstrap";
 import { Button, ErrorBanner, Input } from "@/components/ui";
+import { actionErrorMessage } from "@/lib/action-error";
 
 export function BootstrapForm() {
   const [pending, setPending] = useState(false);
@@ -21,7 +22,7 @@ export function BootstrapForm() {
       });
       window.location.href = "/app";
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Setup failed");
+      setError(actionErrorMessage(err, "Setup failed"));
       setPending(false);
     }
   }
