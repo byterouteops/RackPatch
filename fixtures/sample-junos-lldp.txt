@@ -1,0 +1,28 @@
+LLDP Neighbor Information:
+Local Interface : ge-0/0/0.0
+Parent Interface: -
+Local Port ID: 588
+Age: 12
+Chassis ID Type: MAC address
+Chassis ID: 00:00:5e:00:53:01
+Port ID Type: Interface name
+Port ID: ge-0/0/1.0
+Port description: uplink
+System Name: Core-SW-01
+System Description: Juniper Networks, Inc. qfx5100
+System Capabilities: Bridge, Router
+Enabled Capabilities: Bridge, Router
+
+Local Interface : ge-0/0/1.0
+Parent Interface: -
+Local Port ID: 589
+Age: 10
+Chassis ID Type: MAC address
+Chassis ID: 00:00:5e:00:53:02
+Port ID Type: Interface name
+Port ID: eth0
+Port description: server-nic
+System Name: Srv-01
+System Description: Linux
+System Capabilities: Station
+Enabled Capabilities: Station

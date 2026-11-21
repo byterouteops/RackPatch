@@ -1,0 +1,19 @@
+Interface Ethernet1 detected 1 LLDP neighbors:
+
+  Neighbor System Name: Leaf-B
+  Neighbor Chassis ID: 001c.7300.0001
+  Neighbor Port ID: Ethernet2
+  Neighbor Port Description: uplink
+  Neighbor System Description: Arista Networks EOS version 4.28
+  Neighbor System Capabilities: Bridge, Router
+  Management Address: 10.1.1.2
+
+Interface Ethernet2 detected 1 LLDP neighbors:
+
+  Neighbor System Name: GPU-01
+  Neighbor Chassis ID: 001c.7300.00aa
+  Neighbor Port ID: eth0
+  Neighbor Port Description: nic0
+  Neighbor System Description: Linux
+  Neighbor System Capabilities: Station
+  Management Address: 10.1.2.10

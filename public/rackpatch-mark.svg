@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-label="RackPatch">
+  <rect width="64" height="64" rx="4" fill="#032539"/>
+  <rect x="0" y="0" width="64" height="3" fill="#00BCEB"/>
+  <!-- Left rack / device -->
+  <rect x="12" y="14" width="10" height="36" rx="1.5" fill="#049FD9"/>
+  <rect x="14.5" y="18" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="14.5" y="24" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="14.5" y="30" width="5" height="3" rx="0.5" fill="#E8F1F6"/>
+  <rect x="14.5" y="36" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="14.5" y="42" width="5" height="3" rx="0.5" fill="#032539"/>
+  <!-- Right rack / device -->
+  <rect x="42" y="14" width="10" height="36" rx="1.5" fill="#049FD9"/>
+  <rect x="44.5" y="18" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="44.5" y="24" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="44.5" y="30" width="5" height="3" rx="0.5" fill="#E8F1F6"/>
+  <rect x="44.5" y="36" width="5" height="3" rx="0.5" fill="#032539"/>
+  <rect x="44.5" y="42" width="5" height="3" rx="0.5" fill="#032539"/>
+  <!-- Patch cable -->
+  <path d="M22 31.5 H42" stroke="#00BCEB" stroke-width="3" stroke-linecap="round"/>
+  <circle cx="22" cy="31.5" r="2.5" fill="#E8F1F6"/>
+  <circle cx="42" cy="31.5" r="2.5" fill="#E8F1F6"/>
+</svg>

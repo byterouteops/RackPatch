@@ -1,7 +1,9 @@
 RackPatch
-Copyright 2026 K G Pramod
+Copyright 2026 K G Pramod / VEX-NX
 
-This product includes software developed at RackPatch contributors
+Created and maintained by K G Pramod (VEX-NX).
+
+This product includes software developed by RackPatch contributors
 and is licensed under the Apache License, Version 2.0.
 See the LICENSE file for the full license text.
 
@@ -19,11 +21,10 @@ including but not limited to:
 - lucide-react — ISC
 
 Fonts:
-- Geist and Geist Mono (via next/font/google) — SIL Open Font License 1.1
-  Copyright Vercel, Inc. and contributors.
+- IBM Plex Sans and IBM Plex Mono (via next/font/google) — SIL Open Font License 1.1
+  Copyright of IBM Corp. and contributors under the OFL.
   The OFL FAQ and full license text are available from the SIL Open Font
-  License project. Fonts may be embedded with software under OFL terms.
-  The reserved font name "Geist" applies to modified versions.
+  License project.
 
 Optional native binaries (if included via Next.js image optimization):
 - sharp / libvips platform packages may include LGPL-3.0-or-later components.

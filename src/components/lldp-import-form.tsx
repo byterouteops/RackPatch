@@ -2,11 +2,15 @@
 
 import { useState } from "react";
 import { importLldpEvidence, previewLldpImport } from "@/app/actions/evidence";
-import { AlertBanner, Button, ErrorBanner, Input, TextArea } from "@/components/ui";
+import { SUPPORTED_EVIDENCE_FORMATS, type EvidenceFormat } from "@/lib/lldp/types";
+import { AlertBanner, Button, ErrorBanner, Input, Select, TextArea } from "@/components/ui";
+
+type FormatChoice = EvidenceFormat | "auto";
 
 export function LldpImportForm({ projectId }: { projectId: string }) {
   const [text, setText] = useState("");
   const [sourceDevice, setSourceDevice] = useState("");
+  const [format, setFormat] = useState<FormatChoice>("auto");
   const [preview, setPreview] = useState<Awaited<ReturnType<typeof previewLldpImport>> | null>(
     null,
   );
@@ -18,7 +22,7 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
     setPending(true);
     setError(null);
     try {
-      const p = await previewLldpImport({ projectId, text });
+      const p = await previewLldpImport({ projectId, text, format });
       setPreview(p);
     } catch (err) {
       setError(err instanceof Error ? err.message : "Preview failed");
@@ -37,11 +41,15 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
         text,
         sourceDevice,
         filename: "pasted.txt",
+        format,
       });
       if (!result.ok) {
         setError(result.error || "Import failed");
       } else {
-        setSuccess(`Imported ${result.observationCount} neighbors`);
+        setSuccess(
+          `Imported ${result.observationCount} neighbors` +
+            (result.format ? ` (${result.format})` : ""),
+        );
         window.location.href = `/app/projects/${projectId}/exceptions`;
       }
     } catch (err) {
@@ -60,7 +68,7 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
         </AlertBanner>
       )}
 
-      <div className="grid gap-4 lg:grid-cols-2">
+      <div className="grid gap-4 lg:grid-cols-3">
         <label className="block text-sm font-medium">
           Source device name
           <Input
@@ -69,6 +77,22 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
             onChange={(e) => setSourceDevice(e.target.value)}
             placeholder="e.g. Leaf-02"
           />
+        </label>
+        <label className="block text-sm font-medium">
+          Evidence format
+          <Select
+            className="mt-1"
+            value={format}
+            onChange={(e) => setFormat(e.target.value as FormatChoice)}
+            aria-label="Evidence format"
+          >
+            <option value="auto">Auto-detect</option>
+            {SUPPORTED_EVIDENCE_FORMATS.map((f) => (
+              <option key={f.id} value={f.id}>
+                {f.label}
+              </option>
+            ))}
+          </Select>
         </label>
         <div className="flex items-end gap-2">
           <Button
@@ -89,14 +113,19 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
         </div>
       </div>
 
+      <p className="text-xs text-[var(--muted-fg)]">
+        Supported: Cisco NX-OS / IOS-XE LLDP, Cisco CDP, Arista EOS LLDP, Juniper Junos LLDP.
+        Missing neighbors never mean a cable is absent.
+      </p>
+
       <label className="block text-sm font-medium">
-        NX-OS <code className="rounded bg-slate-100 px-1 text-xs">show lldp neighbors detail</code>{" "}
-        output
+        Neighbor evidence (CLI paste)
         <TextArea
           className="mt-1 font-mono text-xs"
           rows={12}
           value={text}
           onChange={(e) => setText(e.target.value)}
+          placeholder="Paste show lldp neighbors detail or show cdp neighbors detail…"
         />
       </label>
 
@@ -104,24 +133,32 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
 
       {preview && !preview.failed && (
         <div className="space-y-4">
-          <div className="grid gap-3 sm:grid-cols-3">
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--success-soft)] p-4 text-center">
-              <p className="text-2xl font-semibold text-[var(--success)]">
+          <div className="grid gap-3 sm:grid-cols-4">
+            <div className="border border-[var(--border)] border-l-4 border-l-[var(--success)] bg-[var(--success-soft)] p-4 text-center">
+              <p className="text-2xl font-semibold text-[var(--success-ink)]">
                 {preview.observations.length}
               </p>
               <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
                 Neighbors
               </p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--warning-soft)] p-4 text-center">
-              <p className="text-2xl font-semibold text-[var(--warning)]">
+            <div className="border border-[var(--border)] border-l-4 border-l-[var(--warning)] bg-[var(--warning-soft)] p-4 text-center">
+              <p className="text-2xl font-semibold text-[var(--warning-ink)]">
                 {preview.warnings.length}
               </p>
               <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
                 Warnings
               </p>
             </div>
-            <div className="rounded-xl border border-[var(--border)] bg-[var(--accent-soft)] p-4 text-center">
+            <div className="border border-[var(--border)] border-l-4 border-l-[var(--accent)] bg-[var(--accent-soft)] p-4 text-center">
+              <p className="truncate text-sm font-semibold text-[var(--accent)]">
+                {preview.format ?? "detected"}
+              </p>
+              <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
+                Format
+              </p>
+            </div>
+            <div className="border border-[var(--border)] border-l-4 border-l-[var(--accent)] bg-[var(--accent-soft)] p-4 text-center">
               <p className="text-2xl font-semibold text-[var(--accent)]">Ready</p>
               <p className="text-xs font-medium uppercase tracking-wide text-[var(--muted-fg)]">
                 Parse status
@@ -129,24 +166,21 @@ export function LldpImportForm({ projectId }: { projectId: string }) {
             </div>
           </div>
 
-          <div className="overflow-hidden rounded-xl border border-[var(--border)]">
-            <table className="min-w-full text-sm">
-              <thead className="bg-slate-50 text-left text-xs font-semibold uppercase tracking-wide text-[var(--muted-fg)]">
+          <div className="rp-table-wrap">
+            <table className="rp-table">
+              <thead>
                 <tr>
-                  <th className="px-3 py-2">Local port</th>
-                  <th className="px-3 py-2">Remote system</th>
-                  <th className="px-3 py-2">Remote port</th>
+                  <th>Local port</th>
+                  <th>Remote system</th>
+                  <th>Remote port</th>
                 </tr>
               </thead>
               <tbody>
                 {preview.observations.slice(0, 20).map((o, i) => (
-                  <tr
-                    key={`${o.localInterface}-${i}`}
-                    className={i % 2 === 0 ? "bg-white" : "bg-slate-50/70"}
-                  >
-                    <td className="px-3 py-2 font-medium">{o.localInterface}</td>
-                    <td className="px-3 py-2">{o.remoteSystemName ?? "—"}</td>
-                    <td className="px-3 py-2">{o.remotePortId ?? "—"}</td>
+                  <tr key={`${o.localInterface}-${i}`}>
+                    <td className="font-medium">{o.localInterface}</td>
+                    <td>{o.remoteSystemName ?? "—"}</td>
+                    <td className="rp-mono">{o.remotePortId ?? "—"}</td>
                   </tr>
                 ))}
               </tbody>

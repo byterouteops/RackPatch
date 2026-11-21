@@ -19,6 +19,10 @@ const headline = "Know which cables are right before you hand over the rack.";
 export const metadata: Metadata = {
   title: "RackPatch",
   description: headline,
+  icons: {
+    icon: [{ url: "/rackpatch-mark.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/rackpatch-logo.jpg" }],
+  },
 };
 
 export default function RootLayout({

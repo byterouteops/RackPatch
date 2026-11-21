@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Cable } from "lucide-react";
 import { isDevLoginEnabled } from "@/lib/env";
 import { isBootstrapRequired } from "@/lib/bootstrap";
+import { BrandMark } from "@/components/brand-mark";
 import { SignInForm } from "@/components/sign-in-form";
 import { BootstrapForm } from "@/components/bootstrap-form";
 import { Card } from "@/components/ui";
@@ -18,9 +18,7 @@ export default async function SignInPage() {
           href="/"
           className="mx-auto flex max-w-md items-center gap-2.5 text-sm font-semibold text-white"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-[2px] bg-[var(--accent)] text-white">
-            <Cable className="h-3.5 w-3.5" aria-hidden />
-          </span>
+          <BrandMark size={28} />
           <span>
             RackPatch
             <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-white/50">

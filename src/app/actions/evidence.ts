@@ -7,14 +7,27 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
 import { assertPaidOrThrow } from "@/app/actions/workspace";
-import { parseNxosLldpNeighborsDetail } from "@/lib/lldp/nxos-neighbors-detail";
+import { parseNeighborEvidence } from "@/lib/lldp/parse-neighbor-evidence";
+import type { EvidenceFormat } from "@/lib/lldp/types";
 import { normalizeDevice, normalizePort } from "@/lib/csv/normalize";
 import { recordAudit } from "@/lib/audit";
 import { recomputeFindings } from "@/lib/verify/recompute";
 
+const formatSchema = z
+  .enum([
+    "auto",
+    "cisco-nxos-lldp",
+    "cisco-ios-lldp",
+    "cisco-cdp",
+    "arista-eos-lldp",
+    "juniper-junos-lldp",
+  ])
+  .default("auto");
+
 const previewSchema = z.object({
   projectId: z.string(),
   text: z.string().min(1).max(2_000_000),
+  format: formatSchema.optional(),
 });
 
 export async function previewLldpImport(raw: z.infer<typeof previewSchema>) {
@@ -22,7 +35,7 @@ export async function previewLldpImport(raw: z.infer<typeof previewSchema>) {
   const data = previewSchema.parse(raw);
   await requireProjectAccess(user, data.projectId, "canImportEvidence");
   await assertPaidOrThrow(data.projectId);
-  return parseNxosLldpNeighborsDetail(data.text);
+  return parseNeighborEvidence(data.text, (data.format ?? "auto") as EvidenceFormat | "auto");
 }
 
 const importSchema = z.object({
@@ -31,6 +44,7 @@ const importSchema = z.object({
   sourceDevice: z.string().min(1).max(120),
   captureTime: z.string().datetime().optional().nullable(),
   filename: z.string().max(255).optional(),
+  format: formatSchema.optional(),
   deviceAliases: z
     .array(z.object({ alias: z.string(), deviceName: z.string() }))
     .optional(),
@@ -51,7 +65,12 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
   await requireProjectAccess(user, data.projectId, "canImportEvidence");
   await assertPaidOrThrow(data.projectId);
 
-  const parsed = parseNxosLldpNeighborsDetail(data.text);
+  const parsed = parseNeighborEvidence(
+    data.text,
+    (data.format ?? "auto") as EvidenceFormat | "auto",
+  );
+  const formatLabel = parsed.format ?? data.format ?? "auto";
+
   if (parsed.failed) {
     await prisma.evidenceImport.create({
       data: {
@@ -70,8 +89,8 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
     await recordAudit({
       projectId: data.projectId,
       actorId: user.id,
-      action: "evidence.lldp.failed",
-      summary: `LLDP import failed for ${data.sourceDevice}: ${parsed.error}`,
+      action: "evidence.neighbor.failed",
+      summary: `Neighbor evidence import failed for ${data.sourceDevice}: ${parsed.error}`,
     });
     return { ok: false as const, error: parsed.error, warnings: parsed.warnings };
   }
@@ -151,8 +170,9 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
   await recordAudit({
     projectId: data.projectId,
     actorId: user.id,
-    action: "evidence.lldp.import",
-    summary: `Imported LLDP from ${data.sourceDevice} (${parsed.observations.length} neighbors)`,
+    action: "evidence.neighbor.import",
+    summary: `Imported ${formatLabel} from ${data.sourceDevice} (${parsed.observations.length} neighbors)`,
+    metadata: { format: formatLabel },
   });
 
   await recomputeFindings(data.projectId);
@@ -162,5 +182,6 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
     importId: imp.id,
     observationCount: parsed.observations.length,
     warnings: parsed.warnings,
+    format: parsed.format,
   };
 }

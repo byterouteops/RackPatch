@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { AlertTriangle, CheckCircle2, Clock } from "lucide-react";
 import { prisma } from "@/lib/db";
+import { BrandMark } from "@/components/brand-mark";
 import { Button, Card } from "@/components/ui";
 
 export const dynamic = "force-dynamic";
@@ -40,9 +41,7 @@ export default async function DemoPage() {
       <header className="border-b border-[var(--border)] bg-[var(--chrome)] px-4 py-3">
         <div className="mx-auto flex max-w-5xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold text-white">
-            <span className="flex h-7 w-7 items-center justify-center rounded-[2px] bg-[var(--accent)] text-white">
-              RP
-            </span>
+            <BrandMark size={28} />
             RackPatch
           </Link>
           <Button href="/sign-in" size="sm">
@@ -138,6 +137,10 @@ export default async function DemoPage() {
             Sign in to explore
           </Button>
         </div>
+
+        <footer className="mt-12 border-t border-[var(--border)] pt-6 text-center text-xs text-[var(--muted-fg)]">
+          © 2026 K G Pramod / VEX-NX · RackPatch · Apache License 2.0
+        </footer>
       </main>
     </div>
   );

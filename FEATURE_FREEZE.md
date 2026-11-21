@@ -11,7 +11,7 @@
 | CSV cable plan import + publish revisions | Implemented |
 | Installation tracking (Planned / Installed / Blocked) | Implemented |
 | QR labels (print sheet → cable URL) | Partial — print/QR only |
-| NX-OS LLDP evidence import | Implemented |
+| Neighbor evidence import (NX-OS/IOS-XE LLDP, CDP, Arista, Junos) | Implemented |
 | Expected vs observed / mismatch detection | Implemented |
 | Independent physical verification | Implemented |
 | Exceptions ack (mismatches stay visible) | Implemented |
@@ -24,7 +24,7 @@
 
 ## Explicitly out of scope (do not claim)
 
-Multi-vendor LLDP beyond NX-OS, rack 3D / digital twin, AI assistant, NetBox/API/webhooks, fiber/circuits, multi-site orgs, product analytics dashboards, collection workers, continuous compliance, capacity planning, full offline QR scanner.
+Additional CLI formats beyond NX-OS/IOS-XE LLDP, CDP, Arista EOS, Junos; rack 3D / digital twin; AI assistant; NetBox/API/webhooks; fiber/circuits; multi-site orgs; product analytics; collection workers; continuous compliance; capacity planning; full offline QR scanner.
 
 ## Freeze rules
 

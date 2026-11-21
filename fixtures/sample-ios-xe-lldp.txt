@@ -1,0 +1,21 @@
+------------------------------------------------
+Local Intf: Gi1/0/1
+Chassis id: aabb.ccdd.ee01
+Port id: Gi0/1
+Port Description: uplink-to-core
+System Name: Core-SW-01
+System Description: Cisco IOS Software, C9300 Software
+Time remaining: 116 seconds
+System Capabilities: B,R
+Enabled Capabilities: B,R
+------------------------------------------------
+Local Intf: Gi1/0/2
+Chassis id: aabb.ccdd.ee02
+Port id: eth0
+Port Description: server
+System Name: Srv-01
+System Description: Linux
+Time remaining: 110 seconds
+System Capabilities: S
+Enabled Capabilities: S
+------------------------------------------------

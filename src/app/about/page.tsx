@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { Cable } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { Button, Card } from "@/components/ui";
 import packageJson from "../../../package.json";
 
@@ -10,9 +10,7 @@ export default function AboutPage() {
       <header className="border-b border-[var(--border)] bg-[var(--chrome)] px-4 py-3">
         <div className="mx-auto flex max-w-3xl items-center justify-between">
           <Link href="/" className="flex items-center gap-2.5 text-sm font-semibold text-white">
-            <span className="flex h-7 w-7 items-center justify-center rounded-[2px] bg-[var(--accent)] text-white">
-              <Cable className="h-3.5 w-3.5" aria-hidden />
-            </span>
+            <BrandMark size={28} />
             RackPatch
           </Link>
           <Button href="/sign-in" size="sm">
@@ -55,6 +53,23 @@ export default function AboutPage() {
           </div>
         </Card>
 
+        <Card title="Creator">
+          <dl className="grid gap-3 text-sm sm:grid-cols-2">
+            <div>
+              <dt className="text-[var(--muted-fg)]">Author</dt>
+              <dd className="font-medium">K G Pramod</dd>
+            </div>
+            <div>
+              <dt className="text-[var(--muted-fg)]">Company</dt>
+              <dd className="font-medium">VEX-NX</dd>
+            </div>
+          </dl>
+          <p className="mt-3 text-sm text-[var(--muted-fg)]">
+            RackPatch is created and maintained by K G Pramod (VEX-NX). See{" "}
+            <code className="text-xs">NOTICE</code> for copyright.
+          </p>
+        </Card>
+
         <Card title="Source documentation">
           <ul className="list-disc space-y-1 pl-5 text-sm text-[var(--muted-fg)]">
             <li>
@@ -71,6 +86,10 @@ export default function AboutPage() {
             </li>
           </ul>
         </Card>
+
+        <footer className="border-t border-[var(--border)] pt-6 text-center text-xs text-[var(--muted-fg)]">
+          © 2026 K G Pramod / VEX-NX · RackPatch · Apache License 2.0
+        </footer>
       </main>
     </div>
   );

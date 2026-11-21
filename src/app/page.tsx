@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { Cable, CheckCircle2 } from "lucide-react";
+import { CheckCircle2 } from "lucide-react";
+import { BrandMark } from "@/components/brand-mark";
 import { PilotRequestForm } from "@/components/pilot-request-form";
 import { Button, Card } from "@/components/ui";
 
@@ -20,7 +21,7 @@ const features = [
   },
   {
     title: "Mismatch detection",
-    body: "Compare Cisco NX-OS LLDP evidence to the approved plan.",
+    body: "Compare LLDP/CDP neighbor evidence (Cisco, Arista, Juniper) to the approved plan.",
   },
   {
     title: "Exceptions",
@@ -39,9 +40,7 @@ export default function Home() {
       <header className="border-b border-[var(--border)] bg-[var(--chrome)] text-white">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-4 py-3.5 sm:px-6">
           <div className="flex items-center gap-2.5 text-sm font-semibold tracking-wide">
-            <span className="flex h-7 w-7 items-center justify-center rounded-[2px] bg-[var(--accent)] text-white">
-              <Cable className="h-3.5 w-3.5" aria-hidden />
-            </span>
+            <BrandMark size={28} />
             <span>
               RackPatch
               <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-white/50">
@@ -161,7 +160,7 @@ export default function Home() {
             <ol className="mt-3 list-decimal space-y-2 border border-[var(--border)] bg-white p-4 pl-9">
               <li>Create a workspace and project after sign-in.</li>
               <li>Import a CSV cable plan (or seed the synthetic demo).</li>
-              <li>Technicians mark install status; leads import NX-OS LLDP evidence.</li>
+              <li>Technicians mark install status; leads import LLDP or CDP evidence.</li>
               <li>Resolve mismatches; complete independent physical verification.</li>
               <li>Export CSV / create a handover snapshot when ready.</li>
             </ol>
@@ -177,8 +176,11 @@ export default function Home() {
         </div>
       </main>
 
-      <footer className="border-t border-[var(--border)] bg-[var(--chrome)] py-5 text-center text-xs uppercase tracking-[0.08em] text-white/45">
-        RackPatch Community Edition · Apache License 2.0
+      <footer className="border-t border-[var(--border)] bg-[var(--chrome)] py-5 text-center text-xs tracking-[0.06em] text-white/45">
+        <p className="uppercase">RackPatch Community Edition · Apache License 2.0</p>
+        <p className="mt-1.5 text-[11px] normal-case tracking-normal text-white/35">
+          © 2026 K G Pramod / VEX-NX
+        </p>
       </footer>
     </div>
   );

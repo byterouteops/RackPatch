@@ -3,9 +3,10 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
-import { Cable, FolderKanban, LogOut, Menu, Shield, X } from "lucide-react";
+import { FolderKanban, LogOut, Menu, Shield, X } from "lucide-react";
 import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
+import { BrandMark } from "@/components/brand-mark";
 import { Button } from "@/components/ui";
 
 type AppShellProps = {
@@ -52,9 +53,7 @@ export function AppShell({ children, user, isPlatformAdmin }: AppShellProps) {
             className="flex items-center gap-2.5 text-sm font-semibold tracking-wide"
             onClick={() => setOpen(false)}
           >
-            <span className="flex h-7 w-7 items-center justify-center rounded-[2px] bg-[var(--accent)] text-white">
-              <Cable className="h-3.5 w-3.5" aria-hidden />
-            </span>
+            <BrandMark size={28} />
             <span>
               RackPatch
               <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--sidebar-muted)]">

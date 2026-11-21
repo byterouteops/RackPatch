@@ -3,6 +3,7 @@
 Know which cables are right before you hand over the rack.
 
 **License:** [Apache License 2.0](LICENSE) — see also [NOTICE](NOTICE).  
+**Creator:** K G Pramod / VEX-NX  
 **About:** [/about](/about) in a running instance.
 
 RackPatch is an open-source Community Edition for data center deployment leads, network integrators, and installation contractors to plan, install, verify, and hand over physical cabling.

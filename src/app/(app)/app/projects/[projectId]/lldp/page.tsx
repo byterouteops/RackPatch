@@ -34,8 +34,8 @@ export default async function LldpPage({
   return (
     <div>
       <PageHeader
-        title="LLDP evidence"
-        description="Paste Cisco NX-OS show lldp neighbors detail output."
+        title="Neighbor evidence"
+        description="Import Cisco NX-OS/IOS-XE LLDP, Cisco CDP, Arista EOS LLDP, or Juniper Junos LLDP."
       />
       <ProjectSubnav projectId={projectId} />
 

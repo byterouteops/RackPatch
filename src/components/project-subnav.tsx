@@ -9,7 +9,7 @@ const tabs = (projectId: string) =>
     { href: `/app/projects/${projectId}`, label: "Overview", exact: true },
     { href: `/app/projects/${projectId}/cables`, label: "Cables" },
     { href: `/app/projects/${projectId}/plan`, label: "Plan" },
-    { href: `/app/projects/${projectId}/lldp`, label: "LLDP" },
+    { href: `/app/projects/${projectId}/lldp`, label: "Evidence" },
     { href: `/app/projects/${projectId}/exceptions`, label: "Exceptions" },
     { href: `/app/projects/${projectId}/handover`, label: "Handover" },
     { href: `/app/projects/${projectId}/labels`, label: "Labels" },

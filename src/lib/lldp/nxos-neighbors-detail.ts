@@ -1,37 +1,14 @@
 import { normalizeDevice, normalizePort, trimField } from "@/lib/csv/normalize";
+import {
+  MAX_EVIDENCE_BYTES,
+  type NeighborObservation,
+  type NeighborParseResult,
+} from "@/lib/lldp/types";
 
 /**
- * Supported format: Cisco NX-OS style `show lldp neighbors detail` text.
- *
- * Expected block markers (case-insensitive):
- *   Chassis id: ...
- *   Port id: ...
- *   Local Port id: ...
- *   System Name: ...
- *   System Description: ... (optional)
- *
- * Blocks are separated by blank lines or a line of dashes.
- * Representative fixtures live in /fixtures.
+ * Cisco NX-OS `show lldp neighbors detail`
+ * Local Port id / Port id / System Name / Chassis id
  */
-
-export type LldpObservation = {
-  localInterface: string;
-  localInterfaceNorm: string;
-  remoteSystemName: string | null;
-  remoteSystemNorm: string | null;
-  remotePortId: string | null;
-  remotePortNorm: string | null;
-  sourceExcerpt: string;
-};
-
-export type LldpParseResult = {
-  observations: LldpObservation[];
-  warnings: string[];
-  failed: boolean;
-  error?: string;
-};
-
-const MAX_BYTES = 2 * 1024 * 1024;
 
 function splitBlocks(text: string): string[] {
   const normalized = text.replace(/\r\n/g, "\n");
@@ -39,7 +16,6 @@ function splitBlocks(text: string): string[] {
   if (parts.length > 1) {
     return parts.map((p) => p.trim()).filter(Boolean);
   }
-  // Fallback: dash or blank-line separated
   return normalized
     .split(/\n-{3,}\n|\n{2,}/)
     .map((p) => p.trim())
@@ -51,32 +27,40 @@ function field(block: string, label: RegExp): string | null {
   return m ? trimField(m[1]) : null;
 }
 
-export function parseNxosLldpNeighborsDetail(text: string): LldpParseResult {
+export function looksLikeNxosLldp(text: string): boolean {
+  // NX-OS uses "Local Port id: Eth1/1". Junos also has "Local Port ID: <number>"
+  // plus "Local Interface :" — exclude Junos and IOS Local Intf.
+  return (
+    /local port id:\s*(eth|ethernet|mgmt|po|port-channel)/i.test(text) &&
+    !/local interface\s*:/i.test(text) &&
+    !/local intf:/i.test(text) &&
+    (/system name:/i.test(text) || /port id:/i.test(text)) &&
+    /chassis id:/i.test(text)
+  );
+}
+
+export function parseNxosLldpNeighborsDetail(text: string): NeighborParseResult {
   if (!text || !trimField(text)) {
     return { observations: [], warnings: [], failed: true, error: "Empty LLDP input" };
   }
-  if (Buffer.byteLength(text, "utf8") > MAX_BYTES) {
+  if (Buffer.byteLength(text, "utf8") > MAX_EVIDENCE_BYTES) {
     return {
       observations: [],
       warnings: [],
       failed: true,
-      error: `LLDP file exceeds maximum size of ${MAX_BYTES} bytes`,
+      error: `Evidence exceeds maximum size of ${MAX_EVIDENCE_BYTES} bytes`,
     };
   }
 
   const warnings: string[] = [];
-  const observations: LldpObservation[] = [];
+  const observations: NeighborObservation[] = [];
 
-  const looksSupported =
-    /local port id:/i.test(text) && (/system name:/i.test(text) || /port id:/i.test(text));
-
-  if (!looksSupported) {
+  if (!looksLikeNxosLldp(text)) {
     return {
       observations: [],
       warnings: [],
       failed: true,
-      error:
-        "Unrecognized LLDP format. Supported: Cisco NX-OS `show lldp neighbors detail` with Local Port id, Port id, and System Name fields.",
+      error: "Not Cisco NX-OS LLDP (expected Local Port id + Chassis id).",
     };
   }
 
@@ -86,7 +70,7 @@ export function parseNxosLldpNeighborsDetail(text: string): LldpParseResult {
       observations: [],
       warnings: [],
       failed: true,
-      error: "No LLDP neighbor blocks could be extracted from the input",
+      error: "No NX-OS LLDP neighbor blocks could be extracted",
     };
   }
 
@@ -120,9 +104,9 @@ export function parseNxosLldpNeighborsDetail(text: string): LldpParseResult {
       observations: [],
       warnings,
       failed: true,
-      error: "Parsed zero usable neighbor entries from the LLDP input",
+      error: "Parsed zero usable neighbor entries from NX-OS LLDP",
     };
   }
 
-  return { observations, warnings, failed: false };
+  return { observations, warnings, failed: false, format: "cisco-nxos-lldp" };
 }

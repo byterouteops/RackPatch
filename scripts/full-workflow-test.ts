@@ -16,6 +16,7 @@ import { hashPassword } from "better-auth/crypto";
 import { importPlanCsv } from "../src/lib/csv/plan-import";
 import { publishPlanRevision } from "../src/lib/plan/publish";
 import { parseNxosLldpNeighborsDetail } from "../src/lib/lldp/nxos-neighbors-detail";
+import { parseNeighborEvidence } from "../src/lib/lldp/parse-neighbor-evidence";
 import { normalizeDevice } from "../src/lib/csv/normalize";
 import { recomputeFindings } from "../src/lib/verify/recompute";
 import { commercialAllowsMutations } from "../src/lib/authz";
@@ -52,8 +53,16 @@ C1,R1,A,1,R1,A,1
   const lldp = parseNxosLldpNeighborsDetail(lldpText);
   assert("LLDP fixture parses", !lldp.failed && lldp.observations.length >= 2, lldp.error);
 
-  const junk = parseNxosLldpNeighborsDetail("hello world");
+  const junk = parseNeighborEvidence("hello world");
   assert("unsupported LLDP fails visibly", junk.failed === true);
+  const ios = parseNeighborEvidence(
+    require("fs").readFileSync(require("path").join(__dirname, "../fixtures/sample-ios-xe-lldp.txt"), "utf8"),
+  );
+  assert("IOS-XE LLDP parses", ios.failed === false && ios.format === "cisco-ios-lldp");
+  const cdp = parseNeighborEvidence(
+    require("fs").readFileSync(require("path").join(__dirname, "../fixtures/sample-cisco-cdp.txt"), "utf8"),
+  );
+  assert("Cisco CDP parses", cdp.failed === false && cdp.format === "cisco-cdp");
 
   console.log("\n=== 2. Fresh project publish + install + LLDP + verify rules ===");
   const suffix = randomBytes(3).toString("hex");
