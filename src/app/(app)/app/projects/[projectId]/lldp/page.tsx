@@ -1,10 +1,11 @@
-import { CheckCircle2, Link2Off, Clock } from "lucide-react";
+import { CheckCircle2, Clock, Link2Off, Lock } from "lucide-react";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
+import { JobStatusBadge } from "@/components/job-status-badge";
 import { LldpImportForm } from "@/components/lldp-import-form";
-import { ProjectSubnav } from "@/components/project-subnav";
-import { Card, EmptyState, PageHeader, StatCard } from "@/components/ui";
+import { ProjectPageHeader } from "@/components/project-page-header";
+import { Card, EmptyState, StatCard } from "@/components/ui";
 
 export default async function LldpPage({
   params,
@@ -14,7 +15,15 @@ export default async function LldpPage({
   const { projectId } = await params;
   const user = await requireSessionUser();
   const access = await getProjectAccess(user, projectId);
-  if (!access) return <EmptyState title="Permission denied" />;
+  if (!access) {
+    return (
+      <EmptyState
+        icon={<Lock className="h-5 w-5" aria-hidden />}
+        title="Permission denied"
+        description="You do not have access to this project."
+      />
+    );
+  }
 
   let matches = 0;
   let swapped = 0;
@@ -31,13 +40,21 @@ export default async function LldpPage({
     missing = findings.filter((f) => f.state === "AWAITING").length;
   }
 
+  const jobs = await prisma.collectionJob.findMany({
+    where: { projectId },
+    orderBy: { createdAt: "desc" },
+    take: 15,
+  });
+
   return (
     <div>
-      <PageHeader
+      <ProjectPageHeader
+        projectId={projectId}
+        projectName={access.project.name}
+        section="LLDP"
         title="Neighbor evidence"
         description="Import Cisco NX-OS/IOS-XE LLDP, Cisco CDP, Arista EOS LLDP, or Juniper Junos LLDP."
       />
-      <ProjectSubnav projectId={projectId} />
 
       {access.project.activeRevisionId && (
         <div className="mb-6 grid gap-4 sm:grid-cols-3">
@@ -51,7 +68,7 @@ export default async function LldpPage({
             label="Swapped"
             value={swapped}
             icon={<Link2Off className="h-5 w-5" aria-hidden />}
-            tone="danger"
+            tone={swapped > 0 ? "danger" : "neutral"}
           />
           <StatCard
             label="Missing / awaiting"
@@ -63,15 +80,65 @@ export default async function LldpPage({
       )}
 
       {!access.canImportEvidence ? (
-        <EmptyState
-          title="Import not allowed"
-          description="Requires lead role and activated project."
-        />
+        <div className="mb-6">
+          <EmptyState
+            icon={<Lock className="h-5 w-5" aria-hidden />}
+            title="Import not allowed"
+            description="Requires lead role and activated project."
+          />
+        </div>
       ) : (
-        <Card title="Import wizard">
+        <Card
+          title="Import wizard"
+          description="Paste neighbor output from a device; the parser picks the matching vendor format."
+          className="mb-6"
+        >
           <LldpImportForm projectId={projectId} />
         </Card>
       )}
+
+      <Card
+        title="Collection jobs"
+        description="Manual paste imports recorded as jobs. No SSH workers in CE."
+        flush
+      >
+        {jobs.length === 0 ? (
+          <p className="p-5 text-sm text-[var(--muted-fg)]">No collection jobs yet.</p>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="rp-table rp-table-auto">
+              <thead>
+                <tr>
+                  <th>Source device</th>
+                  <th>Status</th>
+                  <th>Detail</th>
+                  <th className="text-right">Created</th>
+                </tr>
+              </thead>
+              <tbody>
+                {jobs.map((j) => (
+                  <tr key={j.id}>
+                    <td className="rp-mono font-medium">{j.sourceDevice}</td>
+                    <td>
+                      <JobStatusBadge status={j.status} />
+                    </td>
+                    <td className="text-xs">
+                      {j.error ? (
+                        <span className="text-[var(--danger)]">{j.error}</span>
+                      ) : (
+                        <span className="text-[var(--muted-fg)]">{j.note ?? "—"}</span>
+                      )}
+                    </td>
+                    <td className="whitespace-nowrap text-right text-xs text-[var(--muted-fg)]">
+                      {j.createdAt.toLocaleString()}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
     </div>
   );
 }

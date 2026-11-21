@@ -2,7 +2,8 @@
 
 **Date:** 2026-11-21  
 **Status:** Architecture / documentation only  
-**Recommendation:** **NO-GO** for product analytics implementation this launch
+**Recommendation:** **NO-GO** for product analytics implementation this launch  
+**Update:** a first-party-only CE slice (`ProductEvent`, counts page) was later implemented - see `PHASE_22_IMPLEMENTATION_REPORT.md`. The audit table below describes the pre-implementation state.
 
 ## Audit (live repo)
 

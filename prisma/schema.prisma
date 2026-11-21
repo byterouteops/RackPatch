@@ -30,6 +30,9 @@ model User {
   physicalVerifications PhysicalVerification[]
   handoverSnapshots     HandoverSnapshot[]
   commercialActivations CommercialActivation[]
+  workOrdersCreated     WorkOrder[]           @relation("WorkOrderCreator")
+  workOrdersAssigned    WorkOrder[]           @relation("WorkOrderAssignee")
+  notifications         UserNotification[]
 
   @@map("user")
 }
@@ -142,8 +145,26 @@ model Workspace {
   memberships WorkspaceMembership[]
   invitations Invitation[]
   projects    Project[]
+  sites       Site[]
 
   @@map("workspace")
+}
+
+/// Physical site/location under a workspace (Phase 14 CE slice).
+model Site {
+  id          String   @id @default(cuid())
+  workspaceId String
+  name        String
+  slug        String
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  projects  Project[]
+
+  @@unique([workspaceId, slug])
+  @@index([workspaceId])
+  @@map("site")
 }
 
 model WorkspaceMembership {
@@ -166,6 +187,8 @@ model Invitation {
   email           String
   role            ProjectRole @default(TECHNICIAN)
   projectId       String?
+  /// Accepting creates a contractor membership (requires role TECHNICIAN).
+  contractor      Boolean     @default(false)
   tokenHash       String      @unique
   expiresAt       DateTime
   acceptedAt      DateTime?
@@ -185,7 +208,9 @@ model Project {
   workspaceId      String
   name             String
   customerName     String?
+  /// Denormalized site label (kept for handover/CSV); prefer siteId when set.
   site             String
+  siteId           String?
   timeZone         String           @default("UTC")
   commercialStatus CommercialStatus @default(NONE)
   isDemo           Boolean          @default(false)
@@ -194,6 +219,7 @@ model Project {
   updatedAt        DateTime         @updatedAt
 
   workspace           Workspace              @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  siteRef             Site?                  @relation(fields: [siteId], references: [id], onDelete: SetNull)
   activeRevision      PlanRevision?          @relation("ActiveRevision", fields: [activeRevisionId], references: [id])
   memberships         ProjectMembership[]
   revisions           PlanRevision[]         @relation("ProjectRevisions")
@@ -204,9 +230,252 @@ model Project {
   auditEvents         AuditEvent[]
   invitations         Invitation[]
   commercialActivations CommercialActivation[]
+  collectionJobs      CollectionJob[]
+  apiTokens           ApiToken[]
+  fieldPhotos         FieldPhoto[]
+  offlineSyncBatches  OfflineSyncBatch[]
+  deviceCredentials   DeviceCredential[]
+  collectionTargets   CollectionTarget[]
+  compliancePolicy    CompliancePolicy?
+  complianceRuns      ComplianceRun[]
+  deviceInventory     DeviceInventory[]
+  stockItems          StockItem[]
+  patchPanels         PatchPanel[]
+  circuits            Circuit[]
+  integrationConfigs  IntegrationConfig[]
+  syncJobs            SyncJob[]
+  webhookEndpoints    WebhookEndpoint[]
+  workOrders          WorkOrder[]
+  labelTemplates      LabelTemplate[]
 
   @@index([workspaceId])
+  @@index([siteId])
   @@map("project")
+}
+
+/// Continuous compliance policy (Phase 11 CE): one per project, checked by cron or manual run.
+model CompliancePolicy {
+  id                 String   @id @default(cuid())
+  projectId          String   @unique
+  enabled            Boolean  @default(true)
+  maxEvidenceAgeDays Int      @default(7)
+  /// Recipients for compliance alerts (sent via Resend when RESEND_API_KEY is set).
+  notifyEmails       String[] @default([])
+  /// Recompute verification findings before evaluating.
+  recomputeFindings  Boolean  @default(false)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("compliance_policy")
+}
+
+/// One compliance evaluation (cron or manual).
+model ComplianceRun {
+  id                 String   @id @default(cuid())
+  projectId          String
+  trigger            String   @default("cron")
+  /// OK | ISSUES | ERROR
+  status             String
+  staleDeviceCount   Int      @default(0)
+  neverImportedCount Int      @default(0)
+  mismatchCount      Int      @default(0)
+  needsReviewCount   Int      @default(0)
+  maxEvidenceAgeDays Int      @default(7)
+  /// Stable hash of the issue set; used to avoid re-emailing identical issues.
+  fingerprint        String?
+  summary            String
+  notified           Boolean  @default(false)
+  notifyError        String?
+  createdAt          DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@map("compliance_run")
+}
+
+enum PortStatus {
+  FREE
+  USED
+  RESERVED
+}
+
+/// Project-scoped device record for port inventory (Phase 12 CE).
+model DeviceInventory {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  nameNorm  String
+  rack      String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ports   DevicePort[]
+
+  @@unique([projectId, nameNorm])
+  @@map("device_inventory")
+}
+
+/// Port on a device. USED ports are synced from the active plan; RESERVED/speed are manual.
+model DevicePort {
+  id             String     @id @default(cuid())
+  deviceId       String
+  portLabel      String
+  portNorm       String
+  speed          String?
+  status         PortStatus @default(FREE)
+  /// Cable ID from the active plan that occupies this port (set by sync).
+  plannedCableId String?
+  note           String?
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
+
+  device DeviceInventory @relation(fields: [deviceId], references: [id], onDelete: Cascade)
+
+  @@unique([deviceId, portNorm])
+  @@index([deviceId, status])
+  @@map("device_port")
+}
+
+/// Spare cable/optic stock line (Phase 15 CE). quantityOnHand is maintained only via StockTransaction.
+model StockItem {
+  id             String   @id @default(cuid())
+  projectId      String
+  sku            String
+  description    String
+  unit           String   @default("each")
+  quantityOnHand Int      @default(0)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  project      Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  transactions StockTransaction[]
+
+  @@unique([projectId, sku])
+  @@map("stock_item")
+}
+
+/// Immutable stock ledger entry (DB trigger rejects UPDATE; app exposes no update/delete).
+model StockTransaction {
+  id            String   @id @default(cuid())
+  itemId        String
+  delta         Int
+  reason        String
+  actorId       String
+  quantityAfter Int
+  createdAt     DateTime @default(now())
+
+  item StockItem @relation(fields: [itemId], references: [id], onDelete: Cascade)
+
+  @@index([itemId, createdAt])
+  @@map("stock_transaction")
+}
+
+enum PanelSide {
+  A
+  Z
+}
+
+/// Fiber/copper patch panel (Phase 16 CE). Ports are pre-created 1..portCount.
+model PatchPanel {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  rack      String
+  rackUnit  Int?
+  portCount Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project     @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  ports   PanelPort[]
+
+  @@unique([projectId, name])
+  @@map("patch_panel")
+}
+
+/// Panel port; optionally mapped to one end (side) of a planned link.
+model PanelPort {
+  id            String     @id @default(cuid())
+  panelId       String
+  portIndex     Int
+  side          PanelSide?
+  plannedLinkId String?
+  note          String?
+
+  panel       PatchPanel   @relation(fields: [panelId], references: [id], onDelete: Cascade)
+  plannedLink PlannedLink? @relation(fields: [plannedLinkId], references: [id], onDelete: SetNull)
+  circuitA    Circuit?     @relation("CircuitPortA")
+  circuitZ    Circuit?     @relation("CircuitPortZ")
+
+  @@unique([panelId, portIndex])
+  @@unique([plannedLinkId, side])
+  @@index([plannedLinkId])
+  @@map("panel_port")
+}
+
+/// Logical circuit terminated on one or two panel ports.
+model Circuit {
+  id           String   @id @default(cuid())
+  projectId    String
+  name         String
+  mediaType    String
+  panelPortAId String   @unique
+  panelPortZId String?  @unique
+  note         String?
+  createdAt    DateTime @default(now())
+
+  project Project    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  portA   PanelPort  @relation("CircuitPortA", fields: [panelPortAId], references: [id], onDelete: Cascade)
+  portZ   PanelPort? @relation("CircuitPortZ", fields: [panelPortZId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, name])
+  @@map("circuit")
+}
+
+/// Encrypted SSH credential for neighbor collection (Phase 10).
+model DeviceCredential {
+  id                 String   @id @default(cuid())
+  projectId          String
+  name               String
+  username           String
+  /// AES-GCM ciphertext (never plaintext).
+  secretCiphertext   String
+  authKind           String   @default("password")
+  createdById        String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  project Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  targets CollectionTarget[]
+
+  @@index([projectId])
+  @@map("device_credential")
+}
+
+/// Device endpoint for allowlisted SSH neighbor collection.
+model CollectionTarget {
+  id                   String   @id @default(cuid())
+  projectId            String
+  name                 String
+  host                 String
+  port                 Int      @default(22)
+  credentialId         String
+  profileId            String
+  /// SHA-256 host key fingerprint (hex). Required after first accept.
+  hostKeyFingerprint   String?
+  enabled              Boolean  @default(true)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  project    Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  credential DeviceCredential @relation(fields: [credentialId], references: [id], onDelete: Restrict)
+
+  @@index([projectId])
+  @@map("collection_target")
 }
 
 model ProjectMembership {
@@ -214,6 +483,8 @@ model ProjectMembership {
   projectId String
   userId    String
   role      ProjectRole
+  /// External contractor: technician-level access + QC acknowledge; never lead powers.
+  contractor Boolean    @default(false)
   createdAt DateTime    @default(now())
 
   project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
@@ -266,12 +537,57 @@ model PlannedLink {
   runtime            LinkRuntime?
   findings           VerificationFinding[]
   physicalChecks     PhysicalVerification[]
+  fieldPhotos        FieldPhoto[]
+  panelPorts         PanelPort[]
+  workOrderLinks     WorkOrderLink[]
 
   @@unique([revisionId, cableId])
   @@unique([revisionId, aDeviceNorm, aPortNorm])
   @@unique([revisionId, zDeviceNorm, zPortNorm])
   @@index([revisionId, endpointKey])
   @@map("planned_link")
+}
+
+/// Field photo attached to a cable (online upload or offline sync).
+model FieldPhoto {
+  id            String   @id @default(cuid())
+  projectId     String
+  plannedLinkId String?
+  clientId      String?
+  mimeType      String
+  byteSize      Int
+  sha256        String
+  /// JPEG/PNG bytes (max enforced in app, ~1.5MB).
+  data          Bytes
+  note          String?
+  source        String   @default("online")
+  capturedAt    DateTime @default(now())
+  uploadedAt    DateTime @default(now())
+  uploadedById  String
+
+  project     Project      @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  plannedLink PlannedLink? @relation(fields: [plannedLinkId], references: [id], onDelete: SetNull)
+
+  @@unique([projectId, clientId])
+  @@index([projectId, plannedLinkId])
+  @@index([plannedLinkId])
+  @@map("field_photo")
+}
+
+/// Record of an offline field queue sync batch.
+model OfflineSyncBatch {
+  id           String   @id @default(cuid())
+  projectId    String
+  uploadedById String
+  itemCount    Int
+  photoCount   Int
+  createdAt    DateTime @default(now())
+  summary      String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@map("offline_sync_batch")
 }
 
 model LinkRuntime {
@@ -285,12 +601,64 @@ model LinkRuntime {
   statusChangedBy String?
   version         Int           @default(1)
   carriedFromLinkId String?
+  /// Optional physical asset serial (Phase 15 CE slice — not a stock ledger).
+  assetSerial     String?
+  lengthMeters    Float?
+  retiredAt       DateTime?
+  retireNote      String?
   updatedAt       DateTime      @updatedAt
 
   plannedLink PlannedLink @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
   installer   User?       @relation("Installer", fields: [installerId], references: [id])
 
   @@map("link_runtime")
+}
+
+enum CollectionJobStatus {
+  PENDING
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+/// Evidence collection job (manual paste or SSH).
+model CollectionJob {
+  id               String              @id @default(cuid())
+  projectId        String
+  status           CollectionJobStatus @default(PENDING)
+  sourceDevice     String
+  createdById      String
+  createdAt        DateTime            @default(now())
+  startedAt        DateTime?
+  finishedAt       DateTime?
+  error            String?
+  evidenceImportId String?
+  note             String?
+  kind             String              @default("manual_paste")
+  targetId         String?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId, createdAt])
+  @@map("collection_job")
+}
+
+/// Project-scoped API token (Phase 19 CE — read-only REST). Token stored hashed.
+model ApiToken {
+  id          String    @id @default(cuid())
+  projectId   String
+  name        String
+  tokenPrefix String
+  tokenHash   String    @unique
+  createdById String
+  createdAt   DateTime  @default(now())
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("api_token")
 }
 
 model EvidenceImport {
@@ -486,4 +854,179 @@ model RateLimitBucket {
   @@unique([key, windowStart])
   @@index([key])
   @@map("rate_limit_bucket")
+}
+
+enum IntegrationKind {
+  NETBOX
+}
+
+enum SyncJobStatus {
+  RUNNING
+  COMPLETED
+  FAILED
+}
+
+/// Phase 19 CE: external integration config. Token encrypted at rest.
+/// writeEnabled gates outbound NetBox PATCH/POST (off by default).
+model IntegrationConfig {
+  id               String          @id @default(cuid())
+  projectId        String
+  kind             IntegrationKind
+  baseUrl          String
+  /// AES-GCM ciphertext (never plaintext).
+  tokenCiphertext  String
+  enabled          Boolean         @default(true)
+  /// When true, leads may push selected cable labels / notes to NetBox (explicit confirm).
+  writeEnabled     Boolean         @default(false)
+  createdById      String
+  createdAt        DateTime        @default(now())
+  updatedAt        DateTime        @updatedAt
+
+  project  Project   @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  syncJobs SyncJob[]
+
+  @@unique([projectId, kind])
+  @@map("integration_config")
+}
+
+/// Record of a NetBox (or fixture) preview / apply job.
+model SyncJob {
+  id            String        @id @default(cuid())
+  projectId     String
+  integrationId String?
+  /// "netbox_live" | "netbox_fixture"
+  source        String
+  status        SyncJobStatus @default(RUNNING)
+  dryRun        Boolean       @default(true)
+  /// JSON counts only (no raw NetBox payloads, no tokens).
+  summary       String?
+  error         String?
+  createdById   String
+  createdAt     DateTime      @default(now())
+  finishedAt    DateTime?
+
+  project     Project            @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  integration IntegrationConfig? @relation(fields: [integrationId], references: [id], onDelete: SetNull)
+
+  @@index([projectId, createdAt])
+  @@map("sync_job")
+}
+
+/// Outbound webhook endpoint (best-effort, HMAC-SHA256 signed). Secret stored encrypted.
+model WebhookEndpoint {
+  id                  String    @id @default(cuid())
+  projectId           String
+  url                 String
+  secretCiphertext    String
+  events              String[]  @default([])
+  enabled             Boolean   @default(true)
+  createdById         String
+  createdAt           DateTime  @default(now())
+  revokedAt           DateTime?
+  lastDeliveryAt      DateTime?
+  lastStatus          String?
+  consecutiveFailures Int       @default(0)
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("webhook_endpoint")
+}
+/// First-party product analytics event (no third-party trackers). Props are sanitized counts/ids only.
+/// No foreign keys on purpose: events are not PII and must not block project/user deletion.
+model ProductEvent {
+  id          String   @id @default(cuid())
+  projectId   String?
+  workspaceId String?
+  actorId     String?
+  /// Dotted lowercase name, e.g. "evidence.import".
+  name        String
+  /// JSON object of sanitized primitives (counts/ids/flags). Never PII or free text.
+  propsJson   String?
+  createdAt   DateTime @default(now())
+
+  @@index([projectId, createdAt])
+  @@index([name, createdAt])
+  @@map("product_event")
+}
+
+enum WorkOrderStatus {
+  DRAFT
+  OPEN
+  IN_PROGRESS
+  DONE
+  CANCELLED
+}
+
+/// Installation work order: groups planned links for field assignment.
+model WorkOrder {
+  id          String          @id @default(cuid())
+  projectId   String
+  code        String
+  title       String
+  status      WorkOrderStatus @default(DRAFT)
+  assigneeId  String?
+  dueAt       DateTime?
+  notes       String?
+  createdById String
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
+
+  project  Project         @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  assignee User?           @relation("WorkOrderAssignee", fields: [assigneeId], references: [id], onDelete: SetNull)
+  createdBy User           @relation("WorkOrderCreator", fields: [createdById], references: [id])
+  items    WorkOrderLink[]
+
+  @@unique([projectId, code])
+  @@index([projectId, status])
+  @@map("work_order")
+}
+
+model WorkOrderLink {
+  id            String @id @default(cuid())
+  workOrderId   String
+  plannedLinkId String
+
+  workOrder   WorkOrder   @relation(fields: [workOrderId], references: [id], onDelete: Cascade)
+  plannedLink PlannedLink @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
+
+  @@unique([workOrderId, plannedLinkId])
+  @@index([plannedLinkId])
+  @@map("work_order_link")
+}
+
+/// Per-project label template (JSON layout config for the designer).
+model LabelTemplate {
+  id         String   @id @default(cuid())
+  projectId  String
+  name       String
+  /// JSON: showQr, showCableId, showEnds, showRack, qrSize, columns, fontScale
+  configJson String
+  isDefault  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("label_template")
+}
+
+/// In-app notification for a user (bell / notifications page).
+model UserNotification {
+  id        String    @id @default(cuid())
+  userId    String
+  projectId String?
+  kind      String
+  title     String
+  body      String
+  href      String?
+  readAt    DateTime?
+  sourceId  String?
+  createdAt DateTime  @default(now())
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId, readAt, createdAt])
+  @@map("user_notification")
 }

@@ -24,8 +24,8 @@ export default async function SignInPage() {
           <BrandMark size={28} />
           <span>
             RackPatch
-            <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-white/50">
-              {bootstrapRequired ? "Initial setup" : "Sign in"}
+            <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cyan)]">
+              {bootstrapRequired ? "Initial setup" : "Data Center Cabling Management"}
             </span>
           </span>
         </Link>

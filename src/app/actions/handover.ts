@@ -10,6 +10,8 @@ import { assertPaidOrThrow } from "@/app/actions/workspace";
 import { toCsv } from "@/lib/csv/safe-export";
 import { recordAudit } from "@/lib/audit";
 import { getAppUrl } from "@/lib/env";
+import { enqueueOutboundWebhook } from "@/lib/webhook-dispatch";
+import { trackEvent } from "@/lib/analytics";
 
 export async function buildHandoverPayload(projectId: string) {
   const project = await prisma.project.findUniqueOrThrow({
@@ -181,6 +183,23 @@ export async function createHandoverSnapshot(raw: z.infer<typeof snapshotSchema>
     actorId: user.id,
     action: "handover.snapshot",
     summary: `Created handover snapshot ${snapshot.id}`,
+  });
+
+  enqueueOutboundWebhook(data.projectId, "handover.create", {
+    snapshotId: snapshot.id,
+    revisionNumber: payload.revision.number,
+    links: payload.counts.links,
+    unresolvedExceptions: payload.counts.unresolvedExceptions,
+  });
+
+  await trackEvent({
+    name: "handover.create",
+    projectId: data.projectId,
+    actorId: user.id,
+    props: {
+      links: payload.counts.links,
+      unresolvedExceptions: payload.counts.unresolvedExceptions,
+    },
   });
 
   revalidatePath(`/app/projects/${data.projectId}/handover`);

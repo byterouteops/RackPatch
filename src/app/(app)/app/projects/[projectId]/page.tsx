@@ -10,17 +10,19 @@ import { CommercialStatus } from "@prisma/client";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
+import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
 import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
-import { ProjectSubnav } from "@/components/project-subnav";
+import { ProjectPageHeader } from "@/components/project-page-header";
 import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import {
   AlertBanner,
   Badge,
+  Button,
   Card,
   EmptyState,
-  PageHeader,
   ProgressBar,
   StatCard,
+  TextLink,
 } from "@/components/ui";
 
 export default async function ProjectOverviewPage({
@@ -55,35 +57,94 @@ export default async function ProjectOverviewPage({
     linkId: string;
   }> = [];
   let playbooks: ReturnType<typeof buildSwapFixPlaybooks> = [];
+  let staleCount = 0;
+  let neverImportedCount = 0;
 
   if (project.activeRevisionId) {
-    const [links, findings] = await Promise.all([
-      prisma.plannedLink.findMany({
-        where: { revisionId: project.activeRevisionId },
-        include: { runtime: true },
-      }),
-      prisma.verificationFinding.findMany({
-        where: { revisionId: project.activeRevisionId },
-        include: { plannedLink: true },
-        orderBy: { computedAt: "desc" },
-      }),
-    ]);
+    const revisionId = project.activeRevisionId;
 
-    counts = {
-      cables: links.length,
-      installed: links.filter((l) => l.runtime?.installStatus === "INSTALLED").length,
-      verified: findings.filter(
-        (f) => f.state === "VERIFIED_LLDP" || f.state === "VERIFIED_PHYSICAL",
-      ).length,
-      openExceptions: findings.filter(
-        (f) =>
-          f.exceptionStatus !== "CLOSED" &&
-          (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW"),
-      ).length,
-    };
+    // Lightweight queries only — never load every link+runtime into memory.
+    const [cables, installed, verified, openExceptions, openFindings, linkSlim, imports] =
+      await Promise.all([
+        prisma.plannedLink.count({ where: { revisionId } }),
+        prisma.plannedLink.count({
+          where: { revisionId, runtime: { installStatus: "INSTALLED" } },
+        }),
+        prisma.verificationFinding.count({
+          where: {
+            revisionId,
+            state: { in: ["VERIFIED_LLDP", "VERIFIED_PHYSICAL"] },
+          },
+        }),
+        prisma.verificationFinding.count({
+          where: {
+            revisionId,
+            exceptionStatus: { not: "CLOSED" },
+            state: { in: ["MISMATCH", "NEEDS_REVIEW"] },
+          },
+        }),
+        prisma.verificationFinding.findMany({
+          where: {
+            revisionId,
+            exceptionStatus: { not: "CLOSED" },
+            state: { in: ["MISMATCH", "NEEDS_REVIEW"] },
+          },
+          include: {
+            plannedLink: {
+              select: {
+                id: true,
+                cableId: true,
+                aRack: true,
+                zRack: true,
+                aDevice: true,
+                aPort: true,
+                zDevice: true,
+                zPort: true,
+              },
+            },
+          },
+          orderBy: { computedAt: "desc" },
+          take: 40,
+        }),
+        prisma.plannedLink.findMany({
+          where: { revisionId },
+          select: {
+            aRack: true,
+            zRack: true,
+            aDevice: true,
+            zDevice: true,
+            runtime: { select: { installStatus: true } },
+          },
+        }),
+        prisma.evidenceImport.findMany({
+          where: { projectId },
+          select: {
+            sourceDevice: true,
+            sourceDeviceNorm: true,
+            uploadedAt: true,
+            captureTime: true,
+            parseFailed: true,
+          },
+          orderBy: { uploadedAt: "desc" },
+          take: 200,
+        }),
+      ]);
+
+    counts = { cables, installed, verified, openExceptions };
+
+    const plannedDevices = Array.from(
+      new Set(linkSlim.flatMap((l) => [l.aDevice, l.zDevice])),
+    );
+    const staleness = computeEvidenceStaleness({
+      imports,
+      plannedDevices,
+      maxAgeDays: 7,
+    });
+    staleCount = staleness.stale.length;
+    neverImportedCount = staleness.neverImported.length;
 
     const byRack = new Map<string, { total: number; installed: number }>();
-    for (const l of links) {
+    for (const l of linkSlim) {
       for (const rack of new Set([l.aRack, l.zRack])) {
         const cur = byRack.get(rack) ?? { total: 0, installed: 0 };
         cur.total += 1;
@@ -93,24 +154,17 @@ export default async function ProjectOverviewPage({
     }
     rackProgress = Array.from(byRack.entries())
       .map(([rack, v]) => ({ rack, ...v }))
-      .sort((a, b) => a.rack.localeCompare(b.rack));
+      .sort((a, b) => a.rack.localeCompare(b.rack))
+      .slice(0, 24);
 
-    const openFindings = findings.filter(
-      (f) =>
-        f.exceptionStatus !== "CLOSED" &&
-        (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW"),
-    );
-
-    attention = openFindings
-      .slice(0, 6)
-      .map((f) => ({
-        id: f.id,
-        cableId: f.plannedLink.cableId,
-        expected: f.expectedSummary,
-        observed: f.observedSummary,
-        state: f.state,
-        linkId: f.plannedLinkId,
-      }));
+    attention = openFindings.slice(0, 6).map((f) => ({
+      id: f.id,
+      cableId: f.plannedLink.cableId,
+      expected: f.expectedSummary,
+      observed: f.observedSummary,
+      state: f.state,
+      linkId: f.plannedLink.id,
+    }));
 
     playbooks = buildSwapFixPlaybooks(
       openFindings.map((f) => ({
@@ -126,28 +180,42 @@ export default async function ProjectOverviewPage({
         aPort: f.plannedLink.aPort,
         zDevice: f.plannedLink.zDevice,
         zPort: f.plannedLink.zPort,
-        plannedLinkId: f.plannedLinkId,
+        plannedLinkId: f.plannedLink.id,
       })),
     );
   }
 
   return (
     <div>
-      <PageHeader
+      <ProjectPageHeader
+        projectId={projectId}
+        projectName={project.name}
         title={project.name}
         description={`${project.site}${project.customerName ? ` · ${project.customerName}` : ""}`}
         actions={
-          <Badge tone={project.commercialStatus === CommercialStatus.NONE ? "warning" : "success"}>
-            {project.isDemo ? "Demo" : project.commercialStatus}
-          </Badge>
+          <>
+            <Badge tone={project.commercialStatus === CommercialStatus.NONE ? "warning" : "success"}>
+              {project.isDemo ? "Demo" : project.commercialStatus}
+            </Badge>
+            <Button href={`/app/projects/${projectId}/handover`} variant="secondary" size="sm">
+              Handover
+            </Button>
+          </>
         }
       />
-      <ProjectSubnav projectId={projectId} />
 
       {!project.activeRevisionId ? (
         <EmptyState
+          icon={<Cable className="h-5 w-5" aria-hidden />}
           title="No active plan"
           description="Import and publish a cable plan to get started."
+          action={
+            access.canPublishPlan ? (
+              <Button href={`/app/projects/${projectId}/plan`} size="sm">
+                Import cable plan
+              </Button>
+            ) : undefined
+          }
         />
       ) : (
         <div className="space-y-6">
@@ -183,8 +251,31 @@ export default async function ProjectOverviewPage({
             />
           </div>
 
+          {(staleCount > 0 || neverImportedCount > 0) && (
+            <AlertBanner tone="warning" title="Evidence freshness">
+              {staleCount > 0 && (
+                <span>
+                  {staleCount} device{staleCount === 1 ? "" : "s"} with evidence older than 7 days
+                  (or failed parse).{" "}
+                </span>
+              )}
+              {neverImportedCount > 0 && (
+                <span>
+                  {neverImportedCount} planned device{neverImportedCount === 1 ? "" : "s"} have no
+                  import yet.{" "}
+                </span>
+              )}
+              <Link href={`/app/projects/${projectId}/lldp`} className="font-semibold underline">
+                Import evidence
+              </Link>
+            </AlertBanner>
+          )}
+
           <div className="grid gap-6 lg:grid-cols-2">
-            <Card title="Installation progress by rack">
+            <Card
+              title="Installation progress by rack"
+              description="Installed links per rack from the active revision."
+            >
               {rackProgress.length === 0 ? (
                 <p className="text-sm text-[var(--muted-fg)]">No rack data yet.</p>
               ) : (
@@ -203,14 +294,8 @@ export default async function ProjectOverviewPage({
 
             <Card
               title="Exceptions requiring attention"
-              action={
-                <Link
-                  href={`/app/projects/${projectId}/exceptions`}
-                  className="text-sm font-medium text-[var(--accent)] hover:underline"
-                >
-                  View all
-                </Link>
-              }
+              description="Open mismatches and items needing review."
+              action={<TextLink href={`/app/projects/${projectId}/exceptions`}>View all</TextLink>}
             >
               {attention.length === 0 ? (
                 <AlertBanner tone="success" title="No open exceptions">
@@ -222,14 +307,14 @@ export default async function ProjectOverviewPage({
                     <li key={item.id}>
                       <Link
                         href={`/app/projects/${projectId}/cables/${item.linkId}`}
-                        className="flex gap-3 border border-[var(--border)] border-l-4 border-l-[var(--warning)] bg-white p-3 transition hover:bg-[var(--accent-soft)]"
+                        className="rp-focus flex gap-3 rounded-[var(--radius)] border border-[var(--border)] border-l-4 border-l-[var(--warning)] bg-white p-3 transition hover:bg-[var(--accent-soft)]"
                       >
                         <AlertTriangle
                           className="mt-0.5 h-5 w-5 shrink-0 text-[var(--danger)]"
                           aria-hidden
                         />
                         <div className="min-w-0">
-                          <p className="font-semibold text-[var(--foreground)]">{item.cableId}</p>
+                          <p className="rp-mono font-semibold text-[var(--foreground)]">{item.cableId}</p>
                           <p className="mt-0.5 truncate text-sm text-[var(--muted-fg)]">
                             {item.expected}
                           </p>

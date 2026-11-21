@@ -1,3 +1,4 @@
+import { cache } from "react";
 import {
   CommercialStatus,
   ProjectRole,
@@ -8,6 +9,7 @@ import {
 } from "@prisma/client";
 import { isHostedSaas, isPlatformAdminEmail } from "@/lib/env";
 import { prisma } from "@/lib/db";
+import { resolveProjectCapabilities } from "@/lib/authz-capabilities";
 
 export type SessionUser = {
   id: string;
@@ -22,6 +24,8 @@ export type ProjectAccess = {
   isOwner: boolean;
   isLead: boolean;
   isTechnician: boolean;
+  /** Contractor membership (technician-level, never lead). */
+  isContractor: boolean;
   canManageWorkspace: boolean;
   canManageProject: boolean;
   canPublishPlan: boolean;
@@ -29,6 +33,8 @@ export type ProjectAccess = {
   canUpdateInstall: boolean;
   canPhysicalVerify: boolean;
   canResolveExceptions: boolean;
+  /** Contractor QC acknowledge (lead uses canResolveExceptions instead). */
+  canQcAcknowledge: boolean;
   canExport: boolean;
   canView: boolean;
 };
@@ -42,26 +48,26 @@ export function commercialAllowsMutations(status: CommercialStatus): boolean {
   return status === CommercialStatus.PILOT || status === CommercialStatus.PAID;
 }
 
-export async function getProjectAccess(
-  user: SessionUser,
-  projectId: string,
-): Promise<ProjectAccess | null> {
-  const project = await prisma.project.findUnique({ where: { id: projectId } });
-  if (!project) return null;
+/** Per-request cache — pages that call access + nested loaders share one lookup. */
+export const getProjectAccess = cache(
+  async (user: SessionUser, projectId: string): Promise<ProjectAccess | null> => {
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project) return null;
 
-  const [wsMembership, projMembership] = await Promise.all([
-    prisma.workspaceMembership.findUnique({
-      where: {
-        workspaceId_userId: { workspaceId: project.workspaceId, userId: user.id },
-      },
-    }),
-    prisma.projectMembership.findUnique({
-      where: { projectId_userId: { projectId, userId: user.id } },
-    }),
-  ]);
+    const [wsMembership, projMembership] = await Promise.all([
+      prisma.workspaceMembership.findUnique({
+        where: {
+          workspaceId_userId: { workspaceId: project.workspaceId, userId: user.id },
+        },
+      }),
+      prisma.projectMembership.findUnique({
+        where: { projectId_userId: { projectId, userId: user.id } },
+      }),
+    ]);
 
-  return buildAccess(project, wsMembership, projMembership);
-}
+    return buildAccess(project, wsMembership, projMembership);
+  },
+);
 
 function buildAccess(
   project: Project,
@@ -69,32 +75,26 @@ function buildAccess(
   projMembership: ProjectMembership | null,
 ): ProjectAccess | null {
   const isOwner = wsMembership?.role === WorkspaceRole.OWNER;
-  const isLead = projMembership?.role === ProjectRole.LEAD || isOwner;
-  const isTechnician = projMembership?.role === ProjectRole.TECHNICIAN || isLead;
 
-  // Owners see all workspace projects; leads/techs need membership
+  // Owners see all workspace projects; leads/techs/contractors need membership
   if (!isOwner && !projMembership) {
     return null;
   }
 
   const paid = commercialAllowsMutations(project.commercialStatus) || project.isDemo;
+  const caps = resolveProjectCapabilities({
+    isOwner,
+    role: projMembership?.role ?? null,
+    contractor: projMembership?.contractor ?? false,
+    paid,
+  });
 
   return {
     project,
     workspaceRole: wsMembership?.role ?? null,
     projectRole: projMembership?.role ?? null,
-    isOwner,
-    isLead,
-    isTechnician,
+    ...caps,
     canManageWorkspace: isOwner,
-    canManageProject: isLead && paid,
-    canPublishPlan: isLead && paid,
-    canImportEvidence: isLead && paid,
-    canUpdateInstall: isTechnician && paid,
-    canPhysicalVerify: isTechnician && paid,
-    canResolveExceptions: isLead && paid,
-    canExport: isLead && paid,
-    canView: true,
   };
 }
 
@@ -146,7 +146,7 @@ export async function requirePlatformAdmin(user: SessionUser) {
   }
 }
 
-export async function listVisibleProjects(user: SessionUser) {
+export const listVisibleProjects = cache(async function listVisibleProjects(user: SessionUser) {
   const memberships = await prisma.workspaceMembership.findMany({
     where: { userId: user.id },
     include: {
@@ -176,4 +176,4 @@ export async function listVisibleProjects(user: SessionUser) {
   return Array.from(byId.values()).sort(
     (a, b) => b.updatedAt.getTime() - a.updatedAt.getTime(),
   );
-}
+});

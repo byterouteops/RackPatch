@@ -1,5 +1,6 @@
 import { parse } from "csv-parse/sync";
 import { z } from "zod";
+import { normalizeCableType } from "@/lib/cable-type";
 import {
   endpointKey,
   normalizeDevice,
@@ -245,7 +246,7 @@ export function normalizeMappedRows(
       zPort,
       zDeviceNorm,
       zPortNorm,
-      cableType,
+      cableType: cableType ? normalizeCableType(cableType) : null,
       notes,
       endpointKey: endpointKey(aDeviceNorm, aPortNorm, zDeviceNorm, zPortNorm),
     });

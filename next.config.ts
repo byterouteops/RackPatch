@@ -2,6 +2,7 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  devIndicators: { position: "bottom-right" },
   async headers() {
     const csp = [
       "default-src 'self'",

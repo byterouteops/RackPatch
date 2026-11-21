@@ -8,6 +8,7 @@ import { requireSessionUser } from "@/lib/session";
 import { requireProjectAccess } from "@/lib/authz";
 import { assertPaidOrThrow } from "@/app/actions/workspace";
 import { recordAudit } from "@/lib/audit";
+import { enqueueOutboundWebhook } from "@/lib/webhook-dispatch";
 
 const updateSchema = z.object({
   projectId: z.string(),
@@ -68,6 +69,13 @@ export async function updateInstallStatus(raw: z.infer<typeof updateSchema>) {
     summary: `${link.cableId} → ${data.status}${
       data.status === InstallStatus.BLOCKED ? ` (${data.blockedReason})` : ""
     }`,
+  });
+
+  enqueueOutboundWebhook(data.projectId, "install.update", {
+    linkId: link.id,
+    cableId: link.cableId,
+    status: data.status,
+    version: updated.version,
   });
 
   revalidatePath(`/app/projects/${data.projectId}/cables`);

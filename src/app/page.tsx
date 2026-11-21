@@ -43,8 +43,8 @@ export default function Home() {
             <BrandMark size={28} />
             <span>
               RackPatch
-              <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-white/50">
-                Community Edition
+              <span className="mt-0.5 block text-[10px] font-medium uppercase tracking-[0.12em] text-[var(--cyan)]">
+                Data Center Cabling Management
               </span>
             </span>
           </div>
@@ -68,7 +68,7 @@ export default function Home() {
             className="pointer-events-none absolute inset-0 opacity-[0.12]"
             style={{
               backgroundImage:
-                "linear-gradient(90deg, transparent 0, transparent 49%, #049fd9 50%, transparent 51%), linear-gradient(0deg, transparent 0, transparent 49%, #049fd9 50%, transparent 51%)",
+                "linear-gradient(90deg, transparent 0, transparent 49%, #06b6d4 50%, transparent 51%), linear-gradient(0deg, transparent 0, transparent 49%, #06b6d4 50%, transparent 51%)",
               backgroundSize: "48px 48px",
             }}
             aria-hidden

@@ -1,17 +1,26 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Mono, IBM_Plex_Sans } from "next/font/google";
+import { Inter, JetBrains_Mono, Plus_Jakarta_Sans } from "next/font/google";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-ibm-plex-sans",
+const jakarta = Plus_Jakarta_Sans({
+  variable: "--font-jakarta",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600", "700", "800"],
+  display: "swap",
 });
 
-const plexMono = IBM_Plex_Mono({
-  variable: "--font-ibm-plex-mono",
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const jetbrains = JetBrains_Mono({
+  variable: "--font-jetbrains",
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
 });
 
 const headline = "Know which cables are right before you hand over the rack.";
@@ -31,10 +40,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body className={`${plexSans.variable} ${plexMono.variable} antialiased`}>
-        {children}
-      </body>
+    <html
+      lang="en"
+      className={`${jakarta.variable} ${inter.variable} ${jetbrains.variable}`}
+    >
+      <body className={`${inter.className} antialiased`}>{children}</body>
     </html>
   );
 }

@@ -12,10 +12,10 @@
 | Install / block / physical verify | Implemented |
 | Installer ≠ verifier rule | Implemented |
 | Label template designer / batch PDF | **Limited / not full Phase 13 scope** |
-| Camera QR scanner | **Not built** |
-| Photo evidence store | **Not built** |
-| Offline sync | **Not built** |
+| Camera QR scanner | **Implemented** (BarcodeDetector + paste fallback; this project only) |
+| Photo evidence store | **Implemented** |
+| Offline sync | **Implemented** (device queue → server sync) |
 
 ## GO / NO-GO
 
-**NO-GO** for full Phase 13 build now — extend labels incrementally after v1; document gaps honestly.
+**GO** for camera scan + offline queue + photo evidence. Full label template designer remains limited.

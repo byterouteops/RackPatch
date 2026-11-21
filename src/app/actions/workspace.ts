@@ -8,6 +8,8 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { commercialAllowsMutations, requireWorkspaceOwner } from "@/lib/authz";
 import { recordAudit } from "@/lib/audit";
+import { ensureSite } from "@/lib/sites";
+import { trackEvent } from "@/lib/analytics";
 import { slugify } from "@/lib/utils";
 
 const createWorkspaceSchema = z.object({
@@ -55,12 +57,15 @@ export async function createProject(raw: z.infer<typeof createProjectSchema>) {
   const data = createProjectSchema.parse(raw);
   await requireWorkspaceOwner(user, data.workspaceId);
 
+  const site = await ensureSite(data.workspaceId, data.site);
+
   const project = await prisma.project.create({
     data: {
       workspaceId: data.workspaceId,
       name: data.name,
       customerName: data.customerName || null,
-      site: data.site,
+      site: site.name,
+      siteId: site.id,
       timeZone: data.timeZone,
       commercialStatus: "NONE",
       memberships: {
@@ -76,6 +81,12 @@ export async function createProject(raw: z.infer<typeof createProjectSchema>) {
     action: "project.create",
     summary: `Created project ${project.name} at ${project.site}`,
   });
+  await trackEvent({
+    name: "project.create",
+    projectId: project.id,
+    workspaceId: data.workspaceId,
+    actorId: user.id,
+  });
 
   revalidatePath("/app");
   return project;
@@ -86,12 +97,21 @@ const inviteSchema = z.object({
   email: z.string().email(),
   role: z.nativeEnum(ProjectRole),
   projectId: z.string().min(1),
+  contractor: z.boolean().optional().default(false),
 });
 
-export async function inviteTeammate(raw: z.infer<typeof inviteSchema>) {
+export async function inviteTeammate(raw: z.input<typeof inviteSchema>) {
   const user = await requireSessionUser();
   const data = inviteSchema.parse(raw);
   await requireWorkspaceOwner(user, data.workspaceId);
+  if (data.contractor && data.role !== ProjectRole.TECHNICIAN) {
+    throw new Error("Contractors must be invited as Technician");
+  }
+  const project = await prisma.project.findFirst({
+    where: { id: data.projectId, workspaceId: data.workspaceId },
+    select: { id: true },
+  });
+  if (!project) throw new Error("Project not found in this workspace");
 
   const token = randomBytes(32).toString("hex");
   const tokenHash = createHash("sha256").update(token).digest("hex");
@@ -100,6 +120,7 @@ export async function inviteTeammate(raw: z.infer<typeof inviteSchema>) {
       workspaceId: data.workspaceId,
       email: data.email.toLowerCase(),
       role: data.role,
+      contractor: data.contractor,
       projectId: data.projectId,
       tokenHash,
       expiresAt: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
@@ -112,7 +133,7 @@ export async function inviteTeammate(raw: z.infer<typeof inviteSchema>) {
     projectId: data.projectId,
     actorId: user.id,
     action: "invitation.create",
-    summary: `Invited ${data.email} as ${data.role}`,
+    summary: `Invited ${data.email} as ${data.contractor ? "contractor " : ""}${data.role}`,
   });
 
   revalidatePath(`/app/workspaces/${data.workspaceId}/team`);
@@ -151,8 +172,12 @@ export async function acceptInvitation(token: string) {
         projectId: invitation.projectId!,
         userId: user.id,
         role: invitation.role,
+        contractor: invitation.contractor && invitation.role === ProjectRole.TECHNICIAN,
       },
-      update: { role: invitation.role },
+      update: {
+        role: invitation.role,
+        contractor: invitation.contractor && invitation.role === ProjectRole.TECHNICIAN,
+      },
     });
   });
 
@@ -161,7 +186,7 @@ export async function acceptInvitation(token: string) {
     projectId: invitation.projectId,
     actorId: user.id,
     action: "invitation.accept",
-    summary: `${user.email} accepted invitation as ${invitation.role}`,
+    summary: `${user.email} accepted invitation as ${invitation.contractor ? "contractor " : ""}${invitation.role}`,
   });
 
   revalidatePath("/app");
@@ -176,4 +201,25 @@ export async function assertPaidOrThrow(projectId: string) {
     );
   }
   return project;
+}
+
+const createSiteSchema = z.object({
+  workspaceId: z.string().min(1),
+  name: z.string().min(1).max(120),
+});
+
+export async function createSite(raw: z.infer<typeof createSiteSchema>) {
+  const user = await requireSessionUser();
+  const data = createSiteSchema.parse(raw);
+  await requireWorkspaceOwner(user, data.workspaceId);
+  const site = await ensureSite(data.workspaceId, data.name);
+  await recordAudit({
+    workspaceId: data.workspaceId,
+    actorId: user.id,
+    action: "site.create",
+    summary: `Ensured site ${site.name}`,
+  });
+  revalidatePath(`/app/workspaces/${data.workspaceId}/sites`);
+  revalidatePath("/app");
+  return site;
 }

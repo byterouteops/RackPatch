@@ -29,6 +29,7 @@ describe("permission boundaries", () => {
     name: "X",
     customerName: null,
     site: "S",
+    siteId: null,
     timeZone: "UTC",
     commercialStatus: CommercialStatus.NONE,
     isDemo: false,

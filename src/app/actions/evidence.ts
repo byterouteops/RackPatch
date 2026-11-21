@@ -12,6 +12,8 @@ import type { EvidenceFormat } from "@/lib/lldp/types";
 import { normalizeDevice, normalizePort } from "@/lib/csv/normalize";
 import { recordAudit } from "@/lib/audit";
 import { recomputeFindings } from "@/lib/verify/recompute";
+import { enqueueOutboundWebhook } from "@/lib/webhook-dispatch";
+import { trackEvent } from "@/lib/analytics";
 
 const formatSchema = z
   .enum([
@@ -71,8 +73,19 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
   );
   const formatLabel = parsed.format ?? data.format ?? "auto";
 
+  const job = await prisma.collectionJob.create({
+    data: {
+      projectId: data.projectId,
+      status: "RUNNING",
+      sourceDevice: data.sourceDevice,
+      createdById: user.id,
+      startedAt: new Date(),
+      note: "manual_paste",
+    },
+  });
+
   if (parsed.failed) {
-    await prisma.evidenceImport.create({
+    const failedImp = await prisma.evidenceImport.create({
       data: {
         projectId: data.projectId,
         sourceDevice: data.sourceDevice,
@@ -86,13 +99,22 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
         captureTime: data.captureTime ? new Date(data.captureTime) : null,
       },
     });
+    await prisma.collectionJob.update({
+      where: { id: job.id },
+      data: {
+        status: "FAILED",
+        finishedAt: new Date(),
+        error: parsed.error,
+        evidenceImportId: failedImp.id,
+      },
+    });
     await recordAudit({
       projectId: data.projectId,
       actorId: user.id,
       action: "evidence.neighbor.failed",
       summary: `Neighbor evidence import failed for ${data.sourceDevice}: ${parsed.error}`,
     });
-    return { ok: false as const, error: parsed.error, warnings: parsed.warnings };
+    return { ok: false as const, error: parsed.error, warnings: parsed.warnings, jobId: job.id };
   }
 
   for (const a of data.deviceAliases ?? []) {
@@ -167,19 +189,42 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
     },
   });
 
+  await prisma.collectionJob.update({
+    where: { id: job.id },
+    data: {
+      status: "COMPLETED",
+      finishedAt: new Date(),
+      evidenceImportId: imp.id,
+    },
+  });
+
   await recordAudit({
     projectId: data.projectId,
     actorId: user.id,
     action: "evidence.neighbor.import",
     summary: `Imported ${formatLabel} from ${data.sourceDevice} (${parsed.observations.length} neighbors)`,
-    metadata: { format: formatLabel },
+    metadata: { format: formatLabel, jobId: job.id },
   });
 
   await recomputeFindings(data.projectId);
+  enqueueOutboundWebhook(data.projectId, "evidence.import", {
+    importId: imp.id,
+    jobId: job.id,
+    sourceDevice: data.sourceDevice,
+    observationCount: parsed.observations.length,
+  });
+  await trackEvent({
+    name: "evidence.import",
+    projectId: data.projectId,
+    actorId: user.id,
+    props: { observationCount: parsed.observations.length },
+  });
   revalidatePath(`/app/projects/${data.projectId}`);
+  revalidatePath(`/app/projects/${data.projectId}/lldp`);
   return {
     ok: true as const,
     importId: imp.id,
+    jobId: job.id,
     observationCount: parsed.observations.length,
     warnings: parsed.warnings,
     format: parsed.format,

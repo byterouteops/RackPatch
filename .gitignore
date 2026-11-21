@@ -44,3 +44,13 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# playwright
+/test-results/
+/playwright-report/
+
+# large UI design PNG archive (manifests kept under docs/implementation)
+/design-references/rackpatch/RackPatch_UI_Images/
+/design-references/image-inventory.json
+
+/ui-audit-shots/

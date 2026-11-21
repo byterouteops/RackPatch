@@ -1,18 +1,18 @@
 import Link from "next/link";
 import { format } from "date-fns";
-import { CheckCircle2, FileText } from "lucide-react";
+import { AlertTriangle, CheckCircle2, FileText, Lock } from "lucide-react";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { HandoverActions } from "@/components/handover-actions";
 import { HandoverShareButton } from "@/components/handover-share-button";
-import { ProjectSubnav } from "@/components/project-subnav";
+import { ProjectPageHeader } from "@/components/project-page-header";
 import { getAppUrl } from "@/lib/env";
 import {
   AlertBanner,
+  Badge,
   Card,
   EmptyState,
-  PageHeader,
   StatCard,
 } from "@/components/ui";
 
@@ -24,7 +24,15 @@ export default async function HandoverPage({
   const { projectId } = await params;
   const user = await requireSessionUser();
   const access = await getProjectAccess(user, projectId);
-  if (!access) return <EmptyState title="Permission denied" />;
+  if (!access) {
+    return (
+      <EmptyState
+        icon={<Lock className="h-5 w-5" aria-hidden />}
+        title="Permission denied"
+        description="You do not have access to this project."
+      />
+    );
+  }
 
   const snapshots = await prisma.handoverSnapshot.findMany({
     where: { projectId },
@@ -52,8 +60,13 @@ export default async function HandoverPage({
 
   return (
     <div>
-      <PageHeader title="Handover" description="Export evidence-backed rack status." />
-      <ProjectSubnav projectId={projectId} />
+      <ProjectPageHeader
+        projectId={projectId}
+        projectName={access.project.name}
+        section="Handover"
+        title="Handover"
+        description="Export evidence-backed rack status."
+      />
 
       <div className="mb-6">
         {notReady ? (
@@ -99,63 +112,81 @@ export default async function HandoverPage({
           <StatCard
             label="Unresolved"
             value={unresolvedLive}
-            icon={<FileText className="h-5 w-5" aria-hidden />}
+            icon={<AlertTriangle className="h-5 w-5" aria-hidden />}
             tone={unresolvedLive > 0 ? "danger" : "neutral"}
           />
         </div>
       )}
 
       {!access.canExport ? (
-        <EmptyState
-          title="Export not allowed"
-          description="Requires lead role and activated project."
-        />
+        <div className="mb-6">
+          <EmptyState
+            icon={<Lock className="h-5 w-5" aria-hidden />}
+            title="Export not allowed"
+            description="Requires lead role and activated project."
+          />
+        </div>
       ) : (
-        <Card title="Export & snapshot" className="mb-6">
+        <Card
+          title="Export & snapshot"
+          description="Download a CSV export or freeze the current state as a snapshot."
+          className="mb-6"
+        >
           <HandoverActions projectId={projectId} snapshotsEnabled />
         </Card>
       )}
 
-      <Card title="Recent snapshots">
+      <Card title="Recent snapshots" description="Latest 20 snapshots, newest first." flush>
         {snapshots.length === 0 ? (
-          <p className="text-sm text-[var(--muted-fg)]">No snapshots yet.</p>
+          <p className="p-5 text-sm text-[var(--muted-fg)]">No snapshots yet.</p>
         ) : (
-          <ul className="divide-y divide-[var(--border)] text-sm">
-            {snapshots.map((s) => (
-              <li
-                key={s.id}
-                className="flex flex-col gap-1 py-3 sm:flex-row sm:items-center sm:justify-between"
-              >
-                <div>
-                  <p className="font-medium">{s.title || s.id}</p>
-                  <p className="text-[var(--muted-fg)]">{format(s.createdAt, "PPpp")}</p>
-                  {s.hasUnresolvedExceptions && (
-                    <p className="mt-1 text-xs font-medium text-[var(--warning)]">
-                      Captured with unresolved exceptions
-                    </p>
-                  )}
-                </div>
-                <div className="sm:text-right">
-                  <Link
-                    href={`/app/projects/${projectId}/handover/${s.id}`}
-                    className="font-medium text-[var(--accent)] hover:underline"
-                  >
-                    Print report →
-                  </Link>
-                  {access.canExport && (
-                    <HandoverShareButton
-                      projectId={projectId}
-                      snapshotId={s.id}
-                      existingUrl={
-                        s.shareToken ? `${getAppUrl()}/share/handover/${s.shareToken}` : null
-                      }
-                      expiresAt={s.shareExpiresAt?.toISOString() ?? null}
-                    />
-                  )}
-                </div>
-              </li>
-            ))}
-          </ul>
+          <div className="overflow-x-auto">
+            <table className="rp-table">
+              <thead>
+                <tr>
+                  <th>Snapshot</th>
+                  <th>Created</th>
+                  <th>State</th>
+                  <th className="text-right">Report &amp; sharing</th>
+                </tr>
+              </thead>
+              <tbody>
+                {snapshots.map((s) => (
+                  <tr key={s.id} className="align-top">
+                    <td className="font-medium">{s.title || s.id}</td>
+                    <td className="whitespace-nowrap text-[var(--muted-fg)]">
+                      {format(s.createdAt, "PPpp")}
+                    </td>
+                    <td>
+                      {s.hasUnresolvedExceptions ? (
+                        <Badge tone="warning">Unresolved exceptions</Badge>
+                      ) : (
+                        <Badge tone="success">Clear</Badge>
+                      )}
+                    </td>
+                    <td className="text-right">
+                      <Link
+                        href={`/app/projects/${projectId}/handover/${s.id}`}
+                        className="rp-focus font-semibold text-[var(--accent)] hover:underline"
+                      >
+                        Print report →
+                      </Link>
+                      {access.canExport && (
+                        <HandoverShareButton
+                          projectId={projectId}
+                          snapshotId={s.id}
+                          existingUrl={
+                            s.shareToken ? `${getAppUrl()}/share/handover/${s.shareToken}` : null
+                          }
+                          expiresAt={s.shareExpiresAt?.toISOString() ?? null}
+                        />
+                      )}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
         )}
       </Card>
     </div>
