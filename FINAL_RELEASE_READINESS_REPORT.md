@@ -6,34 +6,36 @@
 
 ## Verdict
 
-# NOT READY to publish
+# NOT READY to publish publicly
 
-Evidence below. Local product quality for Community Edition core workflows is strong; **publication gates remain open**.
+Private GitHub + live Railway smoke are done. **Public GitHub / Marketplace / outreach still need your explicit approval.**
 
 ---
 
 ## 1. Executive summary
 
-RackPatch CE core path (plan → install → NX-OS LLDP → exceptions → independent verify → handover) passes automated checks. First-run administrator bootstrap is implemented. Production `next build` succeeds. Railway config and docs are prepared locally.
+RackPatch CE core path (plan → install → multi-vendor neighbor evidence → exceptions → independent verify → handover) passes automated checks. First-run administrator bootstrap is implemented. Production `next build` succeeds. GitHub Actions CI is green on `master`. A live Railway project was created and smoke-tested.
 
-**Blocked for public GitHub / Railway Marketplace:** no remote repository URL, no live Railway template deploy test, no Marketplace submission, screenshots incomplete, your explicit publish approval required.
+**Still blocked for public launch:** repo visibility is private; no Marketplace submission; Resend not configured for production magic links; screenshots/marketing publish not approved.
 
 ---
 
-## 2. Actual test results (this session)
+## 2. Actual test results
 
 | Check | Result |
 |-------|--------|
-| `npm run lint` | **PASS** |
-| `npm run typecheck` | **PASS** |
-| `npm test` | **PASS** — 7 files, 26 tests (includes bootstrap) |
-| `npm run test:authz` | **PASS** |
-| `npm run test:full` | **PASS** — all workflow assertions |
-| `npm run build` | **PASS** |
-| Docker image build | **NOT RUN** this session (time; Dockerfile present) |
-| Live Railway deploy | **NOT TESTED** (no approval / no spend) |
-| Playwright browser E2E suite | **N/A** — not a project dependency |
-| UI smoke (manual browser) | **PASS** — landing, sign-in (demo lead), projects, overview (9/6/5/2), cables (9), handover (“not clear” + 2 unresolved), `/demo` `/about` `/api/ready` 200 |
+| `npm run lint` / `typecheck` / `test` / `build` | **PASS** (local; Next.js 15.5.29) |
+| GitHub Actions CI (`master`) | **PASS** (runs after workflow restore) |
+| Gitleaks (git history) | **PASS** — no leaks found |
+| Live Railway deploy | **PASS** — web Online |
+| `GET /api/health` | **200** |
+| `GET /api/ready` | **200** |
+| `GET /sign-in` | **200** — first-run “Create administrator” |
+| `GET /` | **200** |
+| Railway Marketplace publish | **NOT DONE** |
+| Public GitHub | **NOT DONE** (repo private) |
+
+**Live URL (test project):** https://web-production-a08e5b12.up.railway.app  
 
 ---
 
@@ -41,67 +43,42 @@ RackPatch CE core path (plan → install → NX-OS LLDP → exceptions → indep
 
 | Item | Status |
 |------|--------|
-| `ENABLE_DEV_LOGIN` refused in production | Pass (code) |
-| `BETTER_AUTH_SECRET` length/placeholder checks | Pass (code) |
-| Cross-workspace authz script | Pass |
-| First-run bootstrap race guard (`pg_advisory_xact_lock`) | Implemented + unit tested |
-| No default admin password | Pass |
-| Open email/password signup in production | Disabled (`disableSignUp` unless dev login) |
-| Gitleaks on history | **NOT RUN** (first commit pending / local only) |
+| `ENABLE_DEV_LOGIN` refused in production | Pass (code; unset on Railway) |
+| `BETTER_AUTH_SECRET` length/placeholder checks | Pass (code + set on Railway) |
+| First-run bootstrap race guard | Implemented + unit tested |
+| Gitleaks on history | **PASS** |
+| Production magic-link email (Resend) | **NOT CONFIGURED** |
 
 ---
 
-## 4. Deployment readiness (local)
+## 4. Deployment
 
 | Item | Status |
 |------|--------|
-| Dockerfile multi-stage standalone | Present |
-| `railway.toml` migrate + `/api/ready` | Present |
-| Postgres evidence storage (no volume for LLDP text) | Pass |
-| First-run admin when zero users | Implemented |
-| `.env.example` | Updated |
-| Customer-owned Railway only (no publisher hosting) | Design intent documented |
+| Private GitHub `byterouteops/RackPatch` | Pushed |
+| Railway project `RackPatch` + Postgres | Created |
+| Migrations applied | Done (first deploy needed manual migrate; fixed preDeploy + migrate-on-start) |
+| Customer-owned Railway only | Design intent unchanged |
 
 ---
 
-## 5. Feature freeze
+## 5. Remaining blockers for public publish
 
-See [FEATURE_FREEZE.md](FEATURE_FREEZE.md). Do not advertise Phases 9–19/22 product features.
-
----
-
-## 6. Launch pack prepared (not published)
-
-- Three synthetic demo CSVs + scripts (GPU / closet / contractor)
-- LinkedIn / GitHub / Marketplace copy drafts
-- First-10 plan, 60-day plan, adoption metrics, feedback template
-- Phase 22 architecture NO-GO; Phase 23 quality audit; Phase 24 Railway audit
-
----
-
-## 7. Remaining blockers
-
-1. **Your approval** to create remote + push (public or private)  
-2. **Gitleaks** (or equivalent) on first pushed history  
-3. **Fresh Railway deploy test** (may incur cost — needs approval)  
-4. **Marketplace publish** + template ID + screenshots  
-5. **Resend** (or equivalent) for non-bootstrap magic-link email in production  
-6. Optional: Docker image build verification in CI artifact  
+1. **Your approval** to make the GitHub repo public  
+2. **Marketplace publish** + template ID + screenshots  
+3. **Resend** (or equivalent) for non-bootstrap magic-link email  
+4. Optional: rotate any secrets exposed during local debug sessions  
 
 ### Requires your approval before
 
-- `git push` / GitHub visibility change  
+- Public GitHub visibility  
 - Railway Marketplace publish  
-- Paid Railway test project  
 - Customer outreach / LinkedIn publish  
 
 ---
 
-## 8. READY TO PUBLISH?
+## 6. READY TO PUBLISH?
 
-| Question | Answer |
-|----------|--------|
-| Ready to develop / self-host locally? | **Yes** |
-| Ready for public Marketplace + kickback validation? | **No — NOT READY** |
+**NO** for public Marketplace / public GitHub.
 
-**Recommendation: NOT READY to publish.** Complete blockers 1–4 with your approval, re-run this report’s checks, then flip to READY TO PUBLISH.
+**YES** for continued private testing on the live Railway URL above (create first admin via `/sign-in`).
