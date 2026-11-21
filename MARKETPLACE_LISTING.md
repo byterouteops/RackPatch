@@ -1,6 +1,6 @@
 # Marketplace listing draft — RackPatch
 
-**Status:** Draft only — **not submitted** to Railway Marketplace.
+**Status:** Assets ready. Template **not yet published** (Railway CLI template generate blocked; finish in dashboard — see `docs/marketplace/README.md`).
 
 ## Title
 
@@ -22,8 +22,8 @@ Features:
 
 - CSV cable plan imports
 - Rack-level cable tracking
-- Mobile installation workflows
-- Cisco NX-OS LLDP evidence imports
+- Mobile-friendly installation workflows
+- Multi-vendor neighbor evidence (Cisco NX-OS/IOS-XE LLDP, Cisco CDP, Arista EOS LLDP, Juniper Junos LLDP)
 - Expected-versus-observed port comparison
 - Swapped cable detection
 - Independent physical verification
@@ -40,14 +40,16 @@ datacenter, networking, cabling, lldp, nextjs, postgresql, railway, open-source
 
 ## Screenshots
 
-**NOT CAPTURED in this draft.** Capture from a running instance before publish:
+Captured in `docs/marketplace/`:
 
-1. Project overview
-2. Cable inventory
-3. Cable detail (A/Z)
-4. LLDP / exceptions
-5. Handover
-6. Mobile cable detail
+1. `01-overview.png` — project overview
+2. `02-cables.png` — cable inventory
+3. `03-exceptions.png` — LLDP / exceptions
+4. `04-handover.png` — handover report
+
+## Source
+
+https://github.com/byterouteops/RackPatch (public)
 
 ## Deploy on Railway button
 
