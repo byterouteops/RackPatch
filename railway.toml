@@ -8,7 +8,8 @@ dockerfilePath = "Dockerfile"
 
 [deploy]
 # Run migrations before the new release serves traffic.
-preDeployCommand = ["npx", "prisma", "migrate", "deploy"]
+# String form is more reliable than argv arrays on Railway Dockerfile deploys.
+preDeployCommand = "npx prisma migrate deploy"
 healthcheckPath = "/api/ready"
 healthcheckTimeout = 30
 restartPolicyType = "ON_FAILURE"

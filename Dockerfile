@@ -40,4 +40,5 @@ EXPOSE 3000
 ENV PORT=3000
 ENV HOSTNAME=0.0.0.0
 
-CMD ["node", "server.js"]
+# Prefer Railway preDeployCommand; this is a safety net if pre-deploy is skipped.
+CMD ["sh", "-c", "npx prisma migrate deploy && node server.js"]
