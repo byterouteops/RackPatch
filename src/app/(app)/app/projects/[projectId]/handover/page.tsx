@@ -17,6 +17,9 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { HandoverActions } from "@/components/handover-actions";
 import { HandoverShareButton } from "@/components/handover-share-button";
+import { HandoverApprovalButton } from "@/components/handover-approval-button";
+import { HANDOVER_STAGES, STAGE_META, approvalBlocker } from "@/lib/handover/approval";
+import { countBlockingExceptions } from "@/lib/handover/blocking";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { ProjectStrip, StripFact } from "@/components/project-strip";
 import { getAppUrl } from "@/lib/env";
@@ -94,6 +97,17 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
   const ratio = (n: number, d: number) => (d > 0 ? Math.min(100, (n / d) * 100) : 0);
   const latest = snapshots[0];
   const shared = snapshots.some((s) => s.shareToken);
+  const [approvals, blockingExceptions] = latest
+    ? await Promise.all([
+        prisma.handoverApproval.findMany({
+          where: { snapshotId: latest.id },
+          include: { approver: { select: { name: true, email: true } } },
+        }),
+        rev ? countBlockingExceptions(rev) : Promise.resolve(0),
+      ])
+    : [[], 0];
+  const actor = { userId: user.id, projectRole: access.projectRole, contractor: access.isContractor, workspaceOwner: access.isOwner };
+  const approvalCtx = { approvals, blockingExceptions };
 
   const areas = [
     { label: "Cabling Installation", value: ratio(installed, total), href: "/work-orders" },
@@ -308,6 +322,61 @@ export default async function HandoverPage({ params }: { params: Promise<{ proje
           )}
         </section>
       </div>
+
+      <section className="rp-card mb-4 p-4" aria-label="Staged approvals">
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-2">
+          <h2 className="rp-display flex items-center gap-2 text-[15px] font-bold">
+            <ShieldCheck className="h-4 w-4" aria-hidden />
+            Staged Approvals
+          </h2>
+          <span className="text-xs text-[var(--muted-fg)]">
+            {latest ? `Signing against snapshot "${latest.title || latest.id}"` : "Create a handover snapshot to start sign-off"}
+          </span>
+        </div>
+        {latest && blockingExceptions > 0 && (
+          <div className="mb-3">
+            <AlertBanner tone="danger" title="Owner acceptance blocked">
+              {blockingExceptions} critical exception(s) are open without an authorized waiver.{" "}
+              <Link href={`/app/projects/${projectId}/exceptions`} className="font-semibold underline">
+                Resolve or waive them
+              </Link>
+              .
+            </AlertBanner>
+          </div>
+        )}
+        <ol className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+          {HANDOVER_STAGES.map((stage, i) => {
+            const signed = approvals.find((a) => a.stage === stage);
+            const blocker = latest ? approvalBlocker(stage, actor, approvalCtx) : "No snapshot yet.";
+            return (
+              <li
+                key={stage}
+                className={cn(
+                  "flex flex-col rounded-[var(--radius)] border p-3",
+                  signed ? "border-[var(--success)] bg-[var(--success-soft)]" : "border-[var(--border)]",
+                )}
+              >
+                <p className="text-[11px] font-semibold uppercase tracking-wide text-[var(--muted-fg)]">Stage {i + 1}</p>
+                <p className="text-sm font-bold">{STAGE_META[stage].label}</p>
+                <p className="mb-2 text-[11px] text-[var(--muted-fg)]">{STAGE_META[stage].who}</p>
+                {signed ? (
+                  <p className="mt-auto text-xs">
+                    <CheckCircle2 className="mr-1 inline h-3.5 w-3.5 text-[var(--success)]" aria-hidden />
+                    {signed.approver.name || signed.approver.email} · {fmt(signed.createdAt)}
+                    {signed.note && <span className="mt-1 block text-[var(--muted-fg)]">{signed.note}</span>}
+                  </p>
+                ) : blocker || !latest ? (
+                  <p className="mt-auto text-xs text-[var(--muted-fg)]">{blocker}</p>
+                ) : (
+                  <div className="mt-auto">
+                    <HandoverApprovalButton projectId={projectId} snapshotId={latest.id} stage={stage} label={STAGE_META[stage].label} />
+                  </div>
+                )}
+              </li>
+            );
+          })}
+        </ol>
+      </section>
 
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.4fr)_minmax(0,1fr)]">
         <section className="rp-card overflow-hidden" aria-label="Snapshots and sharing">

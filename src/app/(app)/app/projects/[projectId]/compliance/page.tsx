@@ -5,6 +5,7 @@ import { prisma } from "@/lib/db";
 import { getAppUrl } from "@/lib/env";
 import { requireSessionUser } from "@/lib/session";
 import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
+import { collectablePlannedDevices, evidenceAsOf, evidenceScope } from "@/lib/evidence/scope";
 import { DonutWithLegend, Panel } from "@/components/charts";
 import { CompliancePolicyForm } from "@/components/compliance-policy-form";
 import { ProjectPageHeader } from "@/components/project-page-header";
@@ -41,7 +42,7 @@ export default async function CompliancePage({
   }
   const rev = access.project.activeRevisionId;
 
-  const [policy, runs, links, imports, photoLinks] = await Promise.all([
+  const [policy, runs, links, imports, photoLinks, asOf] = await Promise.all([
     prisma.compliancePolicy.findUnique({ where: { projectId } }),
     prisma.complianceRun.findMany({ where: { projectId }, orderBy: { createdAt: "desc" }, take: 10 }),
     rev
@@ -60,19 +61,21 @@ export default async function CompliancePage({
         })
       : Promise.resolve([]),
     prisma.evidenceImport.findMany({
-      where: { projectId },
+      where: { ...evidenceScope(access.project), kind: "NEIGHBOR" },
       select: { sourceDevice: true, sourceDeviceNorm: true, uploadedAt: true, captureTime: true, parseFailed: true },
       orderBy: { uploadedAt: "desc" },
       take: 1000,
     }),
     prisma.fieldPhoto.findMany({ where: { projectId, plannedLinkId: { not: null } }, select: { plannedLinkId: true }, distinct: ["plannedLinkId"] }),
+    evidenceAsOf(access.project),
   ]);
 
   const maxAge = policy?.maxEvidenceAgeDays ?? 7;
   const staleness = computeEvidenceStaleness({
     imports,
-    plannedDevices: Array.from(new Set(links.flatMap((l) => [l.aDevice, l.zDevice]))),
+    plannedDevices: await collectablePlannedDevices(projectId, Array.from(new Set(links.flatMap((l) => [l.aDevice, l.zDevice])))),
     maxAgeDays: maxAge,
+    now: asOf,
   });
   const open = (l: (typeof links)[number], state: string) => l.findings[0]?.state === state && l.findings[0]?.exceptionStatus !== "CLOSED";
   const withPhoto = new Set(photoLinks.map((p) => p.plannedLinkId));

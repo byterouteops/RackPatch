@@ -10,6 +10,7 @@ import {
   Handshake,
   LayoutGrid,
   Network,
+  Server,
   ShieldCheck,
   Wrench,
   type LucideIcon,
@@ -23,6 +24,12 @@ function primaryTabs(projectId: string): Tab[] {
   const base = `/app/projects/${projectId}`;
   return [
     { href: base, label: "Overview", exact: true, icon: LayoutGrid },
+    {
+      href: `${base}/racks`,
+      label: "Fabric",
+      icon: Server,
+      match: [`${base}/racks`, `${base}/fabric`, `${base}/trace`],
+    },
     {
       href: `${base}/cables`,
       label: "Cable Plan",
@@ -120,6 +127,21 @@ function contextTabs(projectId: string, pathname: string): Tab[] | null {
       { href: `${base}/qc`, label: "QC" },
       { href: `${base}/compliance`, label: "Compliance" },
       { href: `${base}/collection`, label: "Collect" },
+    ];
+  }
+  if (pathname.startsWith(`${base}/racks`) || pathname.startsWith(`${base}/fabric`) || pathname.startsWith(`${base}/trace`)) {
+    return [
+      { href: `${base}/racks`, label: "Racks" },
+      { href: `${base}/fabric`, label: "Topology", exact: true },
+      { href: `${base}/fabric/fe`, label: "Front-end" },
+      { href: `${base}/fabric/be`, label: "Back-end" },
+      { href: `${base}/trace`, label: "Trace" },
+    ];
+  }
+  if (pathname.startsWith(`${base}/evidence`)) {
+    return [
+      { href: `${base}/evidence`, label: "Evidence", exact: true },
+      { href: `${base}/evidence/explorer`, label: "Explorer" },
     ];
   }
   if (pathname.startsWith(`${base}/cables`) || pathname.startsWith(`${base}/plan`)) {

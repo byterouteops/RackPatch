@@ -8,13 +8,14 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { inviteTeammate } from "@/app/actions/workspace";
 import { Badge, Button, EmptyState, Input, Select, StatCard } from "@/components/ui";
-type RoleKey = "owner" | "lead" | "technician" | "contractor";
+type RoleKey = "owner" | "lead" | "technician" | "contractor" | "viewer";
 
 const ROLES: Array<{ key: RoleKey; label: string; tone: "info" | "success" | "warning" | "neutral"; input: Omit<CapabilityInput, "paid"> }> = [
   { key: "owner", label: "Workspace Owner", tone: "info", input: { isOwner: true, role: null, contractor: false } },
   { key: "lead", label: "Project Lead", tone: "success", input: { isOwner: false, role: ProjectRole.LEAD, contractor: false } },
   { key: "technician", label: "Technician", tone: "warning", input: { isOwner: false, role: ProjectRole.TECHNICIAN, contractor: false } },
   { key: "contractor", label: "Contractor", tone: "neutral", input: { isOwner: false, role: ProjectRole.TECHNICIAN, contractor: true } },
+  { key: "viewer", label: "Viewer (Auditor)", tone: "neutral", input: { isOwner: false, role: ProjectRole.VIEWER, contractor: false } },
 ];
 
 const PERMS: Array<{ key: "canManageProject" | "canPublishPlan" | "canUpdateInstall" | "canPhysicalVerify" | "canImportEvidence" | "canResolveExceptions" | "canQcAcknowledge" | "canExport"; label: string }> = [
@@ -74,7 +75,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
 
   type Person = { id: string; name: string; email: string; role: RoleKey; projects: string[] };
   const people = new Map<string, Person>();
-  const rank: Record<RoleKey, number> = { owner: 3, lead: 2, technician: 1, contractor: 0 };
+  const rank: Record<RoleKey, number> = { owner: 4, lead: 3, technician: 2, contractor: 1, viewer: 0 };
   const add = (u: { id: string; name: string; email: string }, role: RoleKey, project?: string) => {
     const cur = people.get(u.id) ?? { id: u.id, name: u.name || u.email, email: u.email, role, projects: [] };
     if (rank[role] > rank[cur.role]) cur.role = role;
@@ -82,7 +83,8 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
     people.set(u.id, cur);
   };
   for (const o of owners) add(o.user, "owner");
-  for (const m of memberships) add(m.user, m.contractor ? "contractor" : m.role === "LEAD" ? "lead" : "technician", m.project.name);
+  for (const m of memberships)
+    add(m.user, m.contractor ? "contractor" : m.role === "LEAD" ? "lead" : m.role === "VIEWER" ? "viewer" : "technician", m.project.name);
   const list = [...people.values()].sort((a, b) => rank[b.role] - rank[a.role] || a.name.localeCompare(b.name));
 
   const lastSessions = list.length
@@ -323,6 +325,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
               <Select name="role" defaultValue="TECHNICIAN">
                 <option value="TECHNICIAN">Technician</option>
                 <option value="LEAD">Lead</option>
+                <option value="VIEWER">Viewer (read-only auditor)</option>
               </Select>
             </div>
             <label className="flex items-start gap-2 rounded-[var(--radius)] border border-[var(--border)] bg-[var(--muted)]/50 p-3 text-sm">
@@ -348,7 +351,7 @@ export default async function TeamPage({ params }: { params: Promise<{ workspace
                     <span className="min-w-0">
                       <span className="block truncate font-medium">{i.email}</span>
                       <span className="text-[11px] text-[var(--muted-fg)]">
-                        {i.contractor ? "Contractor" : i.role === "LEAD" ? "Lead" : "Technician"} {"\u00b7"} {workspace.projects.find((p) => p.id === i.projectId)?.name ?? "\u2014"}
+                        {i.contractor ? "Contractor" : i.role === "LEAD" ? "Lead" : i.role === "VIEWER" ? "Viewer" : "Technician"} {"\u00b7"} {workspace.projects.find((p) => p.id === i.projectId)?.name ?? "\u2014"}
                       </span>
                     </span>
                     <Badge tone={expired ? "danger" : "warning"}>{expired ? "Expired" : `Expires ${i.expiresAt.toISOString().slice(0, 10)}`}</Badge>

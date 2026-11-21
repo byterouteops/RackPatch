@@ -20,7 +20,7 @@ import { fetchNetBoxData, normalizeNetBoxBaseUrl } from "@/lib/netbox-client";
 import { parseNetBoxCableId, patchNetBoxCableLabel } from "@/lib/netbox-write";
 import { gitOpsToCsv, parseGitOps, type GitOpsFormat } from "@/lib/gitops";
 import { buildActivePlanGitOps } from "@/lib/gitops-export";
-import { importPlanCsv, type HeaderMapping } from "@/lib/csv/plan-import";
+import { importPlanCsv, type Fabric, type HeaderMapping } from "@/lib/csv/plan-import";
 import { publishPlanRevision } from "@/lib/plan/publish";
 import { notifyProjectLeads } from "@/lib/notifications";
 import { createHash } from "crypto";
@@ -460,7 +460,7 @@ export async function previewGitOpsImport(raw: z.infer<typeof importSchema>) {
     const current = await prisma.plannedLink.findMany({
       where: { revisionId: access.project.activeRevisionId },
     });
-    const d = diffRevisions(current.map((l) => toSnapshot({ ...l, lineNumber: 0 })), parsed.import.rows);
+    const d = diffRevisions(current.map((l) => toSnapshot({ ...l, lineNumber: 0, fabric: l.fabric as Fabric | null })), parsed.import.rows);
     diff = {
       added: d.added.length,
       removed: d.removed.length,

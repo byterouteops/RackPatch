@@ -4,6 +4,7 @@ import { getAppUrl } from "@/lib/env";
 import { sendEmail } from "@/lib/email";
 import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
 import { recomputeFindings } from "@/lib/verify/recompute";
+import { collectablePlannedDevices, evidenceAsOf, evidenceScope } from "@/lib/evidence/scope";
 import {
   buildComplianceEmail,
   evaluateCompliance,
@@ -52,7 +53,10 @@ export async function runComplianceCheck(
         where: { revisionId: project.activeRevisionId },
         select: { aDevice: true, zDevice: true },
       });
-      plannedDevices = Array.from(new Set(links.flatMap((l) => [l.aDevice, l.zDevice])));
+      plannedDevices = await collectablePlannedDevices(
+        projectId,
+        Array.from(new Set(links.flatMap((l) => [l.aDevice, l.zDevice]))),
+      );
 
       const rows = await prisma.verificationFinding.groupBy({
         by: ["state"],
@@ -70,7 +74,7 @@ export async function runComplianceCheck(
     }
 
     const imports = await prisma.evidenceImport.findMany({
-      where: { projectId },
+      where: { ...evidenceScope(project), kind: "NEIGHBOR" },
       select: {
         sourceDevice: true,
         sourceDeviceNorm: true,
@@ -86,6 +90,7 @@ export async function runComplianceCheck(
       imports,
       plannedDevices,
       maxAgeDays: policy.maxEvidenceAgeDays,
+      now: await evidenceAsOf(project),
     });
     evaluation = evaluateCompliance({ staleness, mismatchCount, needsReviewCount });
   } catch (e) {

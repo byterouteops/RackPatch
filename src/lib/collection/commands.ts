@@ -29,6 +29,11 @@ export const COLLECTION_PROFILES = {
     command: "show lldp neighbors detail",
     format: "juniper-junos-lldp" as const,
   },
+  "lldpd-keyvalue": {
+    label: "Linux / Cumulus lldpd",
+    command: "lldpcli show neighbors -f keyvalue",
+    format: "lldpd-keyvalue" as const,
+  },
 } as const;
 
 export type CollectionProfileId = keyof typeof COLLECTION_PROFILES;

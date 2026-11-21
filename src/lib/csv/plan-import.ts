@@ -18,7 +18,28 @@ export const PLAN_FIELDS = [
   "z_port",
   "cable_type",
   "notes",
+  "speed",
+  "length_m",
+  "connector",
+  "media",
+  "fabric",
+  "rail",
+  "color",
 ] as const;
+
+export const FABRICS = ["FE", "BE", "OOB", "EXT", "STORAGE", "PATCH"] as const;
+export type Fabric = (typeof FABRICS)[number];
+
+/** Optional physical attributes carried on a planned link. */
+export type LinkAttributes = {
+  speed: string | null;
+  lengthM: number | null;
+  connector: string | null;
+  media: string | null;
+  fabric: Fabric | null;
+  rail: string | null;
+  color: string | null;
+};
 
 export type PlanField = (typeof PLAN_FIELDS)[number];
 
@@ -40,7 +61,7 @@ export type ParsedPlanRow = {
   cableType: string | null;
   notes: string | null;
   endpointKey: string;
-};
+} & LinkAttributes;
 
 export type PlanIssue = {
   lineNumber: number;
@@ -81,13 +102,31 @@ export function suggestMapping(headers: string[]): HeaderMapping {
     z_rack: ["z_rack", "zrack", "rack_z", "to_rack", "far_rack"],
     z_device: ["z_device", "zdevice", "device_z", "to_device", "far_device", "z_host"],
     z_port: ["z_port", "zport", "port_z", "to_port", "far_port", "z_interface"],
-    cable_type: ["cable_type", "type", "media", "speed"],
-    notes: ["notes", "note", "comment", "comments"],
+    cable_type: ["cable_type", "cabletype", "type"],
+    notes: ["notes", "note", "comment", "comments", "purpose"],
+    speed: ["speed", "link_speed"],
+    length_m: ["length_m", "length", "length_meters"],
+    connector: ["connector", "connector_type", "optic"],
+    media: ["media", "media_type"],
+    fabric: ["fabric", "network"],
+    rail: ["rail"],
+    color: ["color", "colour", "cable_color"],
   };
 
+  const used = new Set<string>();
   for (const field of PLAN_FIELDS) {
-    const hit = lower.find((h) => aliases[field].includes(h.key));
-    if (hit) mapping[field] = hit.raw;
+    for (const alias of aliases[field]) {
+      const hit = lower.find((h) => h.key === alias && !used.has(h.raw));
+      if (hit) {
+        mapping[field] = hit.raw;
+        used.add(hit.raw);
+        break;
+      }
+    }
+  }
+  if (!mapping.cable_type && !mapping.media && !mapping.speed) {
+    const legacy = lower.find((h) => (h.key === "media" || h.key === "speed") && !used.has(h.raw));
+    if (legacy) mapping.cable_type = legacy.raw;
   }
   return mapping;
 }
@@ -165,6 +204,38 @@ export function normalizeMappedRows(
     const zPort = get(rec, "z_port");
     const cableType = mapping.cable_type ? get(rec, "cable_type") || null : null;
     const notes = mapping.notes ? get(rec, "notes") || null : null;
+    const opt = (field: PlanField) => (mapping[field] ? get(rec, field) || null : null);
+    const fabricRaw = opt("fabric");
+    const fabric = fabricRaw ? (fabricRaw.toUpperCase() as Fabric) : null;
+    if (fabric && !(FABRICS as readonly string[]).includes(fabric)) {
+      errors.push({
+        lineNumber,
+        severity: "error",
+        message: `Unknown fabric "${fabricRaw}" (use ${FABRICS.join(", ")})`,
+        cableId: cableId || undefined,
+      });
+      return;
+    }
+    const lengthRaw = opt("length_m");
+    const lengthM = lengthRaw ? Number(lengthRaw.replace(/m$/i, "").trim()) : null;
+    if (lengthRaw && (!Number.isFinite(lengthM) || (lengthM as number) <= 0 || (lengthM as number) > 10_000)) {
+      errors.push({
+        lineNumber,
+        severity: "error",
+        message: `Invalid length_m "${lengthRaw}" (metres, e.g. 3 or 12.5)`,
+        cableId: cableId || undefined,
+      });
+      return;
+    }
+    const attrs: LinkAttributes = {
+      speed: opt("speed"),
+      lengthM,
+      connector: opt("connector"),
+      media: opt("media"),
+      fabric,
+      rail: opt("rail"),
+      color: opt("color"),
+    };
 
     const parsed = rowSchema.safeParse({
       cableId,
@@ -249,6 +320,7 @@ export function normalizeMappedRows(
       cableType: cableType ? normalizeCableType(cableType) : null,
       notes,
       endpointKey: endpointKey(aDeviceNorm, aPortNorm, zDeviceNorm, zPortNorm),
+      ...attrs,
     });
   });
 

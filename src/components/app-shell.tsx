@@ -8,6 +8,8 @@ import { authClient } from "@/lib/auth-client";
 import { cn } from "@/lib/utils";
 import dynamic from "next/dynamic";
 import { BrandMark } from "@/components/brand-mark";
+import { FieldHints } from "@/components/field-hints";
+import { PageGuide } from "@/components/page-guide";
 import {
   SIDEBAR_PRIMARY,
   SIDEBAR_SECONDARY,
@@ -322,7 +324,11 @@ export function AppShell({ children, user, isPlatformAdmin, projects }: AppShell
           </Link>
         </header>
 
-        <main className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-6 sm:px-6">{children}</main>
+        <main className="mx-auto w-full max-w-[1520px] flex-1 px-4 py-6 sm:px-6">
+          <PageGuide />
+          {children}
+        </main>
+        <FieldHints />
       </div>
     </div>
   );

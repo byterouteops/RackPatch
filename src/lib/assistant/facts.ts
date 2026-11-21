@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/db";
 import { computeCapacitySummary } from "@/lib/capacity";
 import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
+import { loadEvidenceScope } from "@/lib/evidence/scope";
 import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
 import type { AssistantFacts } from "@/lib/assistant/answer";
 
@@ -29,6 +30,7 @@ export async function loadAssistantFacts(
     };
   }
 
+  const scope = await loadEvidenceScope(projectId);
   const [links, findings, imports] = await Promise.all([
     prisma.plannedLink.findMany({
       where: { revisionId: activeRevisionId },
@@ -40,7 +42,7 @@ export async function loadAssistantFacts(
       orderBy: { computedAt: "desc" },
     }),
     prisma.evidenceImport.findMany({
-      where: { projectId },
+      where: { ...scope, kind: "NEIGHBOR" },
       select: {
         sourceDevice: true,
         sourceDeviceNorm: true,

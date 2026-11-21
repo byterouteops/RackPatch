@@ -33,6 +33,7 @@ model User {
   workOrdersCreated     WorkOrder[]           @relation("WorkOrderCreator")
   workOrdersAssigned    WorkOrder[]           @relation("WorkOrderAssignee")
   notifications         UserNotification[]
+  handoverApprovals     HandoverApproval[]    @relation("HandoverApprover")
 
   @@map("user")
 }
@@ -90,6 +91,8 @@ enum WorkspaceRole {
 enum ProjectRole {
   LEAD
   TECHNICIAN
+  /// Read-only auditor: can view everything, mutate nothing.
+  VIEWER
 }
 
 enum CommercialStatus {
@@ -126,6 +129,15 @@ enum FindingType {
   CONFLICTING_OBSERVATIONS
   PHYSICAL_MISMATCH
   AWAITING
+  WRONG_NEIGHBOR
+  WRONG_PORT
+  MISSING_NEIGHBOR
+  STALE_EVIDENCE
+  AMBIGUOUS_IDENTITY
+  UNOBSERVABLE
+  PARSER_ERROR
+  LINK_DOWN
+  SPEED_MISMATCH
 }
 
 enum ExceptionStatus {
@@ -214,6 +226,8 @@ model Project {
   timeZone         String           @default("UTC")
   commercialStatus CommercialStatus @default(NONE)
   isDemo           Boolean          @default(false)
+  /// Demo projects only: which synthetic evidence snapshot recompute reads (BASELINE / FAULT_INJECTED / CORRECTED).
+  demoEvidenceSnapshot String?
   activeRevisionId String?          @unique
   createdAt        DateTime         @default(now())
   updatedAt        DateTime         @updatedAt
@@ -247,6 +261,8 @@ model Project {
   webhookEndpoints    WebhookEndpoint[]
   workOrders          WorkOrder[]
   labelTemplates      LabelTemplate[]
+  racks               Rack[]
+  handoverApprovals   HandoverApproval[]
 
   @@index([workspaceId])
   @@index([siteId])
@@ -302,6 +318,24 @@ enum PortStatus {
   RESERVED
 }
 
+/// Physical rack with a known height; device placement references it by name.
+model Rack {
+  id        String   @id @default(cuid())
+  projectId String
+  name      String
+  heightU   Int      @default(42)
+  purpose   String?
+  row       String?
+  position  Int?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@unique([projectId, name])
+  @@map("rack")
+}
+
 /// Project-scoped device record for port inventory (Phase 12 CE).
 model DeviceInventory {
   id        String   @id @default(cuid())
@@ -309,6 +343,16 @@ model DeviceInventory {
   name      String
   nameNorm  String
   rack      String?
+  /// Lowest rack unit occupied (1-based).
+  rackUnit  Int?
+  uHeight   Int?
+  model     String?
+  vendor    String?
+  /// e.g. fe-spine, fe-leaf, border-leaf, be-spine, be-leaf, gpu, cpu, controller, storage, oob, console, jump, router, firewall, panel
+  role      String?
+  face      String?
+  /// Design metadata (platform, NICs, services, discovery profile). Never measured state.
+  attributes Json?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -532,6 +576,14 @@ model PlannedLink {
   cableType       String?
   notes           String?
   endpointKey     String
+  speed           String?
+  lengthM         Float?
+  connector       String?
+  media           String?
+  /// FE, BE, OOB, EXT, STORAGE, PATCH
+  fabric          String?
+  rail            String?
+  color           String?
 
   revision           PlanRevision           @relation(fields: [revisionId], references: [id], onDelete: Cascade)
   runtime            LinkRuntime?
@@ -674,9 +726,17 @@ model EvidenceImport {
   parseWarnings   String[] @default([])
   parseFailed     Boolean  @default(false)
   parseError      String?
+  /// NEIGHBOR (LLDP/CDP) or INTERFACE_STATE (show interface status)
+  kind            String   @default("NEIGHBOR")
+  formatId        String?
+  osProfile       String?
+  /// Generated demo evidence; never a live collection.
+  synthetic       Boolean  @default(false)
+  demoSnapshot    String?
 
-  project      Project       @relation(fields: [projectId], references: [id], onDelete: Cascade)
-  observations Observation[]
+  project         Project                    @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  observations    Observation[]
+  interfaceStates InterfaceStateObservation[]
 
   @@index([projectId, sourceDeviceNorm, uploadedAt])
   @@map("evidence_import")
@@ -698,6 +758,21 @@ model Observation {
 
   @@index([evidenceImportId])
   @@map("observation")
+}
+
+/// Operational port state from `show interface status` (trustworthy source for link-down and speed).
+model InterfaceStateObservation {
+  id               String @id @default(cuid())
+  evidenceImportId String
+  port             String
+  portNorm         String
+  operState        String
+  speed            String?
+
+  evidenceImport EvidenceImport @relation(fields: [evidenceImportId], references: [id], onDelete: Cascade)
+
+  @@index([evidenceImportId])
+  @@map("interface_state_observation")
 }
 
 model DeviceAlias {
@@ -766,6 +841,15 @@ model VerificationFinding {
   closedAt           DateTime?
   closedReason       String?
   relatedCableId     String?
+  /// A, Z, AZ or null: which endpoints produced usable neighbor evidence.
+  observedSides      String?
+  /// BOTH_ENDPOINTS_OBSERVABLE / ONE_ENDPOINT_OBSERVABLE / NEITHER_ENDPOINT_OBSERVABLE / NOT_APPLICABLE
+  observability      String?
+  assigneeId         String?
+  dueAt              DateTime?
+  waivedAt           DateTime?
+  waivedById         String?
+  waiverReason       String?
   computedAt         DateTime          @default(now())
 
   plannedLink PlannedLink  @relation(fields: [plannedLinkId], references: [id], onDelete: Cascade)
@@ -794,9 +878,29 @@ model HandoverSnapshot {
 
   project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
   createdBy User    @relation(fields: [createdById], references: [id])
+  approvals HandoverApproval[]
 
   @@index([projectId, createdAt])
   @@map("handover_snapshot")
+}
+
+/// Staged sign-off on a handover snapshot (INSTALLATION, INDEPENDENT_QC, ENGINEERING, OWNER).
+model HandoverApproval {
+  id         String   @id @default(cuid())
+  projectId  String
+  snapshotId String
+  stage      String
+  approverId String
+  note       String?
+  createdAt  DateTime @default(now())
+
+  project  Project          @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  snapshot HandoverSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  approver User             @relation("HandoverApprover", fields: [approverId], references: [id])
+
+  @@unique([snapshotId, stage])
+  @@index([projectId])
+  @@map("handover_approval")
 }
 
 model AuditEvent {

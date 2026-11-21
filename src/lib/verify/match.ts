@@ -32,25 +32,42 @@ export type MatchKind =
   | "no_observation"
   | "conflicting";
 
+/** Precise outcome; `kind` stays as the coarse legacy classification. */
+export type MatchDetail =
+  | "match"
+  | "wrong_neighbor"
+  | "wrong_port"
+  | "ambiguous_identity"
+  | "ambiguous_fields"
+  | "conflicting"
+  | "no_observation";
+
 export type LinkMatchResult = {
   cableId: string;
   kind: MatchKind;
+  detail: MatchDetail;
+  /** Which planned endpoints produced usable neighbor evidence: "A", "Z", "AZ" or null. */
+  observedSides: "A" | "Z" | "AZ" | null;
   expectedSummary: string;
   observedSummary: string | null;
   relatedCableId: string | null;
   evidenceSource: string | null;
   captureTime: Date | null;
+  /** Oldest capture time among the observations used (for staleness). */
+  oldestCaptureTime: Date | null;
   nextAction: string;
+};
+
+export type MatchOptions = {
+  /**
+   * Device norms known to the project (plan endpoints + inventory + alias targets). When given,
+   * a remote identity outside this set is AMBIGUOUS_IDENTITY instead of a wrong neighbor.
+   */
+  knownDevices?: Set<string>;
 };
 
 function expectedSummary(link: PlannedEndpoint): string {
   return `${link.aDevice} ${link.aPort} ↔ ${link.zDevice} ${link.zPort}`;
-}
-
-function sideOf(link: PlannedEndpoint, deviceNorm: string, portNorm: string): "A" | "Z" | null {
-  if (link.aDeviceNorm === deviceNorm && link.aPortNorm === portNorm) return "A";
-  if (link.zDeviceNorm === deviceNorm && link.zPortNorm === portNorm) return "Z";
-  return null;
 }
 
 function otherEnd(link: PlannedEndpoint, side: "A" | "Z") {
@@ -79,22 +96,44 @@ export function resolvePortAlias(
   return aliases.get(key) ?? normalizePort(port);
 }
 
+const fmtObs = (o: ObservedNeighbor) =>
+  `${o.localDevice} ${o.localPort} → ${o.remoteDevice ?? "?"} ${o.remotePort ?? "?"}`;
+
+function times(list: ObservedNeighbor[]) {
+  const ts = list.map((o) => o.captureTime).filter((t): t is Date => !!t);
+  if (!ts.length) return { newest: null, oldest: null };
+  return {
+    newest: new Date(Math.max(...ts.map((t) => t.getTime()))),
+    oldest: new Date(Math.min(...ts.map((t) => t.getTime()))),
+  };
+}
+
 /**
  * Match observations against planned links.
+ * Neighbor evidence is directional: each endpoint's observation is judged on its own.
  * A/Z orientation reversal counts as the same link.
  * Multiple incompatible observations for one endpoint → conflicting.
+ * The same remote identity+port seen from two different local ports → ambiguous identity.
  * Missing observation → no_observation (awaiting), never "absent".
  */
 export function matchObservationsToPlan(
   links: PlannedEndpoint[],
   observations: ObservedNeighbor[],
+  options: MatchOptions = {},
 ): LinkMatchResult[] {
   const byLocal = new Map<string, ObservedNeighbor[]>();
+  const remoteSeenFrom = new Map<string, Set<string>>();
   for (const obs of observations) {
     const key = `${obs.localDeviceNorm}|${obs.localPortNorm}`;
     const list = byLocal.get(key) ?? [];
     list.push(obs);
     byLocal.set(key, list);
+    if (obs.remoteDeviceNorm && obs.remotePortNorm) {
+      const rk = `${obs.remoteDeviceNorm}|${obs.remotePortNorm}`;
+      const from = remoteSeenFrom.get(rk) ?? new Set<string>();
+      from.add(key);
+      remoteSeenFrom.set(rk, from);
+    }
   }
 
   const portOwner = new Map<string, PlannedEndpoint>();
@@ -103,118 +142,133 @@ export function matchObservationsToPlan(
     portOwner.set(`${link.zDeviceNorm}|${link.zPortNorm}`, link);
   }
 
-  return links.map((link) => {
-    const aKey = `${link.aDeviceNorm}|${link.aPortNorm}`;
-    const zKey = `${link.zDeviceNorm}|${link.zPortNorm}`;
-    const aObs = byLocal.get(aKey) ?? [];
-    const zObs = byLocal.get(zKey) ?? [];
+  return links.map((link): LinkMatchResult => {
+    const aObs = byLocal.get(`${link.aDeviceNorm}|${link.aPortNorm}`) ?? [];
+    const zObs = byLocal.get(`${link.zDeviceNorm}|${link.zPortNorm}`) ?? [];
     const all = [...aObs, ...zObs];
+    const base = {
+      cableId: link.cableId,
+      expectedSummary: expectedSummary(link),
+      relatedCableId: null as string | null,
+    };
 
     if (all.length === 0) {
       return {
-        cableId: link.cableId,
+        ...base,
         kind: "no_observation",
-        expectedSummary: expectedSummary(link),
+        detail: "no_observation",
+        observedSides: null,
         observedSummary: null,
-        relatedCableId: null,
         evidenceSource: null,
         captureTime: null,
+        oldestCaptureTime: null,
         nextAction: "Await usable LLDP or perform independent physical verification",
       };
     }
 
-    // Detect conflicting observations on the same local endpoint
+    const { newest, oldest } = times(all);
+
     for (const group of [aObs, zObs]) {
       if (group.length > 1) {
-        const signatures = new Set(
-          group.map((o) => `${o.remoteDeviceNorm}|${o.remotePortNorm}`),
-        );
+        const signatures = new Set(group.map((o) => `${o.remoteDeviceNorm}|${o.remotePortNorm}`));
         if (signatures.size > 1) {
           return {
-            cableId: link.cableId,
+            ...base,
             kind: "conflicting",
-            expectedSummary: expectedSummary(link),
-            observedSummary: group
-              .map((o) => `${o.localDevice} ${o.localPort} → ${o.remoteDevice ?? "?"} ${o.remotePort ?? "?"}`)
-              .join("; "),
-            relatedCableId: null,
+            detail: "conflicting",
+            observedSides: aObs.length && zObs.length ? "AZ" : aObs.length ? "A" : "Z",
+            observedSummary: group.map(fmtObs).join("; "),
             evidenceSource: group[0]?.evidenceSource ?? null,
-            captureTime: group[0]?.captureTime ?? null,
+            captureTime: newest,
+            oldestCaptureTime: oldest,
             nextAction: "Review conflicting observations; do not auto-pick a winner",
           };
         }
       }
     }
 
-    // Ambiguous if remote identity missing
-    const usable = all.filter((o) => o.remoteDeviceNorm && o.remotePortNorm);
+    const usableA = aObs.filter((o) => o.remoteDeviceNorm && o.remotePortNorm);
+    const usableZ = zObs.filter((o) => o.remoteDeviceNorm && o.remotePortNorm);
+    const usable = [...usableA, ...usableZ];
+    const sides = usableA.length && usableZ.length ? "AZ" : usableA.length ? "A" : usableZ.length ? "Z" : null;
+
     if (usable.length === 0) {
       return {
-        cableId: link.cableId,
+        ...base,
         kind: "ambiguous",
-        expectedSummary: expectedSummary(link),
-        observedSummary: all
-          .map((o) => `${o.localDevice} ${o.localPort} → ${o.remoteDevice ?? "?"} ${o.remotePort ?? "?"}`)
-          .join("; "),
-        relatedCableId: null,
+        detail: "ambiguous_fields",
+        observedSides: null,
+        observedSummary: all.map(fmtObs).join("; "),
         evidenceSource: all[0]?.evidenceSource ?? null,
-        captureTime: all[0]?.captureTime ?? null,
-        nextAction: "Map remote device/port aliases and re-import",
+        captureTime: newest,
+        oldestCaptureTime: oldest,
+        nextAction: "Neighbor entry lacks a remote system name or port ID; map aliases and re-import",
       };
     }
 
-    const obs = usable[0];
-    const localSide = sideOf(link, obs.localDeviceNorm, obs.localPortNorm);
-    if (!localSide) {
+    // One remote identity+port claimed from two different local ports cannot be a single cable.
+    const identityIssue = usable.find(
+      (o) => (remoteSeenFrom.get(`${o.remoteDeviceNorm}|${o.remotePortNorm}`)?.size ?? 0) > 1,
+    );
+    if (identityIssue) {
       return {
-        cableId: link.cableId,
+        ...base,
         kind: "ambiguous",
-        expectedSummary: expectedSummary(link),
-        observedSummary: `${obs.localDevice} ${obs.localPort} → ${obs.remoteDevice} ${obs.remotePort}`,
-        relatedCableId: null,
-        evidenceSource: obs.evidenceSource ?? null,
-        captureTime: obs.captureTime ?? null,
-        nextAction: "Confirm local switch mapping",
+        detail: "ambiguous_identity",
+        observedSides: sides,
+        observedSummary: usable.map(fmtObs).join("; "),
+        evidenceSource: identityIssue.evidenceSource ?? null,
+        captureTime: newest,
+        oldestCaptureTime: oldest,
+        nextAction: `Remote identity "${identityIssue.remoteDevice} ${identityIssue.remotePort}" is reported on more than one port; fix duplicate hostnames or add a device alias`,
       };
     }
 
-    const expectedOther = otherEnd(link, localSide);
-    const remoteMatches =
-      obs.remoteDeviceNorm === expectedOther.deviceNorm &&
-      obs.remotePortNorm === expectedOther.portNorm;
+    const judged = [
+      ...usableA.map((o) => ({ o, expected: otherEnd(link, "A") })),
+      ...usableZ.map((o) => ({ o, expected: otherEnd(link, "Z") })),
+    ];
+    const wrong = judged.find(
+      ({ o, expected }) => o.remoteDeviceNorm !== expected.deviceNorm || o.remotePortNorm !== expected.portNorm,
+    );
 
-    if (remoteMatches) {
+    if (!wrong) {
       return {
-        cableId: link.cableId,
+        ...base,
         kind: "exact",
-        expectedSummary: expectedSummary(link),
-        observedSummary: `${obs.localDevice} ${obs.localPort} → ${obs.remoteDevice} ${obs.remotePort}`,
-        relatedCableId: null,
-        evidenceSource: obs.evidenceSource ?? null,
-        captureTime: obs.captureTime ?? null,
-        nextAction: "No action required",
+        detail: "match",
+        observedSides: sides,
+        observedSummary: usable.map(fmtObs).join("; "),
+        evidenceSource: usable[0].evidenceSource ?? null,
+        captureTime: newest,
+        oldestCaptureTime: oldest,
+        nextAction: sides === "AZ" ? "No action required" : `No action required (${sides} side observed only)`,
       };
     }
 
-    // Wrong endpoint — find which planned link owns the observed remote port if any
-    const remoteKey = `${obs.remoteDeviceNorm}|${obs.remotePortNorm}`;
-    const owner = portOwner.get(remoteKey);
-    const related =
-      owner && owner.cableId !== link.cableId
-        ? owner.cableId
-        : findSwapPartner(link, links, usable);
+    const obs = wrong.o;
+    const owner = portOwner.get(`${obs.remoteDeviceNorm}|${obs.remotePortNorm}`);
+    const related = owner && owner.cableId !== link.cableId ? owner.cableId : findSwapPartner(link, links, usable);
+    const samePeer = obs.remoteDeviceNorm === wrong.expected.deviceNorm;
+    const unknownPeer = options.knownDevices ? !options.knownDevices.has(obs.remoteDeviceNorm!) : false;
 
     return {
-      cableId: link.cableId,
+      ...base,
       kind: "wrong_endpoint",
-      expectedSummary: expectedSummary(link),
-      observedSummary: `${obs.localDevice} ${obs.localPort} → ${obs.remoteDevice} ${obs.remotePort}`,
+      detail: samePeer ? "wrong_port" : "wrong_neighbor",
+      observedSides: sides,
+      observedSummary: fmtObs(obs),
       relatedCableId: related,
       evidenceSource: obs.evidenceSource ?? null,
-      captureTime: obs.captureTime ?? null,
+      captureTime: newest,
+      oldestCaptureTime: oldest,
       nextAction: related
         ? `Fix swapped pair: check ${link.cableId} and ${related}`
-        : `Reconnect to expected ${expectedOther.device} ${expectedOther.port}`,
+        : samePeer
+          ? `Right device, wrong port: move to ${wrong.expected.device} ${wrong.expected.port}`
+          : unknownPeer
+            ? `"${obs.remoteDevice}" is not in this project; reconnect to ${wrong.expected.device} ${wrong.expected.port} or add a device alias if it is the same host`
+            : `Reconnect to expected ${wrong.expected.device} ${wrong.expected.port}`,
     };
   });
 }
@@ -224,10 +278,8 @@ function findSwapPartner(
   links: PlannedEndpoint[],
   obsForLink: ObservedNeighbor[],
 ): string | null {
-  // Classic swap: A sees B's expected remote and B sees A's
   for (const other of links) {
     if (other.cableId === link.cableId) continue;
-    // If this link's observation points at other's A or Z port
     for (const obs of obsForLink) {
       const hitsOther =
         (obs.remoteDeviceNorm === other.aDeviceNorm && obs.remotePortNorm === other.aPortNorm) ||

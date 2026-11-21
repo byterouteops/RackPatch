@@ -16,7 +16,8 @@ export type EvidenceFormat =
   | "cisco-ios-lldp"
   | "cisco-cdp"
   | "arista-eos-lldp"
-  | "juniper-junos-lldp";
+  | "juniper-junos-lldp"
+  | "lldpd-keyvalue";
 
 export type NeighborParseResult = {
   observations: NeighborObservation[];
@@ -60,5 +61,10 @@ export const SUPPORTED_EVIDENCE_FORMATS: Array<{
     id: "juniper-junos-lldp",
     label: "Juniper Junos LLDP",
     command: "show lldp neighbors interface <if> detail / show lldp neighbors detail",
+  },
+  {
+    id: "lldpd-keyvalue",
+    label: "Linux / Cumulus lldpd",
+    command: "lldpcli show neighbors -f keyvalue",
   },
 ];

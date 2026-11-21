@@ -32,6 +32,10 @@ export type CableRow = {
   zDevice: string;
   zPort: string;
   cableType: string | null;
+  fabric?: string | null;
+  speed?: string | null;
+  connector?: string | null;
+  rail?: string | null;
   installStatus: InstallStatus;
   verificationState: VerificationState;
   retired: boolean;
@@ -72,6 +76,8 @@ export function CableListClient({
   cableTypes,
   history,
   initialInstall = "",
+  initialFabric = "",
+  fabrics = [],
 }: {
   projectId: string;
   rows: CableRow[];
@@ -79,10 +85,13 @@ export function CableListClient({
   cableTypes: string[];
   history: CableHistoryEvent[];
   initialInstall?: string;
+  initialFabric?: string;
+  fabrics?: string[];
 }) {
   const [view, setView] = useState<View>("all");
   const [search, setSearch] = useState("");
   const [rack, setRack] = useState("");
+  const [fabric, setFabric] = useState(initialFabric);
   const [install, setInstall] = useState(initialInstall);
   const [verification, setVerification] = useState("");
   const [cableType, setCableType] = useState("");
@@ -99,23 +108,24 @@ export function CableListClient({
     return rows.filter((r) => {
       if (view === "issues" && !isIssue(r)) return false;
       if (rack && r.aRack !== rack && r.zRack !== rack) return false;
+      if (fabric && r.fabric !== fabric) return false;
       if (install && r.installStatus !== install) return false;
       if (verification && r.verificationState !== verification) return false;
       if (cableType && r.cableType !== cableType) return false;
       if (!q) return true;
       const hay =
-        `${r.cableId} ${r.aDevice} ${r.aPort} ${r.zDevice} ${r.zPort} ${r.aRack} ${r.zRack} ${r.cableType ?? ""}`.toLowerCase();
+        `${r.cableId} ${r.aDevice} ${r.aPort} ${r.zDevice} ${r.zPort} ${r.aRack} ${r.zRack} ${r.cableType ?? ""} ${r.fabric ?? ""} ${r.speed ?? ""}`.toLowerCase();
       return hay.includes(q);
     });
-  }, [rows, view, search, rack, install, verification, cableType]);
+  }, [rows, view, search, rack, fabric, install, verification, cableType]);
 
   const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
   const safePage = Math.min(page, pageCount - 1);
   const pageRows = filtered.slice(safePage * pageSize, safePage * pageSize + pageSize);
   const selected = rows.find((r) => r.id === selectedId) ?? null;
-  const filtersActive = Boolean(search || rack || install || verification || cableType);
+  const filtersActive = Boolean(search || rack || fabric || install || verification || cableType);
 
-  useEffect(() => setPage(0), [view, search, rack, install, verification, cableType, pageSize]);
+  useEffect(() => setPage(0), [view, search, rack, fabric, install, verification, cableType, pageSize]);
 
   useEffect(() => {
     function onKey(e: KeyboardEvent) {
@@ -216,6 +226,16 @@ export function CableListClient({
               </option>
             ))}
           </Select>
+          {fabrics.length > 0 && (
+            <Select className="h-9 sm:w-[130px]" value={fabric} onChange={(e) => setFabric(e.target.value)} aria-label="Filter by fabric" data-hint="Show only one fabric: FE, BE, OOB, EXT, STORAGE or PATCH.">
+              <option value="">All fabrics</option>
+              {fabrics.map((f) => (
+                <option key={f} value={f}>
+                  {f}
+                </option>
+              ))}
+            </Select>
+          )}
           <Select className="h-9 sm:w-[130px]" value={install} onChange={(e) => setInstall(e.target.value)} aria-label="Filter by install status">
             <option value="">All install</option>
             <option value="PLANNED">Planned</option>
@@ -250,6 +270,7 @@ export function CableListClient({
               onClick={() => {
                 setSearch("");
                 setRack("");
+                setFabric("");
                 setInstall("");
                 setVerification("");
                 setCableType("");
@@ -351,7 +372,12 @@ export function CableListClient({
                       <span className="font-semibold">{r.zDevice}</span>
                       <span className="text-[var(--muted-fg)]"> / {r.zPort}</span>
                     </td>
-                    <td className="px-2 py-2 text-[var(--muted-fg)]">{r.cableType ?? DASH}</td>
+                    <td className="px-2 py-2 text-[var(--muted-fg)]">
+                      {r.cableType ?? DASH}
+                      {(r.fabric || r.speed) && (
+                        <span className="ml-1 text-[11px]">{[r.fabric, r.speed].filter(Boolean).join(" \u00b7 ")}</span>
+                      )}
+                    </td>
                     <td className="px-2 py-2 text-[var(--muted-fg)]">
                       {r.lengthMeters != null ? `${r.lengthMeters} m` : DASH}
                     </td>
@@ -492,6 +518,10 @@ function CableDetailsPanel({
     ["B Rack", cable.zRack],
     ["Cable Type", cable.cableType ?? DASH],
     ["Length", cable.lengthMeters != null ? `${cable.lengthMeters} m` : DASH],
+    ...(cable.fabric ? ([["Fabric", cable.fabric]] as Array<[string, string]>) : []),
+    ...(cable.speed ? ([["Speed", cable.speed]] as Array<[string, string]>) : []),
+    ...(cable.connector ? ([["Connector", cable.connector]] as Array<[string, string]>) : []),
+    ...(cable.rail ? ([["Rail", cable.rail]] as Array<[string, string]>) : []),
   ];
 
   return (

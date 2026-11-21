@@ -1,0 +1,111 @@
+{
+  "ranAt": "2026-11-21T18:11:12.566Z",
+  "checks": [
+    {
+      "name": "demo workspace is flagged isDemo",
+      "ok": true
+    },
+    {
+      "name": "demo project is flagged isDemo",
+      "ok": true
+    },
+    {
+      "name": "cable count matches topology",
+      "ok": true,
+      "detail": "172/172"
+    },
+    {
+      "name": "device count matches topology",
+      "ok": true,
+      "detail": "50/50"
+    },
+    {
+      "name": "rack count is 14",
+      "ok": true,
+      "detail": "14"
+    },
+    {
+      "name": "demo evidence is all synthetic",
+      "ok": true,
+      "detail": "0 non-synthetic imports"
+    },
+    {
+      "name": "no synthetic evidence in non-demo projects",
+      "ok": true,
+      "detail": "0 found"
+    },
+    {
+      "name": "BASELINE: no LLDP mismatches/review items",
+      "ok": true,
+      "detail": "1 QC rejection(s) only"
+    },
+    {
+      "name": "CORRECTED: no LLDP mismatches/review items",
+      "ok": true,
+      "detail": "1 QC rejection(s) only"
+    },
+    {
+      "name": "scenario 01 Correct front-end leaf-to-GPU connection",
+      "ok": true
+    },
+    {
+      "name": "scenario 02 Swapped front-end cables",
+      "ok": true
+    },
+    {
+      "name": "scenario 03 Swapped back-end GPU cables",
+      "ok": true
+    },
+    {
+      "name": "scenario 04 Missing leaf-to-spine neighbor",
+      "ok": true
+    },
+    {
+      "name": "scenario 05 Wrong remote device",
+      "ok": true
+    },
+    {
+      "name": "scenario 06 Wrong remote interface",
+      "ok": true
+    },
+    {
+      "name": "scenario 07 Missing LLDP advertisement (one direction)",
+      "ok": true
+    },
+    {
+      "name": "scenario 08 Unsupported discovery protocol",
+      "ok": true
+    },
+    {
+      "name": "scenario 09 Stale observation",
+      "ok": true
+    },
+    {
+      "name": "scenario 10 Duplicate or ambiguous device identity",
+      "ok": true
+    },
+    {
+      "name": "scenario 11 Link down with no neighbor",
+      "ok": true
+    },
+    {
+      "name": "scenario 12 Corrected cabling after remediation",
+      "ok": true
+    },
+    {
+      "name": "idempotent reseed is a no-op",
+      "ok": true,
+      "detail": "AI/HPC demo already seeded (fingerprint 4d202a2bdc5f); nothing to do. Use --refresh to rebuild."
+    },
+    {
+      "name": "other workspaces unchanged by reseed",
+      "ok": true,
+      "detail": "{\"projects\":1,\"links\":9,\"imports\":2,\"findings\":9,\"users\":4}"
+    },
+    {
+      "name": "playback restored",
+      "ok": true,
+      "detail": "FAULT_INJECTED"
+    }
+  ]
+}

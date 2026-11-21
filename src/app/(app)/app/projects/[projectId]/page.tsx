@@ -22,7 +22,11 @@ import { prisma } from "@/lib/db";
 import { loadProjectDashStats, projectPhase, PHASE_LABEL, type ProjectPhase } from "@/lib/dashboard-stats";
 import { requireSessionUser } from "@/lib/session";
 import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
+import { collectablePlannedDevices, evidenceAsOf, evidenceScope } from "@/lib/evidence/scope";
 import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
+import { loadFabric } from "@/lib/fabric/load";
+import { HANDOVER_STAGES, STAGE_META } from "@/lib/handover/approval";
+import { countBlockingExceptions } from "@/lib/handover/blocking";
 import { ProjectSubnav } from "@/components/project-subnav";
 import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import { VerificationBadge } from "@/components/status-badges";
@@ -75,7 +79,7 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
       />
     );
   } else {
-    const [total, installed, blocked, stateGroups, swaps, preview, openFindings, linkSlim, imports] = await Promise.all([
+    const [total, installed, blocked, stateGroups, swaps, preview, openFindings, linkSlim, imports, asOf] = await Promise.all([
       prisma.plannedLink.count({ where: { revisionId: rev } }),
       prisma.plannedLink.count({ where: { revisionId: rev, runtime: { installStatus: "INSTALLED" } } }),
       prisma.plannedLink.count({ where: { revisionId: rev, runtime: { installStatus: "BLOCKED" } } }),
@@ -108,12 +112,31 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
         select: { aRack: true, zRack: true, aDevice: true, zDevice: true, runtime: { select: { installStatus: true } } },
       }),
       prisma.evidenceImport.findMany({
-        where: { projectId },
+        where: { ...evidenceScope(project), kind: "NEIGHBOR" },
         select: { sourceDevice: true, sourceDeviceNorm: true, uploadedAt: true, captureTime: true, parseFailed: true },
         orderBy: { uploadedAt: "desc" },
         take: 200,
       }),
+      evidenceAsOf(project),
     ]);
+    const [fabricData, blockingExceptions, latestSnap] = await Promise.all([
+      loadFabric(projectId, rev),
+      countBlockingExceptions(rev),
+      prisma.handoverSnapshot.findFirst({ where: { projectId }, orderBy: { createdAt: "desc" }, select: { title: true, approvals: { select: { stage: true } } } }),
+    ]);
+    const fabricRows = Array.from(
+      fabricData.links.reduce((m, l) => {
+        if (!l.fabric) return m;
+        const r = m.get(l.fabric) ?? { fabric: l.fabric, total: 0, installed: 0, verified: 0, issues: 0, unobservable: 0 };
+        r.total += 1;
+        if (l.installStatus === "INSTALLED") r.installed += 1;
+        if (l.state === "VERIFIED_LLDP" || l.state === "VERIFIED_PHYSICAL") r.verified += 1;
+        if (l.state === "MISMATCH" || l.state === "NEEDS_REVIEW") r.issues += 1;
+        if (l.findingType === "UNOBSERVABLE") r.unobservable += 1;
+        return m.set(l.fabric, r);
+      }, new Map<string, { fabric: string; total: number; installed: number; verified: number; issues: number; unobservable: number }>()).values(),
+    ).sort((a, b) => b.total - a.total);
+    const signedStages = new Set(latestSnap?.approvals.map((a) => a.stage) ?? []);
     const count = (s: VerificationState) => stateGroups.find((g) => g.state === s)?._count._all ?? 0;
     const matched = count("VERIFIED_LLDP") + count("VERIFIED_PHYSICAL");
     const mismatch = count("MISMATCH");
@@ -123,8 +146,9 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
 
     const staleness = computeEvidenceStaleness({
       imports,
-      plannedDevices: Array.from(new Set(linkSlim.flatMap((l) => [l.aDevice, l.zDevice]))),
+      plannedDevices: await collectablePlannedDevices(projectId, Array.from(new Set(linkSlim.flatMap((l) => [l.aDevice, l.zDevice])))),
       maxAgeDays: 7,
+      now: asOf,
     });
     const byRack = new Map<string, { total: number; installed: number }>();
     for (const l of linkSlim) {
@@ -251,6 +275,82 @@ export default async function ProjectOverviewPage({ params }: { params: Promise<
             </div>
           )}
         </section>
+
+        {fabricRows.length > 0 && (
+          <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.6fr)_minmax(0,1fr)]">
+            <section className="rp-card overflow-hidden" aria-label="Fabric readiness">
+              <div className="flex items-center justify-between border-b border-[var(--border)] px-4 py-3">
+                <h2 className="rp-display text-[15px] font-bold">Fabric readiness</h2>
+                <Link href={`/app/projects/${projectId}/fabric`} className="text-xs font-semibold text-[var(--accent)]">
+                  Open topology {"\u2192"}
+                </Link>
+              </div>
+              <div className="overflow-x-auto">
+                <table className="w-full min-w-[560px] text-[13px]">
+                  <thead>
+                    <tr className="border-b border-[var(--border)] bg-[var(--muted)]/60 text-left text-xs font-semibold text-[var(--muted-fg)]">
+                      <th className="px-4 py-2">Fabric</th>
+                      <th className="px-2 py-2 text-right">Cables</th>
+                      <th className="px-2 py-2">Installed</th>
+                      <th className="px-2 py-2">Verified</th>
+                      <th className="px-2 py-2 text-right">Issues</th>
+                      <th className="px-4 py-2 text-right">Physical check only</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {fabricRows.map((r) => (
+                      <tr key={r.fabric} className="border-b border-[var(--border)] last:border-0">
+                        <td className="px-4 py-2 font-semibold">
+                          <Link href={`/app/projects/${projectId}/cables?fabric=${encodeURIComponent(r.fabric)}`} className="hover:text-[var(--accent)]">
+                            {r.fabric}
+                          </Link>
+                        </td>
+                        <td className="rp-mono px-2 py-2 text-right">{r.total}</td>
+                        <td className="w-36 px-2 py-2">
+                          <ProgressBar label="" value={r.installed} max={r.total} />
+                        </td>
+                        <td className="w-36 px-2 py-2">
+                          <ProgressBar label="" value={r.verified} max={r.total} />
+                        </td>
+                        <td className={cn("rp-mono px-2 py-2 text-right", r.issues ? "font-bold text-[var(--danger)]" : "text-[var(--muted-fg)]")}>{r.issues}</td>
+                        <td className="rp-mono px-4 py-2 text-right text-[var(--muted-fg)]">{r.unobservable}</td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+              <p className="border-t border-[var(--border)] px-4 py-2 text-[11px] text-[var(--muted-fg)]">
+                Counts come from the published plan and current findings. &ldquo;Physical check only&rdquo; links cannot be observed by LLDP/CDP (e.g. passive panels, non-LLDP devices).
+              </p>
+            </section>
+            <section className="rp-card p-4" aria-label="Handover gate">
+              <h2 className="rp-display mb-3 text-[15px] font-bold">Handover gate</h2>
+              <p className={cn("mb-3 text-sm font-semibold", blockingExceptions ? "text-[var(--danger)]" : "text-[var(--success-ink)]")}>
+                {blockingExceptions
+                  ? `${blockingExceptions} critical exception(s) open without a waiver; owner acceptance is blocked.`
+                  : "No unwaived critical exceptions."}
+              </p>
+              <ol className="space-y-1.5 text-[13px]">
+                {HANDOVER_STAGES.map((s) => (
+                  <li key={s} className="flex items-center gap-2">
+                    {signedStages.has(s) ? (
+                      <CheckCircle2 className="h-4 w-4 text-[var(--success)]" aria-hidden />
+                    ) : (
+                      <Clock className="h-4 w-4 text-[var(--muted-fg)]" aria-hidden />
+                    )}
+                    <span className={signedStages.has(s) ? "" : "text-[var(--muted-fg)]"}>{STAGE_META[s].label}</span>
+                  </li>
+                ))}
+              </ol>
+              <p className="mt-3 text-xs text-[var(--muted-fg)]">
+                {latestSnap ? `Latest snapshot: ${latestSnap.title}` : "No handover snapshot yet."}{" "}
+                <Link href={`/app/projects/${projectId}/handover`} className="font-semibold text-[var(--accent)]">
+                  Go to handover
+                </Link>
+              </p>
+            </section>
+          </div>
+        )}
 
         {(staleness.stale.length > 0 || staleness.neverImported.length > 0) && (
           <AlertBanner tone="warning" title="Evidence freshness">

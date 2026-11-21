@@ -33,6 +33,7 @@ describe("permission boundaries", () => {
     timeZone: "UTC",
     commercialStatus: CommercialStatus.NONE,
     isDemo: false,
+    demoEvidenceSnapshot: null,
     activeRevisionId: null,
     createdAt: new Date(),
     updatedAt: new Date(),

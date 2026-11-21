@@ -59,16 +59,16 @@ export function InstallControls({
     }
   }
 
-  async function onPhysicalVerify() {
+  async function onPhysicalVerify(ok: boolean) {
     setPending(true);
     setError(null);
     try {
       const result = await recordPhysicalVerification({
         projectId,
         linkId,
-        note: verifyNote || undefined,
-        aConfirmed: true,
-        zConfirmed: true,
+        note: verifyNote.trim() || undefined,
+        aConfirmed: ok,
+        zConfirmed: ok,
       });
       if (!result.ok) {
         setError(result.error);
@@ -147,23 +147,30 @@ export function InstallControls({
         <div className="rounded-xl border border-[var(--border)] bg-white p-4">
           <p className="font-medium">Physical verification</p>
           <p className="mt-1 text-sm text-[var(--muted-fg)]">
-            Confirm both ends on site. Must be a different person than the recorded installer.
+            Confirm both ends on site, or reject with a note. Must be a different person than the recorded installer.
           </p>
           <TextArea
             className="mt-3"
-            placeholder="Optional note"
+            placeholder="Note (required when rejecting)"
             value={verifyNote}
             onChange={(e) => setVerifyNote(e.target.value)}
           />
-          <Button
-            type="button"
-            className="mt-3 w-full sm:w-auto"
-            size="lg"
-            disabled={pending}
-            onClick={() => void onPhysicalVerify()}
-          >
-            Confirm physical A/Z
-          </Button>
+          <div className="mt-3 flex flex-wrap gap-2">
+            <Button type="button" className="w-full sm:w-auto" size="lg" disabled={pending} onClick={() => void onPhysicalVerify(true)}>
+              Confirm physical A/Z
+            </Button>
+            <Button
+              type="button"
+              className="w-full sm:w-auto"
+              size="lg"
+              variant="danger"
+              disabled={pending || verifyNote.trim().length < 5}
+              title={verifyNote.trim().length < 5 ? "Write what is wrong (at least 5 characters) to reject" : undefined}
+              onClick={() => void onPhysicalVerify(false)}
+            >
+              Reject (rework)
+            </Button>
+          </div>
         </div>
       )}
     </div>

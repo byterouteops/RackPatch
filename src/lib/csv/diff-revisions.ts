@@ -15,7 +15,16 @@ export type LinkSnapshot = {
   cableType?: string | null;
   notes?: string | null;
   endpointKey: string;
+  speed?: string | null;
+  lengthM?: number | null;
+  connector?: string | null;
+  media?: string | null;
+  fabric?: string | null;
+  rail?: string | null;
+  color?: string | null;
 };
+
+const ATTR_KEYS = ["speed", "lengthM", "connector", "media", "fabric", "rail", "color"] as const;
 
 export type RevisionDiff = {
   added: LinkSnapshot[];
@@ -47,7 +56,8 @@ function metaEqual(a: LinkSnapshot, b: LinkSnapshot): boolean {
     a.aDevice === b.aDevice &&
     a.aPort === b.aPort &&
     a.zDevice === b.zDevice &&
-    a.zPort === b.zPort
+    a.zPort === b.zPort &&
+    ATTR_KEYS.every((k) => (a[k] ?? null) === (b[k] ?? null))
   );
 }
 
@@ -67,6 +77,13 @@ export function toSnapshot(row: ParsedPlanRow): LinkSnapshot {
     cableType: row.cableType,
     notes: row.notes,
     endpointKey: row.endpointKey,
+    speed: row.speed ?? null,
+    lengthM: row.lengthM ?? null,
+    connector: row.connector ?? null,
+    media: row.media ?? null,
+    fabric: row.fabric ?? null,
+    rail: row.rail ?? null,
+    color: row.color ?? null,
   };
 }
 

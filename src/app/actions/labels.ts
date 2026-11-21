@@ -64,7 +64,7 @@ const printSchema = z.object({
 export async function recordLabelPrint(raw: z.input<typeof printSchema>) {
   const user = await requireSessionUser();
   const data = printSchema.parse(raw);
-  await requireProjectAccess(user, data.projectId);
+  await requireProjectAccess(user, data.projectId, "canUpdateInstall");
   await recordAudit({
     projectId: data.projectId,
     actorId: user.id,

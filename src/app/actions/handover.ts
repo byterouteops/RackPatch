@@ -12,6 +12,8 @@ import { recordAudit } from "@/lib/audit";
 import { getAppUrl } from "@/lib/env";
 import { enqueueOutboundWebhook } from "@/lib/webhook-dispatch";
 import { trackEvent } from "@/lib/analytics";
+import { HANDOVER_STAGES, STAGE_META, approvalBlocker } from "@/lib/handover/approval";
+import { countBlockingExceptions } from "@/lib/handover/blocking";
 
 export async function buildHandoverPayload(projectId: string) {
   const project = await prisma.project.findUniqueOrThrow({
@@ -204,6 +206,50 @@ export async function createHandoverSnapshot(raw: z.infer<typeof snapshotSchema>
 
   revalidatePath(`/app/projects/${data.projectId}/handover`);
   return snapshot;
+}
+
+const approveSchema = z.object({
+  projectId: z.string(),
+  snapshotId: z.string(),
+  stage: z.enum(HANDOVER_STAGES),
+  note: z.string().trim().max(500).optional(),
+});
+
+/** Sign one staged handover approval. Order, independence and the owner exception gate are enforced here. */
+export async function approveHandoverStage(raw: z.infer<typeof approveSchema>) {
+  const user = await requireSessionUser();
+  const data = approveSchema.parse(raw);
+  const access = await requireProjectAccess(user, data.projectId);
+
+  const snap = await prisma.handoverSnapshot.findFirst({
+    where: { id: data.snapshotId, projectId: data.projectId },
+    include: { approvals: { select: { stage: true, approverId: true } } },
+  });
+  if (!snap) return { ok: false as const, error: "Snapshot not found" };
+  const revisionId = access.project.activeRevisionId ?? snap.revisionId;
+  const blocker = approvalBlocker(
+    data.stage,
+    { userId: user.id, projectRole: access.projectRole, contractor: access.isContractor, workspaceOwner: access.isOwner },
+    { approvals: snap.approvals, blockingExceptions: data.stage === "OWNER" ? await countBlockingExceptions(revisionId) : 0 },
+  );
+  if (blocker) return { ok: false as const, error: blocker };
+
+  try {
+    await prisma.handoverApproval.create({
+      data: { projectId: data.projectId, snapshotId: snap.id, stage: data.stage, approverId: user.id, note: data.note || null },
+    });
+  } catch {
+    return { ok: false as const, error: "This stage was signed by someone else just now. Refresh to see it." };
+  }
+  await recordAudit({
+    projectId: data.projectId,
+    actorId: user.id,
+    action: "handover.approve",
+    summary: `Signed ${STAGE_META[data.stage].label} on ${snap.title}`,
+    metadata: { snapshotId: snap.id, stage: data.stage },
+  });
+  revalidatePath(`/app/projects/${data.projectId}/handover`);
+  return { ok: true as const };
 }
 
 const shareSchema = z.object({

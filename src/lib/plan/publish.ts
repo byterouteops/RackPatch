@@ -80,6 +80,13 @@ export async function publishPlanRevision(input: {
           cableType: l.cableType,
           notes: l.notes,
           endpointKey: l.endpointKey,
+          speed: l.speed,
+          lengthM: l.lengthM,
+          connector: l.connector,
+          media: l.media,
+          fabric: l.fabric,
+          rail: l.rail,
+          color: l.color,
         }));
         for (const l of prevFull) {
           if (!l.runtime) continue;
@@ -127,6 +134,13 @@ export async function publishPlanRevision(input: {
           cableType: row.cableType,
           notes: row.notes,
           endpointKey: row.endpointKey,
+          speed: row.speed ?? null,
+          lengthM: row.lengthM ?? null,
+          connector: row.connector ?? null,
+          media: row.media ?? null,
+          fabric: row.fabric ?? null,
+          rail: row.rail ?? null,
+          color: row.color ?? null,
         })),
       });
 

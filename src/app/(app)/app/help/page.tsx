@@ -17,6 +17,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import { requireSessionUser } from "@/lib/session";
+import { PAGE_GUIDES } from "@/lib/help/hints";
 import { Panel } from "@/components/charts";
 import { Button, PageHeader, StatCard } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -53,19 +54,31 @@ const ARTICLES: Article[] = [
     id: "exceptions",
     title: "Resolve exceptions and swaps",
     topic: "Verify",
-    steps: ["Exceptions lists open mismatch and needs-review findings by severity.", "Acknowledge with a note while work is pending; acknowledging does not hide the problem.", "Swap playbooks give the exact port moves for crossed pairs."],
+    steps: ["Exceptions lists open mismatch and needs-review findings by severity.", "Acknowledge with a note while work is pending; acknowledging does not hide the problem.", "Leads assign an owner and due date; overdue items are highlighted.", "A critical exception can carry an authorized waiver (with a reason) so owner acceptance can proceed; it stays visible.", "Swap playbooks give the exact port moves for crossed pairs."],
   },
   {
     id: "physical",
     title: "Independent physical verification",
     topic: "Verify",
-    steps: ["Open a cable record and confirm both A and Z ends on site.", "The verifier must be a different person than the installer.", "Physically verified cables count as verified in handover readiness."],
+    steps: ["Open a cable record or the QC queue and confirm both A and Z ends on site.", "If an end is wrong, untick it and reject with a note; the cable goes to rework.", "The verifier must be a different person than the installer.", "Use this for links LLDP/CDP cannot observe: passive panels, console ports, firewalls without a parser."],
   },
   {
     id: "handover",
     title: "Generate the handover package",
     topic: "Handover",
-    steps: ["Handover shows readiness by area and the acceptance checklist.", "Create a snapshot to freeze the evidence, then export CSV or share a read-only link.", "Unresolved exceptions are flagged in the package."],
+    steps: ["Handover shows readiness by area and the acceptance checklist.", "Create a snapshot to freeze the evidence, then export CSV or share a read-only link.", "Sign the staged approvals in order: installation, independent QC (not the installation signer, not a contractor), engineering, owner.", "Owner acceptance is blocked while critical exceptions are open without an authorized waiver."],
+  },
+  {
+    id: "ai-hpc-demo",
+    title: "AI/HPC fabric demo (synthetic)",
+    topic: "Get started",
+    steps: ["The Northstar demo is fictional: every name, address and IP is synthetic and labelled DEMO.", "Use 'Start demo tour' on the amber banner for the 20 guided scenarios.", "Evidence playback switches between Baseline, Fault injected and Corrected captures. These are stored synthetic files, not a live SSH collection.", "RackPatch verifies physical cabling only; it does not verify BGP, ECN/PFC, RDMA performance or firewall reachability."],
+  },
+  {
+    id: "fabric",
+    title: "Racks, fabric topology and path trace",
+    topic: "Verify",
+    steps: ["Fabric \u2192 Racks shows elevations coloured by the worst finding on each device's cables.", "Topology draws spine/leaf links from the published plan; FE/BE pages list rails and problem links.", "Trace follows a device, port or cable end to end. Data paths never transit the management (OOB) network; an OOB-only path is labelled as such."],
   },
   {
     id: "labels",
@@ -77,7 +90,7 @@ const ARTICLES: Article[] = [
     id: "roles",
     title: "Roles and permissions",
     topic: "Admin",
-    steps: ["Owner and Lead manage plans, imports and handover.", "Technicians update install status and upload photos.", "Contractors get technician access plus QC acknowledge, never lead powers."],
+    steps: ["Owner and Lead manage plans, imports and handover.", "Technicians update install status and upload photos.", "Contractors get technician access plus QC acknowledge, never lead powers.", "Viewers (auditors) can see everything and change nothing."],
   },
 ];
 
@@ -111,6 +124,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
   const q = (sp.q ?? "").trim().toLowerCase();
   const topics = Array.from(new Set(ARTICLES.map((a) => a.topic)));
   const articles = ARTICLES.filter((a) => (!sp.topic || a.topic === sp.topic) && (!q || `${a.title} ${a.topic} ${a.steps.join(" ")}`.toLowerCase().includes(q)));
+  const guides = PAGE_GUIDES.filter((g) => !q || `${g.title} ${g.purpose} ${g.steps.join(" ")}`.toLowerCase().includes(q));
   const docs = REPO_DOCS.filter((d) => !q || `${d.file} ${d.description}`.toLowerCase().includes(q));
   const open = articles.find((a) => a.id === sp.a) ?? articles[0];
   const href = (extra: Record<string, string | undefined>) => {
@@ -163,7 +177,7 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
           </form>
           {q && (
             <p className="mt-3 text-xs text-blue-100">
-              {articles.length} guide(s) and {docs.length} document(s) match {"\u201c"}
+              {articles.length} guide(s), {guides.length} page guide(s) and {docs.length} document(s) match {"\u201c"}
               {sp.q}
               {"\u201d"}.{" "}
               <Link href="/app/help" className="font-semibold underline">
@@ -286,6 +300,29 @@ export default async function HelpPage({ searchParams }: { searchParams: Promise
             </li>
           ))}
         </ol>
+      </Panel>
+
+      <Panel title={`Page Guides (${guides.length})`} icon={HelpCircle} className="mb-4">
+        <p className="mb-3 text-xs text-[var(--muted-fg)]">
+          The same guide appears in the blue &ldquo;How to use&rdquo; bar at the top of each page. Every form field also shows a hint on hover or focus.
+        </p>
+        {guides.length === 0 ? (
+          <p className="text-sm text-[var(--muted-fg)]">No page guides match.</p>
+        ) : (
+          <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+            {guides.map((g) => (
+              <div key={g.id} className="rounded-lg border border-[var(--border)] p-3">
+                <p className="text-[13px] font-semibold">{g.title}</p>
+                <p className="mb-1.5 text-xs text-[var(--muted-fg)]">{g.purpose}</p>
+                <ol className="list-decimal space-y-0.5 pl-4 text-xs">
+                  {g.steps.map((s) => (
+                    <li key={s}>{s}</li>
+                  ))}
+                </ol>
+              </div>
+            ))}
+          </div>
+        )}
       </Panel>
 
       <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1.5fr)_minmax(0,1fr)]">

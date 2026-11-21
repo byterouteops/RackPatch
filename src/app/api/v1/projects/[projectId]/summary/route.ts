@@ -3,6 +3,7 @@ import { prisma } from "@/lib/db";
 import { authenticateProjectRead } from "@/lib/api-auth";
 import { computeCapacitySummary } from "@/lib/capacity";
 import { computeEvidenceStaleness } from "@/lib/evidence-staleness";
+import { loadEvidenceScope } from "@/lib/evidence/scope";
 import { normalizeDevice } from "@/lib/csv/normalize";
 
 export const dynamic = "force-dynamic";
@@ -68,7 +69,7 @@ export async function GET(
       new Set(links.flatMap((l) => [l.aDevice, l.zDevice])),
     );
     const imports = await prisma.evidenceImport.findMany({
-      where: { projectId },
+      where: { ...(await loadEvidenceScope(projectId)), kind: "NEIGHBOR" },
       select: {
         sourceDevice: true,
         sourceDeviceNorm: true,

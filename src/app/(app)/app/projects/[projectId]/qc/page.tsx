@@ -17,6 +17,7 @@ import { prisma } from "@/lib/db";
 import { requireSessionUser } from "@/lib/session";
 import { DonutWithLegend, Panel, pct } from "@/components/charts";
 import { QcAckForm } from "@/components/qc-ack-form";
+import { QcDecisionForm } from "@/components/qc-decision-form";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { AlertBanner, Badge, Button, EmptyState, StatCard } from "@/components/ui";
 import { cn } from "@/lib/utils";
@@ -82,8 +83,10 @@ export default async function QcQueuePage({
 
   const statusOf = (l: (typeof links)[number]): QcStatus => {
     const f = l.findings[0];
+    const pc = l.physicalChecks[0];
+    if (pc && !(pc.aConfirmed && pc.zConfirmed)) return f?.exceptionStatus === "ACKNOWLEDGED" ? "Rework" : "Rejected";
     if (f && (f.state === "VERIFIED_LLDP" || f.state === "VERIFIED_PHYSICAL")) return "Accepted";
-    if (l.physicalChecks.length) return "Accepted";
+    if (pc) return "Accepted";
     if (f && (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW") && f.exceptionStatus !== "CLOSED") return f.exceptionStatus === "ACKNOWLEDGED" ? "Rework" : "Rejected";
     if (l.runtime?.installStatus === "INSTALLED") return "Under QC";
     return "Pending";
@@ -290,6 +293,15 @@ export default async function QcQueuePage({
               </div>
 
               {f?.acknowledgeNote && <p className="rounded-md border border-[var(--border)] p-2 text-xs">{f.acknowledgeNote}</p>}
+              {sel.physicalChecks[0] && !(sel.physicalChecks[0].aConfirmed && sel.physicalChecks[0].zConfirmed) && (
+                <p className="rounded-md border border-[#efb4b7] bg-[var(--danger-soft)] p-2 text-xs">
+                  <span className="font-semibold text-[var(--danger)]">QC rejected: </span>
+                  {sel.physicalChecks[0].note ?? "No note"}
+                </p>
+              )}
+              {access.canPhysicalVerify && sel.runtime?.installStatus === "INSTALLED" && sel.runtime.installerId !== user.id && (
+                <QcDecisionForm key={sel.id} projectId={projectId} linkId={sel.id} aLabel={`${sel.aDevice} ${sel.aPort}`} zLabel={`${sel.zDevice} ${sel.zPort}`} />
+              )}
               {canAck && f && (f.state === "MISMATCH" || f.state === "NEEDS_REVIEW") && f.exceptionStatus === "OPEN" && <QcAckForm projectId={projectId} findingId={f.id} />}
               <div className="flex flex-wrap gap-2">
                 <Button href={`/app/projects/${projectId}/cables/${sel.id}`} size="sm">

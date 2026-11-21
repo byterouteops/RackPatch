@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { evidenceScope } from "@/lib/evidence/scope";
 import { requireSessionUser } from "@/lib/session";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { ProjectStrip, StripFact } from "@/components/project-strip";
@@ -90,7 +91,7 @@ export default async function EvidenceLibraryPage({
       },
     }),
     prisma.evidenceImport.findMany({
-      where: { projectId },
+      where: evidenceScope(project),
       orderBy: { uploadedAt: "desc" },
       take: 200,
       select: {

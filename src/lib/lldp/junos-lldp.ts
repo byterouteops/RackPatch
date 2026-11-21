@@ -54,10 +54,10 @@ export function parseJunosLldpNeighborsDetail(text: string): NeighborParseResult
   for (const block of blocks) {
     const localInterface = field(block, /Local Interface\s*:\s*(.+)/i);
     const remoteSystemName = field(block, /System Name\s*:\s*(.+)/i);
+    // "Local Port ID" is the local SNMP index and "Port description" is free text; only a
+    // line-anchored "Port ID" identifies the remote port.
     const remotePortId =
-      field(block, /Port description\s*:\s*(.+)/i) ||
-      field(block, /Port ID\s*:\s*(.+)/i) ||
-      field(block, /Port id\s*:\s*(.+)/i);
+      field(block, /(?:^|\n)\s*Port ID\s*:\s*(.+)/i) || field(block, /(?:^|\n)\s*Port description\s*:\s*(.+)/i);
 
     if (!localInterface) {
       warnings.push("Skipped Junos LLDP block without Local Interface");

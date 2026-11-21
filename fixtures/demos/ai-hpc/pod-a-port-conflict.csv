@@ -1,0 +1,13 @@
+cable_id,fabric,a_rack,a_device,a_port,z_rack,z_device,z_port,cable_type,speed,length_m,connector,media,rail,color,notes
+CBL-FE-0001,FE,R02,FE-SPINE-01,Ethernet1/1,R04,FE-LEAF-01,Ethernet1/49,AOC,400G,6,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0002,FE,R02,FE-SPINE-01,Ethernet1/2,R04,FE-LEAF-01,Ethernet1/50,AOC,400G,6,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0003,FE,R02,FE-SPINE-01,Ethernet1/3,R04,FE-LEAF-02,Ethernet1/49,AOC,400G,6,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0004,FE,R02,FE-SPINE-01,Ethernet1/4,R04,FE-LEAF-02,Ethernet1/50,AOC,400G,6,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0005,FE,R02,FE-SPINE-01,Ethernet1/5,R05,FE-LEAF-03,Ethernet1/49,AOC,400G,7,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0006,FE,R02,FE-SPINE-01,Ethernet1/6,R05,FE-LEAF-03,Ethernet1/50,AOC,400G,7,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0007,FE,R02,FE-SPINE-01,Ethernet1/7,R05,FE-LEAF-04,Ethernet1/49,AOC,400G,7,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-9999,FE,R02,FE-SPINE-01,Ethernet1/8,R05,FE-LEAF-04,Ethernet1/49,AOC,400G,7,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ leaf
+CBL-FE-0009,FE,R02,FE-SPINE-01,Ethernet1/9,R01,BL-01,Ethernet1/49,AOC,400G,5,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ border leaf
+CBL-FE-0010,FE,R02,FE-SPINE-01,Ethernet1/10,R01,BL-01,Ethernet1/50,AOC,400G,5,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ border leaf
+CBL-FE-0011,FE,R02,FE-SPINE-01,Ethernet1/11,R01,BL-02,Ethernet1/49,AOC,400G,5,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ border leaf
+CBL-FE-0012,FE,R02,FE-SPINE-01,Ethernet1/12,R01,BL-02,Ethernet1/50,AOC,400G,5,QSFP-DD,AOC 400G,,Aqua,FE spine ↔ border leaf

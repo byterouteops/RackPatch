@@ -20,6 +20,7 @@ import { prisma } from "@/lib/db";
 import { getSessionUser } from "@/lib/session";
 import { buildSwapFixPlaybooks } from "@/lib/verify/fix-playbook";
 import { ExceptionAckForm } from "@/components/exception-ack-form";
+import { ExceptionOwnerForm } from "@/components/exception-owner-form";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { SwapFixPlaybookList } from "@/components/swap-fix-playbook";
 import { VerificationBadge } from "@/components/status-badges";
@@ -31,9 +32,18 @@ const CATEGORY: Record<FindingType, { label: string; color: string }> = {
   PHYSICAL_MISMATCH: { label: "Physical mismatch", color: "#f59e0b" },
   CONFLICTING_OBSERVATIONS: { label: "Conflicting evidence", color: "#8b5cf6" },
   AMBIGUOUS: { label: "Ambiguous neighbor", color: "#3b82f6" },
-  NO_OBSERVATION: { label: "Missing neighbor", color: "#14b8a6" },
+  NO_OBSERVATION: { label: "No evidence yet", color: "#14b8a6" },
   AWAITING: { label: "Awaiting evidence", color: "#94a3b8" },
   EXACT_MATCH: { label: "Exact match", color: "#22c55e" },
+  WRONG_NEIGHBOR: { label: "Wrong neighbor / swap", color: "#dc2626" },
+  WRONG_PORT: { label: "Wrong port / swap", color: "#f97316" },
+  AMBIGUOUS_IDENTITY: { label: "Ambiguous identity", color: "#6366f1" },
+  MISSING_NEIGHBOR: { label: "Missing neighbor", color: "#0ea5e9" },
+  STALE_EVIDENCE: { label: "Stale evidence", color: "#a3a3a3" },
+  UNOBSERVABLE: { label: "Unobservable", color: "#64748b" },
+  PARSER_ERROR: { label: "Parser error", color: "#e11d48" },
+  LINK_DOWN: { label: "Link down", color: "#b45309" },
+  SPEED_MISMATCH: { label: "Speed mismatch", color: "#ca8a04" },
 };
 
 const SEVERITY: Record<FindingSeverity, { label: string; bar: string; tone: "danger" | "warning" | "info" }> = {
@@ -147,10 +157,31 @@ export default async function ExceptionsPage({
   const list = filter.status ? all.filter((f) => f.exceptionStatus === filter.status) : active;
   const selected = all.find((f) => f.id === sp.ex) ?? list[0] ?? null;
 
-  const ackUserIds = [...new Set(all.map((f) => f.acknowledgedById).filter((x): x is string => Boolean(x)))];
-  const ackUsers = ackUserIds.length
-    ? await prisma.user.findMany({ where: { id: { in: ackUserIds } }, select: { id: true, name: true, email: true } })
-    : [];
+  const ackUserIds = [
+    ...new Set(all.flatMap((f) => [f.acknowledgedById, f.assigneeId, f.waivedById]).filter((x): x is string => Boolean(x))),
+  ];
+  const [ackUsers, memberships, owners] = await Promise.all([
+    ackUserIds.length
+      ? prisma.user.findMany({ where: { id: { in: ackUserIds } }, select: { id: true, name: true, email: true } })
+      : Promise.resolve([]),
+    access.canResolveExceptions
+      ? prisma.projectMembership.findMany({
+          where: { projectId, role: { not: "VIEWER" } },
+          select: { contractor: true, role: true, user: { select: { id: true, name: true, email: true } } },
+        })
+      : Promise.resolve([]),
+    access.canResolveExceptions
+      ? prisma.workspaceMembership.findMany({
+          where: { workspaceId: project.workspaceId, role: "OWNER" },
+          select: { user: { select: { id: true, name: true, email: true } } },
+        })
+      : Promise.resolve([]),
+  ]);
+  const members = [
+    ...memberships.map((m) => ({ id: m.user.id, label: `${m.user.name || m.user.email} (${m.contractor ? "contractor" : m.role.toLowerCase()})` })),
+    ...owners.filter((o) => !memberships.some((m) => m.user.id === o.user.id)).map((o) => ({ id: o.user.id, label: `${o.user.name || o.user.email} (owner)` })),
+  ].sort((a, b) => a.label.localeCompare(b.label));
+  const now = new Date();
   const userName = (id: string | null) => {
     const u = ackUsers.find((x) => x.id === id);
     return u ? u.name || u.email : null;
@@ -324,6 +355,13 @@ export default async function ExceptionsPage({
                               <Link href={qs({ ex: f.id })} scroll={false} className="block">
                                 {CATEGORY[f.findingType].label}
                                 {f.relatedCableId && <span className="text-[var(--muted-fg)]"> {"\u2194"} {f.relatedCableId}</span>}
+                                {(f.assigneeId || f.waivedAt) && (
+                                  <span className="block text-[11px] text-[var(--muted-fg)]">
+                                    {f.assigneeId && <>Owner: {userName(f.assigneeId)}</>}
+                                    {f.dueAt && f.exceptionStatus !== "CLOSED" && f.dueAt < now && <span className="font-semibold text-[var(--danger)]"> · overdue</span>}
+                                    {f.waivedAt && <span className="font-semibold text-[var(--success-ink)]"> · waived</span>}
+                                  </span>
+                                )}
                               </Link>
                             </td>
                             <td className="px-2 py-2">
@@ -373,6 +411,26 @@ export default async function ExceptionsPage({
                     )}
                     <dt className="text-[var(--muted-fg)]">Next action</dt>
                     <dd>{selected.nextAction ?? "\u2014"}</dd>
+                    <dt className="text-[var(--muted-fg)]">Assigned to</dt>
+                    <dd>
+                      {userName(selected.assigneeId) ?? "Unassigned"}
+                      {selected.dueAt && (
+                        <span className={cn("ml-2 text-xs", selected.exceptionStatus !== "CLOSED" && selected.dueAt < now ? "font-semibold text-[var(--danger)]" : "text-[var(--muted-fg)]")}>
+                          due {fmt(selected.dueAt)}
+                          {selected.exceptionStatus !== "CLOSED" && selected.dueAt < now && " (overdue)"}
+                        </span>
+                      )}
+                    </dd>
+                    {selected.waivedAt && (
+                      <>
+                        <dt className="text-[var(--muted-fg)]">Waived</dt>
+                        <dd>
+                          {fmt(selected.waivedAt)}
+                          {userName(selected.waivedById) && <> by {userName(selected.waivedById)}</>}
+                          {selected.waiverReason && <p className="text-xs text-[var(--muted-fg)]">{selected.waiverReason}</p>}
+                        </dd>
+                      </>
+                    )}
                     {selected.acknowledgedAt && (
                       <>
                         <dt className="text-[var(--muted-fg)]">Acknowledged</dt>
@@ -395,6 +453,18 @@ export default async function ExceptionsPage({
                   </dl>
                   {selected.exceptionStatus === "OPEN" && access.canResolveExceptions && (
                     <ExceptionAckForm projectId={projectId} findingId={selected.id} />
+                  )}
+                  {selected.exceptionStatus !== "CLOSED" && access.canResolveExceptions && (
+                    <ExceptionOwnerForm
+                      key={selected.id}
+                      projectId={projectId}
+                      findingId={selected.id}
+                      members={members}
+                      assigneeId={selected.assigneeId}
+                      dueAt={selected.dueAt?.toISOString() ?? null}
+                      waived={Boolean(selected.waivedAt)}
+                      critical={selected.severity === "ERROR"}
+                    />
                   )}
                   <div className="mt-4 flex flex-wrap gap-2">
                     <Button href={`/app/projects/${projectId}/cables/${selected.plannedLinkId}`} size="sm" variant="secondary">

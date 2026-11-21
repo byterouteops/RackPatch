@@ -20,10 +20,10 @@ export default async function CablesPage({
   searchParams,
 }: {
   params: Promise<{ projectId: string }>;
-  searchParams: Promise<{ status?: string }>;
+  searchParams: Promise<{ status?: string; fabric?: string }>;
 }) {
   const { projectId } = await params;
-  const { status } = await searchParams;
+  const { status, fabric } = await searchParams;
   const initialInstall = status && ["PLANNED", "INSTALLED", "BLOCKED"].includes(status) ? status : "";
   const user = await requireSessionUser();
   const access = await getProjectAccess(user, projectId);
@@ -35,6 +35,7 @@ export default async function CablesPage({
   const rows: CableRow[] = [];
   const racks = new Set<string>();
   const cableTypes = new Set<string>();
+  const fabrics = new Set<string>();
 
   if (project.activeRevisionId) {
     const links = await prisma.plannedLink.findMany({
@@ -51,7 +52,12 @@ export default async function CablesPage({
       racks.add(l.zRack);
       const type = cableTypeLabel(l.cableType);
       cableTypes.add(type);
+      if (l.fabric) fabrics.add(l.fabric);
       rows.push({
+        fabric: l.fabric,
+        speed: l.speed,
+        connector: l.connector,
+        rail: l.rail,
         id: l.id,
         cableId: l.cableId,
         aRack: l.aRack,
@@ -64,7 +70,7 @@ export default async function CablesPage({
         installStatus: l.runtime?.installStatus ?? "PLANNED",
         verificationState: l.findings[0]?.state ?? "AWAITING",
         retired: !!l.runtime?.retiredAt,
-        lengthMeters: l.runtime?.lengthMeters ?? null,
+        lengthMeters: l.runtime?.lengthMeters ?? l.lengthM ?? null,
         notes: l.notes,
         blockedReason: l.runtime?.blockedReason ?? null,
         expected: l.findings[0]?.expectedSummary ?? null,
@@ -176,6 +182,8 @@ export default async function CablesPage({
         <CableListClient
           projectId={projectId}
           initialInstall={initialInstall}
+          initialFabric={fabric && fabrics.has(fabric) ? fabric : ""}
+          fabrics={Array.from(fabrics).sort()}
           rows={rows}
           racks={Array.from(racks).sort()}
           cableTypes={Array.from(cableTypes).sort()}

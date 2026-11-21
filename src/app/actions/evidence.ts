@@ -1,6 +1,5 @@
 "use server";
 
-import { createHash } from "crypto";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 import { prisma } from "@/lib/db";
@@ -9,6 +8,8 @@ import { requireProjectAccess } from "@/lib/authz";
 import { assertPaidOrThrow } from "@/app/actions/workspace";
 import { parseNeighborEvidence } from "@/lib/lldp/parse-neighbor-evidence";
 import type { EvidenceFormat } from "@/lib/lldp/types";
+import { looksLikeInterfaceStatus, parseInterfaceStatus } from "@/lib/lldp/interface-status";
+import { storeEvidence } from "@/lib/evidence/store";
 import { normalizeDevice, normalizePort } from "@/lib/csv/normalize";
 import { recordAudit } from "@/lib/audit";
 import { recomputeFindings } from "@/lib/verify/recompute";
@@ -23,6 +24,8 @@ const formatSchema = z
     "cisco-cdp",
     "arista-eos-lldp",
     "juniper-junos-lldp",
+    "lldpd-keyvalue",
+    "interface-status",
   ])
   .default("auto");
 
@@ -37,7 +40,20 @@ export async function previewLldpImport(raw: z.infer<typeof previewSchema>) {
   const data = previewSchema.parse(raw);
   await requireProjectAccess(user, data.projectId, "canImportEvidence");
   await assertPaidOrThrow(data.projectId);
-  return parseNeighborEvidence(data.text, (data.format ?? "auto") as EvidenceFormat | "auto");
+  const fmt = data.format ?? "auto";
+  if (fmt === "interface-status" || (fmt === "auto" && looksLikeInterfaceStatus(data.text))) {
+    const st = parseInterfaceStatus(data.text);
+    return {
+      observations: [],
+      warnings: [
+        ...st.warnings,
+        ...(st.failed ? [] : [`Interface status: ${st.states.length} ports (${st.states.filter((s) => s.operState === "up").length} up). Used for link-down and speed checks, not neighbor matching.`]),
+      ],
+      failed: st.failed,
+      error: st.error,
+    };
+  }
+  return parseNeighborEvidence(data.text, fmt as EvidenceFormat | "auto");
 }
 
 const importSchema = z.object({
@@ -67,12 +83,6 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
   await requireProjectAccess(user, data.projectId, "canImportEvidence");
   await assertPaidOrThrow(data.projectId);
 
-  const parsed = parseNeighborEvidence(
-    data.text,
-    (data.format ?? "auto") as EvidenceFormat | "auto",
-  );
-  const formatLabel = parsed.format ?? data.format ?? "auto";
-
   const job = await prisma.collectionJob.create({
     data: {
       projectId: data.projectId,
@@ -84,38 +94,31 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
     },
   });
 
-  if (parsed.failed) {
-    const failedImp = await prisma.evidenceImport.create({
-      data: {
-        projectId: data.projectId,
-        sourceDevice: data.sourceDevice,
-        sourceDeviceNorm: normalizeDevice(data.sourceDevice),
-        uploadedById: user.id,
-        filename: data.filename,
-        rawTextHash: createHash("sha256").update(data.text).digest("hex"),
-        parseWarnings: parsed.warnings,
-        parseFailed: true,
-        parseError: parsed.error,
-        captureTime: data.captureTime ? new Date(data.captureTime) : null,
-      },
-    });
+  const stored = await storeEvidence({
+    projectId: data.projectId,
+    sourceDevice: data.sourceDevice,
+    text: data.text,
+    uploadedById: user.id,
+    filename: data.filename,
+    captureTime: data.captureTime ? new Date(data.captureTime) : null,
+    format: data.format ?? "auto",
+  });
+
+  if (!stored.ok) {
     await prisma.collectionJob.update({
       where: { id: job.id },
-      data: {
-        status: "FAILED",
-        finishedAt: new Date(),
-        error: parsed.error,
-        evidenceImportId: failedImp.id,
-      },
+      data: { status: "FAILED", finishedAt: new Date(), error: stored.error, evidenceImportId: stored.importId },
     });
     await recordAudit({
       projectId: data.projectId,
       actorId: user.id,
       action: "evidence.neighbor.failed",
-      summary: `Neighbor evidence import failed for ${data.sourceDevice}: ${parsed.error}`,
+      summary: `Evidence import failed for ${data.sourceDevice}: ${stored.error}`,
     });
-    return { ok: false as const, error: parsed.error, warnings: parsed.warnings, jobId: job.id };
+    await recomputeFindings(data.projectId);
+    return { ok: false as const, error: stored.error, warnings: stored.warnings, jobId: job.id };
   }
+  const formatLabel = stored.formatId;
 
   for (const a of data.deviceAliases ?? []) {
     await prisma.deviceAlias.upsert({
@@ -164,69 +167,41 @@ export async function importLldpEvidence(raw: z.infer<typeof importSchema>) {
     });
   }
 
-  const imp = await prisma.evidenceImport.create({
-    data: {
-      projectId: data.projectId,
-      sourceDevice: data.sourceDevice,
-      sourceDeviceNorm: normalizeDevice(data.sourceDevice),
-      uploadedById: user.id,
-      filename: data.filename,
-      rawTextHash: createHash("sha256").update(data.text).digest("hex"),
-      parseWarnings: parsed.warnings,
-      parseFailed: false,
-      captureTime: data.captureTime ? new Date(data.captureTime) : null,
-      observations: {
-        create: parsed.observations.map((o) => ({
-          localInterface: o.localInterface,
-          localInterfaceNorm: o.localInterfaceNorm,
-          remoteSystemName: o.remoteSystemName,
-          remoteSystemNorm: o.remoteSystemNorm,
-          remotePortId: o.remotePortId,
-          remotePortNorm: o.remotePortNorm,
-          sourceExcerpt: o.sourceExcerpt,
-        })),
-      },
-    },
-  });
-
   await prisma.collectionJob.update({
     where: { id: job.id },
-    data: {
-      status: "COMPLETED",
-      finishedAt: new Date(),
-      evidenceImportId: imp.id,
-    },
+    data: { status: "COMPLETED", finishedAt: new Date(), evidenceImportId: stored.importId },
   });
 
+  const noun = stored.kind === "INTERFACE_STATE" ? "interface states" : "neighbors";
   await recordAudit({
     projectId: data.projectId,
     actorId: user.id,
-    action: "evidence.neighbor.import",
-    summary: `Imported ${formatLabel} from ${data.sourceDevice} (${parsed.observations.length} neighbors)`,
+    action: stored.kind === "INTERFACE_STATE" ? "evidence.interface_state.import" : "evidence.neighbor.import",
+    summary: `Imported ${formatLabel} from ${data.sourceDevice} (${stored.count} ${noun})`,
     metadata: { format: formatLabel, jobId: job.id },
   });
 
   await recomputeFindings(data.projectId);
   enqueueOutboundWebhook(data.projectId, "evidence.import", {
-    importId: imp.id,
+    importId: stored.importId,
     jobId: job.id,
     sourceDevice: data.sourceDevice,
-    observationCount: parsed.observations.length,
+    observationCount: stored.count,
   });
   await trackEvent({
     name: "evidence.import",
     projectId: data.projectId,
     actorId: user.id,
-    props: { observationCount: parsed.observations.length },
+    props: { observationCount: stored.count },
   });
   revalidatePath(`/app/projects/${data.projectId}`);
   revalidatePath(`/app/projects/${data.projectId}/lldp`);
   return {
     ok: true as const,
-    importId: imp.id,
+    importId: stored.importId,
     jobId: job.id,
-    observationCount: parsed.observations.length,
-    warnings: parsed.warnings,
-    format: parsed.format,
+    observationCount: stored.count,
+    warnings: stored.warnings,
+    format: formatLabel,
   };
 }

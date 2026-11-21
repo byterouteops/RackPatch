@@ -20,6 +20,7 @@ import {
 import type { Prisma, VerificationState } from "@prisma/client";
 import { getProjectAccess } from "@/lib/authz";
 import { prisma } from "@/lib/db";
+import { evidenceScope } from "@/lib/evidence/scope";
 import { requireSessionUser } from "@/lib/session";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { ProjectStrip, StripFact } from "@/components/project-strip";
@@ -83,7 +84,7 @@ export default async function VerifyPage({
       where: { revisionId: rev, state: { in: ["MISMATCH", "NEEDS_REVIEW"] }, exceptionStatus: "ACKNOWLEDGED" },
     }),
     prisma.verificationFinding.count({ where: { revisionId: rev, relatedCableId: { not: null }, exceptionStatus: { not: "CLOSED" } } }),
-    prisma.evidenceImport.findFirst({ where: { projectId }, orderBy: { uploadedAt: "desc" }, select: { uploadedAt: true, sourceDevice: true } }),
+    prisma.evidenceImport.findFirst({ where: evidenceScope(project), orderBy: { uploadedAt: "desc" }, select: { uploadedAt: true, sourceDevice: true } }),
     prisma.physicalVerification.count({ where: { revisionId: rev } }),
     prisma.handoverSnapshot.count({ where: { projectId } }),
   ]);

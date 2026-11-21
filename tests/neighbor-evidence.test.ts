@@ -51,6 +51,8 @@ describe("multi-vendor neighbor evidence", () => {
     expect(parsed.observations).toHaveLength(2);
     expect(parsed.observations[0].localInterface).toContain("ge-0/0/0");
     expect(parsed.observations[0].remoteSystemName).toBe("Core-SW-01");
+    expect(parsed.observations[0].remotePortId).toBe("ge-0/0/1.0");
+    expect(parsed.observations[1].remotePortId).toBe("eth0");
   });
 
   it("honors explicit format hint", () => {

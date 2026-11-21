@@ -3,6 +3,7 @@ import { parseCiscoCdpNeighborsDetail, looksLikeCiscoCdp } from "@/lib/lldp/cisc
 import { parseIosLldpNeighborsDetail, looksLikeIosLldp } from "@/lib/lldp/ios-lldp";
 import { parseJunosLldpNeighborsDetail, looksLikeJunosLldp } from "@/lib/lldp/junos-lldp";
 import { parseNxosLldpNeighborsDetail, looksLikeNxosLldp } from "@/lib/lldp/nxos-neighbors-detail";
+import { parseLldpdKeyvalue, looksLikeLldpdKeyvalue } from "@/lib/lldp/lldpd-keyvalue";
 import {
   SUPPORTED_EVIDENCE_FORMATS,
   type EvidenceFormat,
@@ -25,10 +26,12 @@ const parsers: Record<
     looksLike: looksLikeJunosLldp,
     parse: parseJunosLldpNeighborsDetail,
   },
+  "lldpd-keyvalue": { looksLike: looksLikeLldpdKeyvalue, parse: parseLldpdKeyvalue },
 };
 
-/** Prefer more specific Cisco LLDP before CDP; NX-OS before IOS. */
+/** lldpd keyvalue is unambiguous; then Cisco LLDP before CDP; NX-OS before IOS. */
 const AUTO_ORDER: EvidenceFormat[] = [
+  "lldpd-keyvalue",
   "cisco-nxos-lldp",
   "cisco-ios-lldp",
   "cisco-cdp",

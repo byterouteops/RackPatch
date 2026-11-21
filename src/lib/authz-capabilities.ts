@@ -7,6 +7,7 @@ import { ProjectRole } from "@prisma/client";
  * role is LEAD (defense in depth). Contractors are technicians who may additionally QC-acknowledge
  * open findings (`canQcAcknowledge`) but cannot resolve exceptions, publish, import, export, or
  * manage the project. Workspace owners are never treated as contractors.
+ * VIEWER is a read-only auditor: every capability except `canView` is false.
  */
 export type CapabilityInput = {
   isOwner: boolean;
@@ -35,7 +36,7 @@ export type ProjectCapabilities = {
 
 export function resolveProjectCapabilities(input: CapabilityInput): ProjectCapabilities {
   const { isOwner, role, paid } = input;
-  const isContractor = input.contractor && !isOwner && role !== null;
+  const isContractor = input.contractor && !isOwner && role !== null && role !== ProjectRole.VIEWER;
   const isLead = isOwner || (role === ProjectRole.LEAD && !isContractor);
   const isTechnician =
     role === ProjectRole.TECHNICIAN || role === ProjectRole.LEAD || isLead || isContractor;
