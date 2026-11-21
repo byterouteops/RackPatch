@@ -6,6 +6,9 @@ import { SignInForm } from "@/components/sign-in-form";
 import { BootstrapForm } from "@/components/bootstrap-form";
 import { Card } from "@/components/ui";
 
+// Needs live DB for first-run bootstrap detection — never prerender at image build.
+export const dynamic = "force-dynamic";
+
 export default async function SignInPage() {
   const bootstrapRequired = await isBootstrapRequired();
   const devLoginEnabled = isDevLoginEnabled();
