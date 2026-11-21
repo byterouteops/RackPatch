@@ -1,6 +1,6 @@
 # Marketplace listing draft — RackPatch
 
-**Status:** Assets ready. Template **not yet published** (Railway CLI template generate blocked; finish in dashboard — see `docs/marketplace/README.md`).
+**Status:** Published — https://railway.com/template/rackpatch
 
 ## Title
 
@@ -53,10 +53,8 @@ https://github.com/byterouteops/RackPatch (public)
 
 ## Deploy on Railway button
 
-Add only after a real template URL exists:
-
 ```md
-[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/template/<REAL_ID>)
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/rackpatch)
 ```
 
-Do not invent template IDs.
+Listing: https://railway.com/template/rackpatch

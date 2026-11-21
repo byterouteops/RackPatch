@@ -6,9 +6,9 @@
 
 ## Verdict
 
-# ALMOST READY — Marketplace publish still open
+# PUBLISHED (Marketplace live)
 
-Public GitHub is live. Live Railway smoke (including full CE workflow) **PASS**. Resend API key and Marketplace template publish remain.
+Public GitHub + Railway Marketplace template are live. Resend remains optional.
 
 ---
 
@@ -16,23 +16,16 @@ Public GitHub is live. Live Railway smoke (including full CE workflow) **PASS**.
 
 | Item | Status |
 |------|--------|
-| Public GitHub | **https://github.com/byterouteops/RackPatch** |
+| Public GitHub | https://github.com/byterouteops/RackPatch |
+| Railway Marketplace | https://railway.com/template/rackpatch |
+| One-click deploy | https://railway.com/new/template/rackpatch |
+| Live smoke project | https://web-production-a08e5b12.up.railway.app |
 | CI on `master` | Green |
-| Gitleaks (git history) | Pass |
-| Live smoke deploy | Pass — https://web-production-a08e5b12.up.railway.app |
-| Live workflow smoke | Pass — plan → install → LLDP swap → exceptions → handover |
-| Marketplace screenshots | In `docs/marketplace/` |
-| Template README draft | `docs/marketplace/TEMPLATE_README.md` |
 
-## Still open
+## Optional
 
 | Item | Status |
 |------|--------|
-| `RESEND_API_KEY` on Railway | Needs your key — see `docs/RESEND_SETUP.md` |
-| Railway Marketplace publish | Dashboard **Generate Template** (CLI create fails with source error) |
-| LinkedIn / outreach | Drafts only — not published |
-
-### Requires your action
-
-1. Paste Resend API key (browser opened to Resend earlier)
-2. In Railway project settings → **Generate Template from Project** → Publish
+| Resend magic-link email | Optional — password admin works |
+| Fix marketplace icon CDN | Icon was uploaded from a local path; prefer GitHub raw SVG |
+| LinkedIn / outreach | Drafts only |

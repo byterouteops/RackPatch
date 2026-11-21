@@ -8,6 +8,10 @@ Know which cables are right before you hand over the rack.
 
 RackPatch is an open-source Community Edition for data center deployment leads, network integrators, and installation contractors to plan, install, verify, and hand over physical cabling.
 
+[![Deploy on Railway](https://railway.com/button.svg)](https://railway.com/new/template/rackpatch)
+
+**Template:** [railway.com/template/rackpatch](https://railway.com/template/rackpatch)
+
 **Self-host:** core workflows work without payment activation (`HOSTED_SAAS` unset/false).  
 **Optional services:** assisted pilot / hosted SaaS may charge **USD $299 per installation project** — that is a service fee, not a mandatory software license.
 
