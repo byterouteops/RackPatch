@@ -9,7 +9,7 @@
 | Local Docker rebuild this pass | NOT RE-RUN | Docker CLI present; image built on Railway |
 | `railway.toml` | PASS | Dockerfile builder; `preDeployCommand` migrate; `/api/ready` |
 | Live smoke (v0.1) | PASS | web Online; ready 200; admin session; swap exceptions |
-| v0.2 deploy | THIS PASS | Push → Railway redeploy → migrate shareToken |
+| v0.2 deploy | PASS | Railway SUCCESS; migrate applied at start; ready 200 |
 | Env vars smoke | PASS | DATABASE_URL, BETTER_AUTH_*, APP URLs, RESEND_*, EMAIL_FROM; no ENABLE_DEV_LOGIN |
 | Persistence | PASS | Postgres volume; data survived prior redeploys |
 | Customer-owned deploy | READY | Marketplace template `rackpatch` |

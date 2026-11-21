@@ -12,3 +12,5 @@
 | B5 | Perf | Scale | 10k cable benchmarks | NOT TESTED — not a launch blocker |
 
 v0.2 share links reviewed — no P0 defect found pre-deploy.
+
+| B6 | P0 (fixed) | Docker migrate | `railway up` skipped preDeploy; lean image lacked prisma `effect` dep | Fixed in Dockerfile (full node_modules + migrate-on-start); v0.2.1 |
