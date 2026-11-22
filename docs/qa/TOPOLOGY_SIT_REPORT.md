@@ -53,7 +53,7 @@ Run twice; the second run (after the final build) passed 4 of 4 including the sc
 | 10 | Zoom, pan, search, reset, export | Pass | Zoom level changes; pan moves the view; search opens BE-LEAF-03; reset gives identical positions; SVG 35,838 bytes and PNG 158,806 bytes downloaded |
 | 11 | Refresh keeps positions | Pass | Identical positions after reload (cached) and in a new browser with no cache (recomputed), all three views |
 | 12 | Large topology responsive | Pass | See performance below |
-| 13 | Existing workflows unaffected | Pass for workflow tests; 3 access tests fail for a separate reason (see defects) | See regression |
+| 13 | Existing workflows unaffected | Pass | See regression |
 | 14 | No console errors or failed API calls | Pass | 0 console errors, 0 failed requests across all topology pages |
 | — | Visual regression | Pass | Baselines `e2e/sit/topology.spec.ts-snapshots/topology-{full,fe,be}-chromium-win32.png`; second run matched within 1 % |
 
@@ -84,11 +84,11 @@ Node (vitest, same layout code): 500 devices fully expanded lay out in 30.4 s wi
 | Production build | Pass |
 | SIT workflows (A–G including AI/HPC fabrics and trace), controls, fonts, resilience, perf | All passed |
 | SIT crawl: every route as lead, axe serious/critical | Passed after one fix (legend count contrast 4.16:1 → full colour) |
-| SIT security + crawl cross-workspace | 3 failures, not caused by this change (below) |
+| SIT security + crawl cross-workspace | First run: 3 failures from the shared demo (below). After retargeting to a private project: 4 of 4 passed; the outside user was denied on all 35 private-project pages, with positive member controls passing |
 
 ## Remaining defects and limits
 
-1. **3 SIT access tests fail** (`security.spec.ts` "cable details are not readable across workspaces", "API authentication and authorization" search check, `crawl.spec.ts` "cross-workspace user cannot read AI/HPC project pages"). Cause: the shared read-only demo (commit e18c536) gives every signed-in user a VIEWER membership on the AI/HPC demo project; the database shows `lead@demo.rackpatch.local` received it on 2026-11-22. The tests still assume that user cannot read the demo. Write protection is intact (the server-action replay test that blocks viewers, other workspaces and anonymous users from changing install status passes). Needs a decision: update these tests to target a non-demo project, or change the sharing behaviour.
+1. **Resolved: 3 SIT access tests assumed the AI/HPC demo was private.** The shared read-only demo (commit e18c536) gives every signed-in user a VIEWER membership on it (`lead@demo.rackpatch.local` received it on 2026-11-22). As agreed, the cross-workspace read checks now target the private "SIT Scale 5000" project, with positive controls for the member; the write-replay test still runs against the demo and confirms viewers and other workspaces cannot change it.
 2. **Back-end crossings 104 vs 96 before.** The Back-end is a complete spine/leaf mesh plus rail cabling; orthogonal routes have more segments than the old straight lines, so the segment-pair count is not strictly lower. No overlaps or cables through devices, which the old view also had none of here.
 3. **Full view at 1440 px fits at about 53 % zoom.** Labels are readable but small; full screen or zoom is better for detail.
 4. **500 devices fully expanded takes about 25 s to lay out** (in the worker; the page stays usable). The default grouped view is ready in 1.3 s.

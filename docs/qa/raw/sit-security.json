@@ -135,8 +135,8 @@
   },
   {
     "check": "cable details as cross-workspace lead",
-    "status": 200,
-    "pass": false
+    "status": 500,
+    "pass": true
   },
   {
     "check": "cable details anonymous",
@@ -146,6 +146,16 @@
   {
     "check": "revoked session (2 rows) rejected once cache cookie expires",
     "status": "http://localhost:3100/sign-in",
+    "pass": true
+  },
+  {
+    "check": "control: member search finds the private project's cable",
+    "status": 200,
+    "pass": true
+  },
+  {
+    "check": "me/search cross-workspace returns no private-project hits",
+    "status": 200,
     "pass": true
   }
 ]

@@ -1,7 +1,7 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 import { scanLayout, type LayoutIssue } from "../lib/layout-scan";
-import { NS, SIT_ENABLED, assertSitTarget, closeAll, concreteRoutes, contextAs, resolveIds, watchErrors, writeResult, type Ids } from "./helpers";
+import { NS, PRIVATE_PROJECT, SIT_ENABLED, assertSitTarget, closeAll, concreteRoutes, contextAs, resolveIds, resolvePrivateTarget, watchErrors, writeResult, type Ids } from "./helpers";
 
 /** SIT route crawl. SIT=1 E2E_BASE_URL=http://localhost:3100 npx playwright test e2e/sit/crawl.spec.ts */
 test.skip(!SIT_ENABLED, "Set SIT=1 (isolated rackpatch_sit DB + SIT server)");
@@ -15,7 +15,6 @@ const VIEWPORTS: [number, number][] = [
   [768, 1024],
   [390, 844],
 ];
-const AI_NAME = "AI/HPC Fabric Commissioning";
 const DENIED = /permission denied|not found|do not have access|no access|404|could not be found/i;
 
 let ids: Ids;
@@ -110,16 +109,19 @@ for (const role of ["owner", "tech", "contractor", "qc", "engineer", "viewer"]) 
   });
 }
 
-test("cross-workspace user cannot read AI/HPC project pages", async ({ browser }) => {
+// The AI/HPC demo is shared read-only with every signed-in user, so the private-project check uses a non-demo project.
+test("cross-workspace user cannot read another workspace's private project pages", async ({ browser }) => {
+  const priv = await resolvePrivateTarget();
   const { context, page } = await contextAs(browser, "lead@demo.rackpatch.local");
-  const routes = concreteRoutes(ids).filter((r) => r.route.includes("[projectId]") || r.route.includes("[workspaceId]"));
+  const target: Ids = { ...ids, aiProject: priv.projectId, aiWorkspace: priv.workspaceId, link: priv.linkId, rack: priv.rack, snapshot: null, workOrder: null };
+  const routes = concreteRoutes(target).filter((r) => r.route.includes("[projectId]") || r.route.includes("[workspaceId]"));
   const leaks: string[] = [];
   const visits: Visit[] = [];
   for (const r of routes) {
     const [v] = await crawl(page, [r]);
     visits.push(v);
     const text = await page.locator("main").innerText().catch(() => "");
-    if (text.includes(AI_NAME) || text.includes("CBL-FE-") || text.includes("NS-DC1")) leaks.push(r.route);
+    if (text.includes(PRIVATE_PROJECT) || text.includes(priv.cableId) || text.includes("SIT Scale Hall")) leaks.push(r.route);
   }
   writeResult("sit-crawl-cross-workspace", { visits, leaks });
   await closeAll(context);

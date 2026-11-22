@@ -86,6 +86,20 @@ export async function resolveIds(): Promise<Ids> {
   };
 }
 
+/**
+ * A private (non-demo) Northstar project for cross-workspace read checks. The AI/HPC demo is shared read-only
+ * with every signed-in user by design, so it cannot be the target of "must not be readable" tests.
+ * Created by scripts/sit-seed-large.ts; the Northstar lead is a member, lead@demo.rackpatch.local is not.
+ */
+export const PRIVATE_PROJECT = "SIT Scale 5000";
+export async function resolvePrivateTarget() {
+  const db = sitDb();
+  const p = await db.project.findFirst({ where: { name: PRIVATE_PROJECT, isDemo: false, workspace: { slug: "northstar-ai-demo" } } });
+  if (!p?.activeRevisionId) throw new Error(`Missing "${PRIVATE_PROJECT}": run scripts/sit-seed-large.ts against rackpatch_sit`);
+  const link = await db.plannedLink.findFirstOrThrow({ where: { revisionId: p.activeRevisionId }, orderBy: { cableId: "asc" } });
+  return { projectId: p.id, workspaceId: p.workspaceId, revisionId: p.activeRevisionId, linkId: link.id, cableId: link.cableId, rack: link.aRack };
+}
+
 /** Concrete URLs for every page route in docs/qa/sit-inventory.json. */
 export function concreteRoutes(ids: Ids) {
   const inv = JSON.parse(fs.readFileSync("docs/qa/sit-inventory.json", "utf8")) as { pages: { route: string }[] };

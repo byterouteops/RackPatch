@@ -1,7 +1,7 @@
 import { expect, test, type APIRequestContext, type Request } from "@playwright/test";
 import { request as pwRequest } from "@playwright/test";
 import fs from "node:fs";
-import { NS, SIT_ENABLED, assertSitTarget, closeAll, contextAs, sitDb, writeResult } from "./helpers";
+import { NS, SIT_ENABLED, assertSitTarget, closeAll, contextAs, resolvePrivateTarget, sitDb, writeResult } from "./helpers";
 
 /**
  * SIT security: direct server-action replay, CSRF origin check, API auth, session expiry, role UI.
@@ -93,9 +93,9 @@ test("server-action replay: viewer, cross-workspace, anonymous and forged-origin
 });
 
 test("server-action replay: cable details are not readable across workspaces or anonymously", async ({ browser }) => {
-  const rev = (await db.project.findUniqueOrThrow({ where: { id: aiProjectId } })).activeRevisionId!;
+  const priv = await resolvePrivateTarget();
   const target = await db.verificationFinding.findFirstOrThrow({
-    where: { revisionId: rev, nextAction: { not: null } },
+    where: { revisionId: priv.revisionId, nextAction: { not: null } },
     select: { plannedLinkId: true, nextAction: true },
   });
   const marker = target.nextAction!;
@@ -105,10 +105,10 @@ test("server-action replay: cable details are not readable across workspaces or 
   lead.page.on("request", (r: Request) => {
     if (r.method() === "POST" && r.headers()["next-action"] && (r.postData() ?? "").includes('"linkId"')) cap = { url: r.url(), headers: r.headers(), body: r.postData() ?? "" };
   });
-  await lead.page.goto(`/app/projects/${aiProjectId}/cables`);
+  await lead.page.goto(`/app/projects/${priv.projectId}/cables`);
   await expect.poll(() => cap !== null, { timeout: 15_000 }).toBe(true);
   const captured = cap as unknown as Captured;
-  const args = [{ projectId: aiProjectId, linkId: target.plannedLinkId }];
+  const args = [{ projectId: priv.projectId, linkId: target.plannedLinkId }];
 
   async function read(label: string, ctx: APIRequestContext, expectLeak: boolean) {
     const headers: Record<string, string> = { origin: baseURL.replace(/\/$/, "") };
@@ -131,7 +131,9 @@ test("server-action replay: cable details are not readable across workspaces or 
 
 test("API authentication and authorization", async ({ browser }) => {
   const anon = await pwRequest.newContext({ baseURL });
+  const priv = await resolvePrivateTarget();
   const photo = await db.fieldPhoto.findFirst({ where: { projectId: aiProjectId } });
+  const privPhoto = await db.fieldPhoto.findFirst({ where: { projectId: priv.projectId } });
   const checks: Array<[string, () => Promise<number>, number[]]> = [
     ["v1 summary without token", async () => (await anon.get(`/api/v1/projects/${aiProjectId}/summary`)).status(), [401]],
     ["v1 cables with malformed token", async () => (await anon.get(`/api/v1/projects/${aiProjectId}/cables`, { headers: { authorization: "Bearer nope" } })).status(), [401]],
@@ -144,13 +146,20 @@ test("API authentication and authorization", async ({ browser }) => {
   ];
   if (photo) checks.push(["field photo anonymous", async () => (await anon.get(`/api/field-photos/${photo.id}`)).status(), [401]]);
 
+  // Cross-workspace checks target a private project: the AI/HPC demo is shared read-only with every user.
   const other = await contextAs(browser, "lead@demo.rackpatch.local");
-  checks.push(["v1 summary as cross-workspace session", async () => (await other.context.request.get(`/api/v1/projects/${aiProjectId}/summary`)).status(), [403]]);
-  if (photo) checks.push(["field photo as cross-workspace session", async () => (await other.context.request.get(`/api/field-photos/${photo.id}`)).status(), [403]]);
-  const search = await other.context.request.get(`/api/me/search?q=CBL-FE&projectId=${aiProjectId}`);
+  checks.push(["v1 summary as cross-workspace session", async () => (await other.context.request.get(`/api/v1/projects/${priv.projectId}/summary`)).status(), [403]]);
+  if (privPhoto) checks.push(["field photo as cross-workspace session", async () => (await other.context.request.get(`/api/field-photos/${privPhoto.id}`)).status(), [403]]);
+  const q = encodeURIComponent(priv.cableId);
+  const lead = await contextAs(browser, NS("lead"));
+  const control = (await (await lead.context.request.get(`/api/me/search?q=${q}&projectId=${priv.projectId}`)).json()) as { hits: unknown[] };
+  results.push({ check: "control: member search finds the private project's cable", status: 200, pass: control.hits.length > 0 });
+  expect(control.hits.length).toBeGreaterThan(0);
+  const search = await other.context.request.get(`/api/me/search?q=${q}&projectId=${priv.projectId}`);
   const searchBody = (await search.json()) as { hits: unknown[] };
-  results.push({ check: "me/search cross-workspace returns no AI/HPC hits", status: search.status(), pass: searchBody.hits.length === 0 });
+  results.push({ check: "me/search cross-workspace returns no private-project hits", status: search.status(), pass: searchBody.hits.length === 0 });
   expect(searchBody.hits).toHaveLength(0);
+  await closeAll(lead.context);
 
   for (const [label, run, ok] of checks) {
     const status = await run();
