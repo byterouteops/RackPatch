@@ -2,6 +2,7 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { magicLink } from "better-auth/plugins";
 import { prisma } from "@/lib/db";
+import { grantDemoViewerAccess } from "@/lib/demo/viewer-access";
 import { describeResendFailure } from "@/lib/email";
 import { getAppUrl, isDevLoginEnabled } from "@/lib/env";
 
@@ -60,6 +61,19 @@ export const auth = betterAuth({
     cookieCache: {
       enabled: true,
       maxAge: 60 * 5,
+    },
+  },
+  databaseHooks: {
+    session: {
+      create: {
+        after: async (session) => {
+          try {
+            await grantDemoViewerAccess(session.userId);
+          } catch (e) {
+            console.error(`[auth] Demo viewer access failed: ${e instanceof Error ? e.message : "unknown error"}`);
+          }
+        },
+      },
     },
   },
   trustedOrigins: [getAppUrl()],

@@ -1,3 +1,4 @@
+import { ProjectRole } from "@prisma/client";
 import { getProjectAccess } from "@/lib/authz";
 import { requireSessionUser } from "@/lib/session";
 import { DemoTour } from "@/components/demo-tour";
@@ -17,6 +18,7 @@ export default async function ProjectLayout({ children, params }: { children: Re
           snapshot={project.demoEvidenceSnapshot}
           emailDomain={DEMO.emailDomain}
           scenarios={project.demoEvidenceSnapshot ? DEMO_SCENARIOS : []}
+          viewOnly={access?.projectRole === ProjectRole.VIEWER && !access.isOwner}
         />
       )}
       {children}

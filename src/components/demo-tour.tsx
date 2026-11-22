@@ -13,11 +13,14 @@ export function DemoTour({
   snapshot,
   emailDomain,
   scenarios,
+  viewOnly = false,
 }: {
   projectId: string;
   snapshot: string | null;
   emailDomain: string;
   scenarios: DemoScenario[];
+  /** Shared read-only access: persona sign-in is not available, so the step names the role instead. */
+  viewOnly?: boolean;
 }) {
   const router = useRouter();
   const [step, setStep] = useState<number | null>(null);
@@ -65,7 +68,15 @@ export function DemoTour({
             </span>
             <strong className="min-w-0 flex-1">{s.title}</strong>
             <span className="text-xs text-[var(--muted-fg)]">
-              Sign in as <code>{s.as}@{emailDomain}</code>
+              {viewOnly ? (
+                <>
+                  Demo role: <code>{s.as}</code> · you are viewing read-only
+                </>
+              ) : (
+                <>
+                  Sign in as <code>{s.as}@{emailDomain}</code>
+                </>
+              )}
             </span>
             <button type="button" aria-label="Previous step" disabled={step === 0} onClick={() => go(step - 1)} className="rounded p-1 hover:bg-[var(--muted)] disabled:opacity-40">
               <ChevronLeft className="h-4 w-4" />

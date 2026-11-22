@@ -79,7 +79,8 @@ export default async function WorkOrdersPage({
       },
     }),
     prisma.projectMembership.findMany({
-      where: { projectId },
+      // Every signed-in user is a VIEWER on the shared demo; keep them out of its team list.
+      where: project.isDemo ? { projectId, role: { not: "VIEWER" } } : { projectId },
       include: { user: { select: { id: true, name: true, email: true } } },
     }),
     revisionId
