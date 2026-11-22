@@ -2,6 +2,8 @@
 
 Know which cables are right before you hand over the rack.
 
+**Try it live:** [rackpatch.vex-nx.com](https://rackpatch.vex-nx.com) — sign up with your email; you'll receive a one-time sign-in link.
+
 **License:** [Apache License 2.0](LICENSE) — see also [NOTICE](NOTICE).  
 **Creator:** K G Pramod / VEX-NX  
 **About:** [/about](/about) in a running instance.
