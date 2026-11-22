@@ -2,24 +2,34 @@ import { betterAuth } from "better-auth";
 import { prismaAdapter } from "better-auth/adapters/prisma";
 import { magicLink } from "better-auth/plugins";
 import { prisma } from "@/lib/db";
+import { describeResendFailure } from "@/lib/email";
 import { getAppUrl, isDevLoginEnabled } from "@/lib/env";
 
 async function sendMagicLinkEmail(data: { email: string; url: string }) {
   if (process.env.RESEND_API_KEY) {
     const from = process.env.EMAIL_FROM || "RackPatch <onboarding@resend.dev>";
-    await fetch("https://api.resend.com/emails", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        from,
-        to: data.email,
-        subject: "Your RackPatch sign-in link",
-        text: `Sign in to RackPatch: ${data.url}\n\nThis link expires shortly.`,
-      }),
-    });
+    try {
+      const res = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from,
+          to: data.email,
+          subject: "Your RackPatch sign-in link",
+          text: `Sign in to RackPatch: ${data.url}\n\nThis link expires shortly.`,
+        }),
+      });
+      if (!res.ok) {
+        console.error(`[auth] Magic link email to ${data.email} failed: ${await describeResendFailure(res)}`);
+      }
+    } catch (e) {
+      console.error(
+        `[auth] Magic link email to ${data.email} failed: ${e instanceof Error ? e.message : "fetch error"}`,
+      );
+    }
     return;
   }
 

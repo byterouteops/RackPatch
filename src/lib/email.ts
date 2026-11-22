@@ -7,6 +7,22 @@ export type SendEmailResult =
   | { ok: true; skipped: true }
   | { ok: false; error: string };
 
+export async function describeResendFailure(res: Response): Promise<string> {
+  let message = "";
+  try {
+    const body = await res.text();
+    try {
+      const parsed = JSON.parse(body) as { message?: unknown };
+      message = typeof parsed.message === "string" ? parsed.message : body;
+    } catch {
+      message = body;
+    }
+  } catch {
+    message = "";
+  }
+  return `HTTP ${res.status}${message ? ` ${message.slice(0, 500)}` : ""}`;
+}
+
 export async function sendEmail(input: {
   to: string[];
   subject: string;
@@ -28,10 +44,14 @@ export async function sendEmail(input: {
       body: JSON.stringify({ from, to: input.to, subject: input.subject, text: input.text }),
     });
     if (!res.ok) {
+      const detail = await describeResendFailure(res);
+      console.error(`[email] "${input.subject}" to ${input.to.length} recipient(s) failed: ${detail}`);
       return { ok: false, error: `Resend responded ${res.status}` };
     }
     return { ok: true };
   } catch (e) {
-    return { ok: false, error: e instanceof Error ? e.message : "Email send failed" };
+    const message = e instanceof Error ? e.message : "Email send failed";
+    console.error(`[email] "${input.subject}" to ${input.to.length} recipient(s) failed: ${message}`);
+    return { ok: false, error: message };
   }
 }
