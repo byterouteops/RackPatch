@@ -4,6 +4,8 @@ const nextConfig: NextConfig = {
   output: "standalone",
   distDir: process.env.NEXT_DIST_DIR || ".next",
   poweredByHeader: false,
+  // ssh2 ships an optional native addon (sshcrypto.node) that webpack cannot bundle when it is compiled (Linux CI).
+  serverExternalPackages: ["ssh2"],
   devIndicators: { position: "bottom-right" },
   experimental: {
     // Field photos are capped at 1.5 MB (≈2 MB as base64) and LLDP pastes at 2,000,000 chars.
