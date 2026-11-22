@@ -56,8 +56,9 @@ export default async function DemoPage() {
         </p>
         <h1 className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Interactive demo</h1>
         <p className="mt-3 text-[var(--muted-fg)]">
-          Both cables below are installed and can be link-up. RackPatch shows exactly which two
-          ports to fix before handover.
+          {demoProject ? `${demoProject.name}: ` : ""}these cables are installed and can show
+          link-up, yet LLDP/CDP evidence disagrees with the approved plan. RackPatch shows exactly
+          which ports to fix before handover.
         </p>
 
         {mismatches.length > 0 ? (
@@ -67,7 +68,9 @@ export default async function DemoPage() {
                 <AlertTriangle className="h-6 w-6 shrink-0 text-amber-700" aria-hidden />
                 <div className="w-full">
                   <p className="font-semibold text-amber-950">
-                    Swapped pair on Leaf-02 — {mismatches.map((m) => m.plannedLink.cableId).join(" & ")}
+                    {mismatches.length === 1
+                      ? `1 cable mismatch — ${mismatches[0].plannedLink.cableId}`
+                      : `${mismatches.length} cable mismatches`}
                   </p>
                   <ul className="mt-4 space-y-3">
                     {mismatches.map((m) => (
