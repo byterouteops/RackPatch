@@ -1,0 +1,103 @@
+{
+  "20": {
+    "devices": 20,
+    "cables": 44,
+    "graphMs": 19,
+    "hostGroups": 0,
+    "initial": {
+      "nodes": 20,
+      "bundles": 36,
+      "layoutMs": 390,
+      "size": "1584x764",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 46,
+      "segments": 120
+    }
+  },
+  "50": {
+    "devices": 50,
+    "cables": 108,
+    "graphMs": 12,
+    "hostGroups": 5,
+    "initial": {
+      "nodes": 15,
+      "bundles": 26,
+      "layoutMs": 84,
+      "size": "1145x706",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 16,
+      "segments": 82
+    },
+    "expanded": {
+      "nodes": 50,
+      "bundles": 96,
+      "layoutMs": 484,
+      "size": "4313x926",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 254,
+      "segments": 386
+    }
+  },
+  "100": {
+    "devices": 100,
+    "cables": 212,
+    "graphMs": 23,
+    "hostGroups": 8,
+    "initial": {
+      "nodes": 22,
+      "bundles": 40,
+      "layoutMs": 110,
+      "size": "1678x727",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 36,
+      "segments": 132
+    },
+    "expanded": {
+      "nodes": 100,
+      "bundles": 196,
+      "layoutMs": 1494,
+      "size": "9438x1073",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 831,
+      "segments": 786
+    }
+  },
+  "500": {
+    "devices": 500,
+    "cables": 1432,
+    "graphMs": 50,
+    "hostGroups": 27,
+    "initial": {
+      "nodes": 69,
+      "bundles": 314,
+      "layoutMs": 399,
+      "size": "5772x1847",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 13969,
+      "segments": 942
+    },
+    "expanded": {
+      "nodes": 500,
+      "bundles": 1176,
+      "layoutMs": 30395,
+      "size": "47954x2704",
+      "forcedOrder": false,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 19127,
+      "segments": 4724
+    }
+  }
+}

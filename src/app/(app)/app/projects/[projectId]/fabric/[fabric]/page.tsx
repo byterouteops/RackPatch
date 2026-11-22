@@ -4,15 +4,16 @@ import { Lock } from "lucide-react";
 import { getProjectAccess } from "@/lib/authz";
 import { requireSessionUser } from "@/lib/session";
 import { loadFabric, peerOf, STATUS_STYLE } from "@/lib/fabric/load";
-import { FabricStats, FabricTopology } from "@/components/fabric-topology";
 import { ProjectPageHeader } from "@/components/project-page-header";
-import { StatusLegend } from "@/components/rack-elevation";
 import { VerificationBadge } from "@/components/status-badges";
+import { TopologyStats } from "@/components/topology/topology-stats";
+import { TopologyView } from "@/components/topology/topology-view";
 import { EmptyState } from "@/components/ui";
+import { buildTopologyGraph } from "@/lib/topology/graph";
 
-const META: Record<string, { title: string; fabrics: string[]; switches: string[]; description: string }> = {
-  fe: { title: "Front-end fabric", fabrics: ["FE", "STORAGE"], switches: ["fe-spine", "fe-leaf", "border-leaf"], description: "Spine/leaf front-end: GPU/CPU/control host access, storage clients and border leafs." },
-  be: { title: "Back-end fabric", fabrics: ["BE"], switches: ["be-spine", "be-leaf"], description: "Rail-aligned GPU RDMA fabric: NIC k of every GPU server lands on the leaf for rail k." },
+const META: Record<string, { view: "fe" | "be"; title: string; fabrics: string[]; switches: string[]; description: string }> = {
+  fe: { view: "fe", title: "Front-end fabric", fabrics: ["FE", "STORAGE"], switches: ["fe-spine", "fe-leaf", "border-leaf"], description: "Spine/leaf front-end: GPU/CPU/control host access, storage clients and border leafs. Hosts are grouped by class." },
+  be: { view: "be", title: "Back-end fabric", fabrics: ["BE"], switches: ["be-spine", "be-leaf"], description: "Rail-aligned GPU RDMA fabric: NIC k of every GPU server lands on the leaf for rail k. GPU servers are grouped by rack." },
 };
 
 export default async function FabricDetailPage({ params }: { params: Promise<{ projectId: string; fabric: string }> }) {
@@ -29,6 +30,7 @@ export default async function FabricDetailPage({ params }: { params: Promise<{ p
   const switches = data.devices.filter((d) => d.role && meta.switches.includes(d.role)).sort((a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }));
   const rails = Array.from(new Set(links.map((l) => l.rail).filter(Boolean) as string[])).sort();
   const problems = links.filter((l) => l.state === "MISMATCH" || l.state === "NEEDS_REVIEW");
+  const graph = buildTopologyGraph({ view: meta.view, devices: data.devices, links: data.links });
 
   return (
     <div>
@@ -37,11 +39,8 @@ export default async function FabricDetailPage({ params }: { params: Promise<{ p
         <EmptyState title="No cables in this fabric" description={`Set fabric = ${meta.fabrics.join(" or ")} on cables in the plan CSV.`} />
       ) : (
         <div className="space-y-6">
-          {meta.fabrics.map((f) => (
-            <FabricStats key={f} links={data.links} fabric={f} base={base} />
-          ))}
-          <StatusLegend />
-          <FabricTopology devices={data.devices} links={data.links} fabrics={meta.fabrics} includeHosts hrefForDevice={(n) => `${base}/trace?from=${encodeURIComponent(n)}`} />
+          <TopologyStats graph={graph} base={base} />
+          <TopologyView graph={graph} base={base} />
 
           {rails.length > 0 && (
             <section aria-label="Rails" className="grid gap-3 md:grid-cols-2">

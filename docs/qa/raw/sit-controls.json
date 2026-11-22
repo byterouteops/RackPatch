@@ -2,18 +2,18 @@
   "lead": {
     "routes": 48,
     "totals": {
-      "links": 2007,
-      "buttons": 346,
-      "fields": 209,
-      "total": 2562
+      "links": 2009,
+      "buttons": 363,
+      "fields": 210,
+      "total": 2582
     },
     "perRoute": [
       {
         "route": "/",
-        "links": 6,
+        "links": 12,
         "buttons": 1,
         "fields": 4,
-        "total": 11
+        "total": 17
       },
       {
         "route": "/about",
@@ -74,16 +74,16 @@
       {
         "route": "/app/projects/[projectId]/api",
         "links": 42,
-        "buttons": 5,
+        "buttons": 7,
         "fields": 2,
-        "total": 49
+        "total": 51
       },
       {
         "route": "/app/projects/[projectId]/assistant",
         "links": 29,
-        "buttons": 12,
+        "buttons": 10,
         "fields": 2,
-        "total": 43
+        "total": 41
       },
       {
         "route": "/app/projects/[projectId]/cables",
@@ -95,9 +95,9 @@
       {
         "route": "/app/projects/[projectId]/cables/[linkId]",
         "links": 36,
-        "buttons": 14,
+        "buttons": 12,
         "fields": 8,
-        "total": 58
+        "total": 56
       },
       {
         "route": "/app/projects/[projectId]/capacity",
@@ -109,16 +109,16 @@
       {
         "route": "/app/projects/[projectId]/collection",
         "links": 37,
-        "buttons": 5,
+        "buttons": 7,
         "fields": 5,
-        "total": 47
+        "total": 49
       },
       {
         "route": "/app/projects/[projectId]/compliance",
         "links": 47,
-        "buttons": 8,
+        "buttons": 6,
         "fields": 5,
-        "total": 60
+        "total": 58
       },
       {
         "route": "/app/projects/[projectId]/evidence",
@@ -137,16 +137,16 @@
       {
         "route": "/app/projects/[projectId]/exceptions",
         "links": 102,
-        "buttons": 7,
+        "buttons": 9,
         "fields": 5,
-        "total": 114
+        "total": 116
       },
       {
         "route": "/app/projects/[projectId]/fabric",
-        "links": 90,
-        "buttons": 6,
-        "fields": 1,
-        "total": 97
+        "links": 81,
+        "buttons": 20,
+        "fields": 2,
+        "total": 103
       },
       {
         "route": "/app/projects/[projectId]/fabric/[fabric]",
@@ -157,10 +157,10 @@
       },
       {
         "route": "/app/projects/[projectId]/handover",
-        "links": 56,
-        "buttons": 22,
+        "links": 61,
+        "buttons": 27,
         "fields": 2,
-        "total": 80
+        "total": 90
       },
       {
         "route": "/app/projects/[projectId]/handover/[snapshotId]",
@@ -242,16 +242,16 @@
       {
         "route": "/app/projects/[projectId]/scan",
         "links": 33,
-        "buttons": 9,
+        "buttons": 7,
         "fields": 2,
-        "total": 44
+        "total": 42
       },
       {
         "route": "/app/projects/[projectId]/spares",
         "links": 47,
-        "buttons": 10,
+        "buttons": 12,
         "fields": 9,
-        "total": 66
+        "total": 68
       },
       {
         "route": "/app/projects/[projectId]/trace",
@@ -270,30 +270,30 @@
       {
         "route": "/app/projects/[projectId]/verify",
         "links": 98,
-        "buttons": 4,
+        "buttons": 6,
         "fields": 1,
-        "total": 103
+        "total": 105
       },
       {
         "route": "/app/projects/[projectId]/work-orders",
         "links": 64,
-        "buttons": 6,
+        "buttons": 4,
         "fields": 1,
-        "total": 71
+        "total": 69
       },
       {
         "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
         "links": 38,
-        "buttons": 11,
+        "buttons": 9,
         "fields": 1,
-        "total": 50
+        "total": 48
       },
       {
         "route": "/app/search",
         "links": 20,
-        "buttons": 5,
+        "buttons": 3,
         "fields": 7,
-        "total": 32
+        "total": 30
       },
       {
         "route": "/app/settings",
@@ -305,9 +305,9 @@
       {
         "route": "/app/workspaces/[workspaceId]/sites",
         "links": 19,
-        "buttons": 2,
+        "buttons": 4,
         "fields": 1,
-        "total": 22
+        "total": 24
       },
       {
         "route": "/app/workspaces/[workspaceId]/team",
@@ -349,18 +349,18 @@
   "owner": {
     "routes": 48,
     "totals": {
-      "links": 2121,
-      "buttons": 363,
-      "fields": 233,
-      "total": 2717
+      "links": 2124,
+      "buttons": 359,
+      "fields": 223,
+      "total": 2706
     },
     "perRoute": [
       {
         "route": "/",
-        "links": 6,
+        "links": 12,
         "buttons": 1,
         "fields": 4,
-        "total": 11
+        "total": 17
       },
       {
         "route": "/about",
@@ -393,23 +393,23 @@
       {
         "route": "/app/notifications",
         "links": 24,
-        "buttons": 5,
+        "buttons": 3,
         "fields": 1,
-        "total": 30
+        "total": 28
       },
       {
         "route": "/app/projects",
-        "links": 40,
+        "links": 45,
         "buttons": 3,
         "fields": 2,
-        "total": 45
+        "total": 50
       },
       {
         "route": "/app/projects/[projectId]",
-        "links": 88,
+        "links": 93,
         "buttons": 6,
         "fields": 1,
-        "total": 95
+        "total": 100
       },
       {
         "route": "/app/projects/[projectId]/analytics",
@@ -421,23 +421,23 @@
       {
         "route": "/app/projects/[projectId]/api",
         "links": 42,
-        "buttons": 7,
+        "buttons": 5,
         "fields": 2,
-        "total": 51
+        "total": 49
       },
       {
         "route": "/app/projects/[projectId]/assistant",
         "links": 29,
-        "buttons": 12,
+        "buttons": 10,
         "fields": 2,
-        "total": 43
+        "total": 41
       },
       {
         "route": "/app/projects/[projectId]/cables",
         "links": 37,
-        "buttons": 16,
+        "buttons": 14,
         "fields": 34,
-        "total": 87
+        "total": 85
       },
       {
         "route": "/app/projects/[projectId]/cables/[linkId]",
@@ -456,23 +456,23 @@
       {
         "route": "/app/projects/[projectId]/collection",
         "links": 37,
-        "buttons": 7,
+        "buttons": 5,
         "fields": 5,
-        "total": 49
+        "total": 47
       },
       {
         "route": "/app/projects/[projectId]/compliance",
         "links": 47,
-        "buttons": 6,
+        "buttons": 8,
         "fields": 5,
-        "total": 58
+        "total": 60
       },
       {
         "route": "/app/projects/[projectId]/evidence",
         "links": 56,
-        "buttons": 7,
+        "buttons": 5,
         "fields": 3,
-        "total": 66
+        "total": 64
       },
       {
         "route": "/app/projects/[projectId]/evidence/explorer",
@@ -490,10 +490,10 @@
       },
       {
         "route": "/app/projects/[projectId]/fabric",
-        "links": 90,
-        "buttons": 4,
-        "fields": 1,
-        "total": 95
+        "links": 81,
+        "buttons": 20,
+        "fields": 2,
+        "total": 103
       },
       {
         "route": "/app/projects/[projectId]/fabric/[fabric]",
@@ -504,10 +504,10 @@
       },
       {
         "route": "/app/projects/[projectId]/handover",
-        "links": 56,
-        "buttons": 22,
+        "links": 61,
+        "buttons": 27,
         "fields": 2,
-        "total": 80
+        "total": 90
       },
       {
         "route": "/app/projects/[projectId]/handover/[snapshotId]",
@@ -519,9 +519,9 @@
       {
         "route": "/app/projects/[projectId]/integrations",
         "links": 37,
-        "buttons": 11,
+        "buttons": 9,
         "fields": 11,
-        "total": 59
+        "total": 57
       },
       {
         "route": "/app/projects/[projectId]/inventory",
@@ -532,10 +532,10 @@
       },
       {
         "route": "/app/projects/[projectId]/labels",
-        "links": 33,
-        "buttons": 18,
-        "fields": 12,
-        "total": 63
+        "links": 19,
+        "buttons": 5,
+        "fields": 1,
+        "total": 25
       },
       {
         "route": "/app/projects/[projectId]/lldp",
@@ -582,16 +582,16 @@
       {
         "route": "/app/projects/[projectId]/reports",
         "links": 38,
-        "buttons": 8,
+        "buttons": 6,
         "fields": 2,
-        "total": 48
+        "total": 46
       },
       {
         "route": "/app/projects/[projectId]/scan",
         "links": 33,
-        "buttons": 9,
+        "buttons": 7,
         "fields": 2,
-        "total": 44
+        "total": 42
       },
       {
         "route": "/app/projects/[projectId]/spares",
@@ -638,9 +638,9 @@
       {
         "route": "/app/search",
         "links": 20,
-        "buttons": 3,
+        "buttons": 5,
         "fields": 7,
-        "total": 30
+        "total": 32
       },
       {
         "route": "/app/settings",
@@ -658,10 +658,10 @@
       },
       {
         "route": "/app/workspaces/[workspaceId]/team",
-        "links": 37,
-        "buttons": 3,
+        "links": 42,
+        "buttons": 5,
         "fields": 5,
-        "total": 45
+        "total": 52
       },
       {
         "route": "/demo",

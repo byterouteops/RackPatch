@@ -4,10 +4,12 @@ import { getProjectAccess } from "@/lib/authz";
 import { requireSessionUser } from "@/lib/session";
 import { loadFabric } from "@/lib/fabric/load";
 import { FABRIC_DESIGN } from "@/lib/demo/ai-hpc/topology";
-import { FabricStats, FabricTopology } from "@/components/fabric-topology";
+import { FabricStats } from "@/components/fabric-topology";
 import { ProjectPageHeader } from "@/components/project-page-header";
-import { StatusLegend } from "@/components/rack-elevation";
+import { TopologyStats } from "@/components/topology/topology-stats";
+import { TopologyView } from "@/components/topology/topology-view";
 import { EmptyState } from "@/components/ui";
+import { buildTopologyGraph } from "@/lib/topology/graph";
 
 export default async function FabricPage({ params }: { params: Promise<{ projectId: string }> }) {
   const { projectId } = await params;
@@ -18,17 +20,25 @@ export default async function FabricPage({ params }: { params: Promise<{ project
   const data = await loadFabric(projectId, project.activeRevisionId);
   const base = `/app/projects/${projectId}`;
   const fabrics = Array.from(new Set(data.links.map((l) => l.fabric).filter(Boolean) as string[])).sort();
-  const switchFabrics = fabrics.filter((f) => f === "FE" || f === "BE" || f === "EXT");
+  const graph = buildTopologyGraph({ view: "full", devices: data.devices, links: data.links });
+  const offView = data.links.length - graph.cables.length;
 
   return (
     <div>
-      <ProjectPageHeader projectId={projectId} projectName={project.name} section="Fabric" title="Fabric topology" description="Spine/leaf and edge topology drawn from the published cable plan. Line colour = worst verification state of the cables between two devices." />
-      {fabrics.length === 0 ? (
-        <EmptyState title="No fabric data" description="Add a 'fabric' column (FE, BE, OOB, EXT, STORAGE, PATCH) to the cable plan CSV and set device roles to draw the topology." action={<Link className="text-sm font-semibold text-[var(--accent-ink)]" href={`${base}/plan`}>Import plan</Link>} />
+      <ProjectPageHeader projectId={projectId} projectName={project.name} section="Fabric" title="Fabric topology" description="External, spine, leaf and host tiers drawn from the published cable plan. Every physical cable is kept; parallel cables are bundled and can be expanded." />
+      {graph.cables.length === 0 ? (
+        <EmptyState title="No fabric data" description="Publish a cable plan to draw the topology. Add a 'fabric' column (FE, BE, OOB, EXT, STORAGE, PATCH) and device roles for the best grouping." action={<Link className="text-sm font-semibold text-[var(--accent-ink)]" href={`${base}/plan`}>Import plan</Link>} />
       ) : (
         <div className="space-y-6">
-          <StatusLegend />
-          <FabricTopology devices={data.devices} links={data.links} fabrics={switchFabrics} includeHosts={false} hrefForDevice={(n) => `${base}/trace?from=${encodeURIComponent(n)}`} />
+          <TopologyStats graph={graph} base={base} />
+          <TopologyView graph={graph} base={base} />
+          {offView > 0 && (
+            <p className="text-xs text-[var(--muted-fg)]">
+              {offView} management (OOB) and patch-panel cable{offView === 1 ? " is" : "s are"} not part of the data-fabric drawing; see{" "}
+              <Link className="font-semibold text-[var(--accent-ink)]" href={`${base}/cables`}>Cable Plan</Link> or trace them on the{" "}
+              <Link className="font-semibold text-[var(--accent-ink)]" href={`${base}/trace`}>Trace</Link> tab.
+            </p>
+          )}
           {fabrics.map((f) => (
             <section key={f} className="space-y-2" aria-label={`${f} fabric`}>
               <div className="flex items-baseline gap-2">

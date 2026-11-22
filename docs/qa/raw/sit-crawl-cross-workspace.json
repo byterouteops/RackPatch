@@ -6,9 +6,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 810
+      "ms": 1688
     },
     {
       "route": "/app/projects/[projectId]/analytics",
@@ -18,7 +18,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 710
+      "ms": 810
     },
     {
       "route": "/app/projects/[projectId]/api",
@@ -26,9 +26,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/api",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 721
+      "ms": 866
     },
     {
       "route": "/app/projects/[projectId]/assistant",
@@ -36,9 +36,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/assistant",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 725
+      "ms": 856
     },
     {
       "route": "/app/projects/[projectId]/cables",
@@ -46,9 +46,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/cables",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 707
+      "ms": 868
     },
     {
       "route": "/app/projects/[projectId]/cables/[linkId]",
@@ -56,9 +56,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/cables/cmwqsu4zj002z97swrewik2cr",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 720
+      "ms": 861
     },
     {
       "route": "/app/projects/[projectId]/capacity",
@@ -66,9 +66,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/capacity",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 725
+      "ms": 852
     },
     {
       "route": "/app/projects/[projectId]/collection",
@@ -76,9 +76,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/collection",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 729
+      "ms": 873
     },
     {
       "route": "/app/projects/[projectId]/compliance",
@@ -86,9 +86,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/compliance",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 699
+      "ms": 853
     },
     {
       "route": "/app/projects/[projectId]/evidence",
@@ -96,9 +96,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 705
+      "ms": 850
     },
     {
       "route": "/app/projects/[projectId]/evidence/explorer",
@@ -106,9 +106,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/evidence/explorer",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 771
+      "ms": 874
     },
     {
       "route": "/app/projects/[projectId]/exceptions",
@@ -116,9 +116,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/exceptions",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 725
+      "ms": 863
     },
     {
       "route": "/app/projects/[projectId]/fabric",
@@ -126,19 +126,19 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 716
+      "ms": 1072
     },
     {
       "route": "/app/projects/[projectId]/fabric/[fabric]",
-      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/BE",
       "status": 200,
-      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/BE",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 708
+      "ms": 952
     },
     {
       "route": "/app/projects/[projectId]/handover",
@@ -146,19 +146,19 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 713
+      "ms": 850
     },
     {
       "route": "/app/projects/[projectId]/handover/[snapshotId]",
-      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwr0ir5q009a974gt47j4nf1",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwrjh4ve00gl979cf02b3ms5",
       "status": 200,
-      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwr0ir5q009a974gt47j4nf1",
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwrjh4ve00gl979cf02b3ms5",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 770
+      "ms": 906
     },
     {
       "route": "/app/projects/[projectId]/integrations",
@@ -166,9 +166,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/integrations",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 725
+      "ms": 886
     },
     {
       "route": "/app/projects/[projectId]/inventory",
@@ -176,9 +176,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/inventory",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 701
+      "ms": 896
     },
     {
       "route": "/app/projects/[projectId]/labels",
@@ -186,9 +186,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/labels",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 710
+      "ms": 1927
     },
     {
       "route": "/app/projects/[projectId]/lldp",
@@ -196,9 +196,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/lldp",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 721
+      "ms": 866
     },
     {
       "route": "/app/projects/[projectId]/panels",
@@ -206,9 +206,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/panels",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 811
+      "ms": 867
     },
     {
       "route": "/app/projects/[projectId]/plan",
@@ -216,9 +216,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/plan",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 738
+      "ms": 867
     },
     {
       "route": "/app/projects/[projectId]/qc",
@@ -226,9 +226,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/qc",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 782
+      "ms": 865
     },
     {
       "route": "/app/projects/[projectId]/racks",
@@ -236,9 +236,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/racks",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 765
+      "ms": 909
     },
     {
       "route": "/app/projects/[projectId]/racks/[rack]",
@@ -246,9 +246,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/racks/R01",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 724
+      "ms": 904
     },
     {
       "route": "/app/projects/[projectId]/reports",
@@ -256,9 +256,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/reports",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 700
+      "ms": 851
     },
     {
       "route": "/app/projects/[projectId]/scan",
@@ -266,9 +266,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/scan",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 761
+      "ms": 869
     },
     {
       "route": "/app/projects/[projectId]/spares",
@@ -276,9 +276,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/spares",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 760
+      "ms": 860
     },
     {
       "route": "/app/projects/[projectId]/trace",
@@ -286,9 +286,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/trace",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 720
+      "ms": 857
     },
     {
       "route": "/app/projects/[projectId]/twin",
@@ -296,9 +296,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/twin",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 929
+      "ms": 866
     },
     {
       "route": "/app/projects/[projectId]/verify",
@@ -306,9 +306,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/verify",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 690
+      "ms": 862
     },
     {
       "route": "/app/projects/[projectId]/work-orders",
@@ -316,9 +316,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 691
+      "ms": 862
     },
     {
       "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
@@ -326,9 +326,9 @@
       "status": 200,
       "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/work-orders/cmwqsu7aj047l97swsfcl8zj0",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 719
+      "ms": 886
     },
     {
       "route": "/app/workspaces/[workspaceId]/sites",
@@ -338,7 +338,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 808
+      "ms": 781
     },
     {
       "route": "/app/workspaces/[workspaceId]/team",
@@ -348,8 +348,41 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 833
+      "ms": 788
     }
   ],
-  "leaks": []
+  "leaks": [
+    "/app/projects/[projectId]",
+    "/app/projects/[projectId]/api",
+    "/app/projects/[projectId]/assistant",
+    "/app/projects/[projectId]/cables",
+    "/app/projects/[projectId]/cables/[linkId]",
+    "/app/projects/[projectId]/capacity",
+    "/app/projects/[projectId]/collection",
+    "/app/projects/[projectId]/compliance",
+    "/app/projects/[projectId]/evidence",
+    "/app/projects/[projectId]/evidence/explorer",
+    "/app/projects/[projectId]/exceptions",
+    "/app/projects/[projectId]/fabric",
+    "/app/projects/[projectId]/fabric/[fabric]",
+    "/app/projects/[projectId]/handover",
+    "/app/projects/[projectId]/handover/[snapshotId]",
+    "/app/projects/[projectId]/integrations",
+    "/app/projects/[projectId]/inventory",
+    "/app/projects/[projectId]/labels",
+    "/app/projects/[projectId]/lldp",
+    "/app/projects/[projectId]/panels",
+    "/app/projects/[projectId]/plan",
+    "/app/projects/[projectId]/qc",
+    "/app/projects/[projectId]/racks",
+    "/app/projects/[projectId]/racks/[rack]",
+    "/app/projects/[projectId]/reports",
+    "/app/projects/[projectId]/scan",
+    "/app/projects/[projectId]/spares",
+    "/app/projects/[projectId]/trace",
+    "/app/projects/[projectId]/twin",
+    "/app/projects/[projectId]/verify",
+    "/app/projects/[projectId]/work-orders",
+    "/app/projects/[projectId]/work-orders/[workOrderId]"
+  ]
 }

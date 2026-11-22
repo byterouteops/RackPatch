@@ -8,7 +8,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 646
+      "ms": 886
     },
     {
       "route": "/about",
@@ -18,7 +18,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 578
+      "ms": 588
     },
     {
       "route": "/app",
@@ -28,7 +28,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 905
+      "ms": 857
     },
     {
       "route": "/app/admin",
@@ -38,7 +38,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 816
+      "ms": 792
     },
     {
       "route": "/app/help",
@@ -48,7 +48,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 930
+      "ms": 919
     },
     {
       "route": "/app/notifications",
@@ -58,7 +58,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 854
+      "ms": 813
     },
     {
       "route": "/app/projects",
@@ -68,7 +68,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 872
+      "ms": 863
     },
     {
       "route": "/app/projects/[projectId]",
@@ -78,7 +78,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 997
+      "ms": 876
     },
     {
       "route": "/app/projects/[projectId]/analytics",
@@ -88,7 +88,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 817
+      "ms": 779
     },
     {
       "route": "/app/projects/[projectId]/api",
@@ -98,7 +98,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 937
+      "ms": 876
     },
     {
       "route": "/app/projects/[projectId]/assistant",
@@ -108,7 +108,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 857
+      "ms": 872
     },
     {
       "route": "/app/projects/[projectId]/cables",
@@ -118,7 +118,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 893
+      "ms": 895
     },
     {
       "route": "/app/projects/[projectId]/cables/[linkId]",
@@ -128,7 +128,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 870
+      "ms": 867
     },
     {
       "route": "/app/projects/[projectId]/capacity",
@@ -138,7 +138,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 884
+      "ms": 864
     },
     {
       "route": "/app/projects/[projectId]/collection",
@@ -148,7 +148,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 862
+      "ms": 857
     },
     {
       "route": "/app/projects/[projectId]/compliance",
@@ -158,7 +158,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 868
+      "ms": 853
     },
     {
       "route": "/app/projects/[projectId]/evidence",
@@ -168,7 +168,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 892
+      "ms": 869
     },
     {
       "route": "/app/projects/[projectId]/evidence/explorer",
@@ -178,7 +178,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 892
+      "ms": 860
     },
     {
       "route": "/app/projects/[projectId]/exceptions",
@@ -188,7 +188,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1067
+      "ms": 864
     },
     {
       "route": "/app/projects/[projectId]/fabric",
@@ -198,17 +198,17 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 910
+      "ms": 1068
     },
     {
       "route": "/app/projects/[projectId]/fabric/[fabric]",
-      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/BE",
       "status": 200,
-      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/OOB",
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/fabric/BE",
       "errors": [],
-      "denied": true,
+      "denied": false,
       "appError": false,
-      "ms": 884
+      "ms": 1147
     },
     {
       "route": "/app/projects/[projectId]/handover",
@@ -218,17 +218,17 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1161
+      "ms": 865
     },
     {
       "route": "/app/projects/[projectId]/handover/[snapshotId]",
-      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwr0ir5q009a974gt47j4nf1",
+      "url": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwrjh4ve00gl979cf02b3ms5",
       "status": 200,
-      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwr0ir5q009a974gt47j4nf1",
+      "finalUrl": "/app/projects/cmwqsu4xx000r97sw826udapr/handover/cmwrjh4ve00gl979cf02b3ms5",
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 950
+      "ms": 923
     },
     {
       "route": "/app/projects/[projectId]/integrations",
@@ -238,7 +238,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1017
+      "ms": 880
     },
     {
       "route": "/app/projects/[projectId]/inventory",
@@ -248,7 +248,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1013
+      "ms": 867
     },
     {
       "route": "/app/projects/[projectId]/labels",
@@ -258,7 +258,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 2077
+      "ms": 2010
     },
     {
       "route": "/app/projects/[projectId]/lldp",
@@ -268,7 +268,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 928
+      "ms": 867
     },
     {
       "route": "/app/projects/[projectId]/panels",
@@ -278,7 +278,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1088
+      "ms": 858
     },
     {
       "route": "/app/projects/[projectId]/plan",
@@ -298,7 +298,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 969
+      "ms": 866
     },
     {
       "route": "/app/projects/[projectId]/racks",
@@ -308,7 +308,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1002
+      "ms": 918
     },
     {
       "route": "/app/projects/[projectId]/racks/[rack]",
@@ -318,7 +318,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 961
+      "ms": 950
     },
     {
       "route": "/app/projects/[projectId]/reports",
@@ -328,7 +328,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 1086
+      "ms": 860
     },
     {
       "route": "/app/projects/[projectId]/scan",
@@ -338,7 +338,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 893
+      "ms": 870
     },
     {
       "route": "/app/projects/[projectId]/spares",
@@ -348,7 +348,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 885
+      "ms": 870
     },
     {
       "route": "/app/projects/[projectId]/trace",
@@ -358,7 +358,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 876
+      "ms": 901
     },
     {
       "route": "/app/projects/[projectId]/twin",
@@ -368,7 +368,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 931
+      "ms": 884
     },
     {
       "route": "/app/projects/[projectId]/verify",
@@ -378,7 +378,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 897
+      "ms": 895
     },
     {
       "route": "/app/projects/[projectId]/work-orders",
@@ -388,7 +388,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 978
+      "ms": 883
     },
     {
       "route": "/app/projects/[projectId]/work-orders/[workOrderId]",
@@ -398,7 +398,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 934
+      "ms": 921
     },
     {
       "route": "/app/search",
@@ -408,7 +408,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 841
+      "ms": 802
     },
     {
       "route": "/app/settings",
@@ -418,7 +418,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 827
+      "ms": 779
     },
     {
       "route": "/app/workspaces/[workspaceId]/sites",
@@ -428,7 +428,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 861
+      "ms": 781
     },
     {
       "route": "/app/workspaces/[workspaceId]/team",
@@ -438,7 +438,7 @@
       "errors": [],
       "denied": true,
       "appError": false,
-      "ms": 857
+      "ms": 832
     },
     {
       "route": "/demo",
@@ -448,7 +448,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 668
+      "ms": 603
     },
     {
       "route": "/invite/[token]",
@@ -458,7 +458,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 607
+      "ms": 611
     },
     {
       "route": "/share/handover/[token]",
@@ -468,7 +468,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 585
+      "ms": 560
     },
     {
       "route": "/sign-in",
@@ -478,7 +478,7 @@
       "errors": [],
       "denied": false,
       "appError": false,
-      "ms": 585
+      "ms": 575
     }
   ]
 }

@@ -1,0 +1,234 @@
+{
+  "tabs": {
+    "Front-end": "ok",
+    "Back-end": "ok",
+    "Trace": "ok",
+    "Topology": "ok"
+  },
+  "views": {
+    "full": {
+      "devices": 35,
+      "cables": 106,
+      "expanded": {
+        "nodes": 35,
+        "segments": 344,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 339,
+        "labelOverflows": 0
+      },
+      "bundled": {
+        "nodes": 35,
+        "segments": 288,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 272,
+        "labelOverflows": 0
+      },
+      "filters": {
+        "MISMATCH": 8,
+        "NEEDS_REVIEW": 7
+      },
+      "bundleChecked": "BE-SPINE-01|BE-LEAF-01",
+      "deviceChecked": "BE-LEAF-01"
+    },
+    "fe": {
+      "devices": 23,
+      "cables": 54,
+      "expanded": {
+        "nodes": 23,
+        "segments": 182,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 92,
+        "labelOverflows": 0
+      },
+      "bundled": {
+        "nodes": 23,
+        "segments": 148,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 47,
+        "labelOverflows": 0
+      },
+      "filters": {
+        "MISMATCH": 3,
+        "NEEDS_REVIEW": 4
+      },
+      "bundleChecked": "FE-SPINE-01|BL-01",
+      "deviceChecked": "BL-01"
+    },
+    "be": {
+      "devices": 12,
+      "cables": 40,
+      "expanded": {
+        "nodes": 12,
+        "segments": 114,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 122,
+        "labelOverflows": 0
+      },
+      "bundled": {
+        "nodes": 12,
+        "segments": 92,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 104,
+        "labelOverflows": 0
+      },
+      "filters": {
+        "MISMATCH": 5,
+        "NEEDS_REVIEW": 0
+      },
+      "bundleChecked": "BE-SPINE-01|BE-LEAF-01",
+      "deviceChecked": "BE-LEAF-01"
+    }
+  },
+  "tools": {
+    "zoom": "98% -> 98%",
+    "pan": "transform changed",
+    "search": "BE-LEAF-03 found",
+    "reset": "positions identical",
+    "exports": {
+      "SVG": 35838,
+      "PNG": 158806
+    }
+  },
+  "determinism": {
+    "full": {
+      "nodes": 35,
+      "refresh": "identical (cached)",
+      "freshBrowser": "identical (recomputed)"
+    },
+    "fe": {
+      "nodes": 23,
+      "refresh": "identical (cached)",
+      "freshBrowser": "identical (recomputed)"
+    },
+    "be": {
+      "nodes": 12,
+      "refresh": "identical (cached)",
+      "freshBrowser": "identical (recomputed)"
+    }
+  },
+  "trace": {
+    "from": "GPU-08A",
+    "to": "BE-SPINE-01",
+    "hops": 2,
+    "highlighted": [
+      "CBL-BE-0017",
+      "CBL-BE-0001"
+    ]
+  },
+  "consoleErrors": 0,
+  "failedRequests": 0,
+  "scale": {
+    "20": {
+      "devices": 20,
+      "cables": 44,
+      "nodesShown": 20,
+      "readyMs": 1080,
+      "layoutMs": 459,
+      "maxLongTaskMs": 0,
+      "geo": {
+        "nodes": 20,
+        "segments": 120,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 46,
+        "labelOverflows": 0
+      }
+    },
+    "50": {
+      "devices": 50,
+      "cables": 108,
+      "nodesShown": 15,
+      "readyMs": 964,
+      "layoutMs": 235,
+      "maxLongTaskMs": 0,
+      "geo": {
+        "nodes": 15,
+        "segments": 82,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 16,
+        "labelOverflows": 0
+      },
+      "expanded": {
+        "nodesInDom": 50,
+        "readyMs": 399,
+        "maxPingMs": 10,
+        "maxLongTaskMs": 0,
+        "geo": {
+          "nodes": 50,
+          "segments": 386,
+          "nodeOverlaps": 0,
+          "segmentsThroughNodes": 0,
+          "crossings": 254,
+          "labelOverflows": 0
+        }
+      }
+    },
+    "100": {
+      "devices": 100,
+      "cables": 212,
+      "nodesShown": 22,
+      "readyMs": 1003,
+      "layoutMs": 266,
+      "maxLongTaskMs": 0,
+      "geo": {
+        "nodes": 22,
+        "segments": 132,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 36,
+        "labelOverflows": 0
+      },
+      "expanded": {
+        "nodesInDom": 100,
+        "readyMs": 993,
+        "maxPingMs": 9,
+        "maxLongTaskMs": 0,
+        "geo": {
+          "nodes": 100,
+          "segments": 786,
+          "nodeOverlaps": 0,
+          "segmentsThroughNodes": 0,
+          "crossings": 831,
+          "labelOverflows": 0
+        }
+      }
+    },
+    "500": {
+      "devices": 500,
+      "cables": 1432,
+      "nodesShown": 69,
+      "readyMs": 1337,
+      "layoutMs": 759,
+      "maxLongTaskMs": 0,
+      "geo": {
+        "nodes": 69,
+        "segments": 942,
+        "nodeOverlaps": 0,
+        "segmentsThroughNodes": 0,
+        "crossings": 13969,
+        "labelOverflows": 0
+      },
+      "expanded": {
+        "nodesInDom": 87,
+        "readyMs": 25175,
+        "maxPingMs": 170,
+        "maxLongTaskMs": 0,
+        "geo": {
+          "nodes": 87,
+          "segments": 940,
+          "nodeOverlaps": 0,
+          "segmentsThroughNodes": 0,
+          "crossings": 1550,
+          "labelOverflows": 0
+        }
+      }
+    }
+  }
+}

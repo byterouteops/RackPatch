@@ -6,7 +6,9 @@ import { requireSessionUser } from "@/lib/session";
 import { loadFabric, peerOf, tracePath, type FabricLink } from "@/lib/fabric/load";
 import { ProjectPageHeader } from "@/components/project-page-header";
 import { VerificationBadge } from "@/components/status-badges";
+import { TopologyView } from "@/components/topology/topology-view";
 import { Button, EmptyState, Input } from "@/components/ui";
+import { buildTopologyGraph } from "@/lib/topology/graph";
 
 function Hop({ l, from, base, panels }: { l: FabricLink; from: string; base: string; panels: string[] }) {
   const p = peerOf(l, from);
@@ -94,6 +96,7 @@ export default async function TracePage({
     : [];
   const panelsFor = (id: string) => panelPorts.filter((p) => p.plannedLinkId === id).map((p) => `${p.panel.name}:${p.portIndex}${p.side ? ` (${p.side})` : ""}`);
   const deviceNames = data.devices.map((d) => d.name);
+  const graph = buildTopologyGraph({ view: "trace", devices: data.devices, links: data.links, traceCableIds: ids });
 
   return (
     <div>
@@ -138,7 +141,15 @@ export default async function TracePage({
                 ? "Single cable"
                 : `${hops.length} cable(s) on ${fromDev?.name}`}
           </p>
-          <ol className="space-y-2">
+          <div className="mb-4">
+            <TopologyView
+              graph={graph}
+              base={base}
+              highlightCableIds={ids}
+              ariaLabel={`Topology of ${mode === "path" ? `path ${from} to ${to}` : mode === "cable" ? `cable ${hops[0]?.l.cableId}` : `cables on ${fromDev?.name}`}`}
+            />
+          </div>
+          <ol className="space-y-2" aria-label="Interface-level path">
             {hops.map((h) => (
               <Hop key={h.l.cableId + h.from} l={h.l} from={h.from} base={base} panels={panelsFor(h.l.id)} />
             ))}

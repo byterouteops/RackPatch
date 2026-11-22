@@ -47,6 +47,13 @@ export type FabricLink = {
   nextAction: string | null;
   observability: string | null;
   relatedCableId: string | null;
+  cableType: string | null;
+  expectedSummary: string | null;
+  evidenceSource: string | null;
+  captureTime: string | null;
+  observedSides: string | null;
+  /** Latest independent physical check on this revision, if any. */
+  physical: { verifiedAt: string; aConfirmed: boolean; zConfirmed: boolean; note: string | null } | null;
 };
 
 export type FabricDevice = {
@@ -90,10 +97,23 @@ export const loadFabric = cache(async (projectId: string, revisionId: string | n
           where: { revisionId },
           orderBy: { cableId: "asc" },
           select: {
-            id: true, cableId: true, fabric: true, rail: true, speed: true, media: true, lengthM: true,
+            id: true, cableId: true, fabric: true, rail: true, speed: true, media: true, lengthM: true, cableType: true,
             aRack: true, aDevice: true, aPort: true, zRack: true, zDevice: true, zPort: true,
             runtime: { select: { installStatus: true } },
-            findings: { where: { revisionId }, take: 1, select: { state: true, findingType: true, observedSummary: true, nextAction: true, observability: true, relatedCableId: true } },
+            findings: {
+              where: { revisionId },
+              take: 1,
+              select: {
+                state: true, findingType: true, observedSummary: true, nextAction: true, observability: true, relatedCableId: true,
+                expectedSummary: true, evidenceSource: true, captureTime: true, observedSides: true,
+              },
+            },
+            physicalChecks: {
+              where: { revisionId },
+              orderBy: { verifiedAt: "desc" },
+              take: 1,
+              select: { verifiedAt: true, aConfirmed: true, zConfirmed: true, note: true },
+            },
           },
         })
       : Promise.resolve([]),
@@ -101,6 +121,7 @@ export const loadFabric = cache(async (projectId: string, revisionId: string | n
 
   const flat: FabricLink[] = links.map((l) => {
     const f = l.findings[0];
+    const pv = l.physicalChecks[0];
     return {
       id: l.id, cableId: l.cableId, fabric: l.fabric, rail: l.rail, speed: l.speed, media: l.media, lengthM: l.lengthM,
       aRack: l.aRack, aDevice: l.aDevice, aPort: l.aPort, zRack: l.zRack, zDevice: l.zDevice, zPort: l.zPort,
@@ -111,6 +132,12 @@ export const loadFabric = cache(async (projectId: string, revisionId: string | n
       nextAction: f?.nextAction ?? null,
       observability: f?.observability ?? null,
       relatedCableId: f?.relatedCableId ?? null,
+      cableType: l.cableType,
+      expectedSummary: f?.expectedSummary ?? null,
+      evidenceSource: f?.evidenceSource ?? null,
+      captureTime: f?.captureTime?.toISOString() ?? null,
+      observedSides: f?.observedSides ?? null,
+      physical: pv ? { verifiedAt: pv.verifiedAt.toISOString(), aConfirmed: pv.aConfirmed, zConfirmed: pv.zConfirmed, note: pv.note } : null,
     };
   });
 

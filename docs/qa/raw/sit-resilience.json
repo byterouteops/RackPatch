@@ -37,7 +37,7 @@
   {
     "check": "database outage (after fix): page state",
     "pass": true,
-    "detail": "health 503; page HTTP 500; body: This page could not load RackPatch could not reach a required service (for example the database). No changes were saved by this request. Try again in a moment; if it keeps happening, contact your administrator. Reference: 3054520238 Try aga"
+    "detail": "health 503; page HTTP 500; body: This page could not load RackPatch could not reach a required service (for example the database). No changes were saved by this request. Try again in a moment; if it keeps happening, contact your administrator. Reference: 4204695393 Try aga"
   },
   {
     "check": "database outage (after fix): recovery via Try again",
@@ -54,7 +54,7 @@
   {
     "check": "1.9 MB LLDP paste (under 2,000,000-char limit) reaches the parser",
     "pass": true,
-    "detail": "input 75 ms; alert: Unrecognized neighbor evidence format. Supported: Cisco NX-OS LLDP (`show lldp neighbors detail`); Cisco IOS / IOS-XE LLDP (`show lldp neighbors detail`); Cisco CDP (NX-OS / IOS) (`show cdp neighbors detail`); Arista EOS LLDP (`show lldp neighbors detail`); Juniper Junos LLDP (`show lldp neighbors interface <if> detail / show lldp neighbors detail`); Linux / Cumulus lldpd (`lldpcli show neighbors -f keyvalue`).; preview shown: false"
+    "detail": "input 46 ms; alert: Unrecognized neighbor evidence format. Supported: Cisco NX-OS LLDP (`show lldp neighbors detail`); Cisco IOS / IOS-XE LLDP (`show lldp neighbors detail`); Cisco CDP (NX-OS / IOS) (`show cdp neighbors detail`); Arista EOS LLDP (`show lldp neighbors detail`); Juniper Junos LLDP (`show lldp neighbors interface <if> detail / show lldp neighbors detail`); Linux / Cumulus lldpd (`lldpcli show neighbors -f keyvalue`).; preview shown: false"
   },
   {
     "check": "2.1 MB LLDP paste (over limit) is refused with a message",

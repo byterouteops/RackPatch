@@ -1,0 +1,78 @@
+{
+  "full": {
+    "collapsed": {
+      "nodes": 35,
+      "segments": 288,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 272,
+      "labelOverflows": 0
+    },
+    "expanded": {
+      "nodes": 35,
+      "segments": 344,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 339,
+      "labelOverflows": 0
+    },
+    "layoutMs": "799"
+  },
+  "frontend": {
+    "collapsed": {
+      "nodes": 23,
+      "segments": 148,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 47,
+      "labelOverflows": 0
+    },
+    "expanded": {
+      "nodes": 23,
+      "segments": 182,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 92,
+      "labelOverflows": 0
+    },
+    "layoutMs": "385"
+  },
+  "backend": {
+    "collapsed": {
+      "nodes": 12,
+      "segments": 92,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 104,
+      "labelOverflows": 0
+    },
+    "expanded": {
+      "nodes": 12,
+      "segments": 114,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 122,
+      "labelOverflows": 0
+    },
+    "layoutMs": "334"
+  },
+  "trace": {
+    "collapsed": {
+      "nodes": 35,
+      "segments": 291,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 272,
+      "labelOverflows": 0
+    },
+    "expanded": {
+      "nodes": 35,
+      "segments": 344,
+      "nodeOverlaps": 0,
+      "segmentsThroughNodes": 0,
+      "crossings": 339,
+      "labelOverflows": 0
+    },
+    "layoutMs": "627"
+  }
+}

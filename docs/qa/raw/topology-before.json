@@ -1,0 +1,27 @@
+{
+  "full": {
+    "nodes": 18,
+    "segments": 30,
+    "nodeOverlaps": 9,
+    "segmentsThroughNodes": 6,
+    "crossings": 34,
+    "labelOverflows": 0
+  },
+  "frontend": {
+    "nodes": 23,
+    "segments": 42,
+    "nodeOverlaps": 14,
+    "segmentsThroughNodes": 18,
+    "crossings": 210,
+    "labelOverflows": 0
+  },
+  "backend": {
+    "nodes": 12,
+    "segments": 32,
+    "nodeOverlaps": 0,
+    "segmentsThroughNodes": 0,
+    "crossings": 96,
+    "labelOverflows": 0
+  },
+  "trace": "no diagram"
+}

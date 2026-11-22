@@ -19,6 +19,8 @@ including but not limited to:
 - Zod, csv-parse, date-fns, nanoid, qrcode, clsx, tailwind-merge — MIT
 - bcryptjs — BSD-3-Clause
 - lucide-react — ISC
+- elkjs (Eclipse Layout Kernel, topology layout) — EPL-2.0
+  Unmodified; source available at https://github.com/kieler/elkjs
 
 Fonts:
 - IBM Plex Sans and IBM Plex Mono (via next/font/google) — SIL Open Font License 1.1

@@ -31,7 +31,7 @@
   {
     "check": "me/search cross-workspace returns no AI/HPC hits",
     "status": 200,
-    "pass": true
+    "pass": false
   },
   {
     "check": "v1 summary without token",
@@ -135,8 +135,8 @@
   },
   {
     "check": "cable details as cross-workspace lead",
-    "status": 500,
-    "pass": true
+    "status": 200,
+    "pass": false
   },
   {
     "check": "cable details anonymous",
