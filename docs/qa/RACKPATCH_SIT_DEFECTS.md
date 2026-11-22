@@ -15,8 +15,8 @@ issue; **P3** minor visual or usability issue.
 | --- | --- | --- | --- |
 | P0 | 0 | 0 | 0 |
 | P1 | 3 | 3 | 0 |
-| P2 | 10 | 8 | 2 (D-13, D-18) |
-| P3 | 11 | 5 | 6 (D-12, D-14, D-15, D-16, D-17, D-21) |
+| P2 | 11 | 10 | 1 (D-13) |
+| P3 | 12 | 5 | 7 (D-12, D-14, D-15, D-16, D-17, D-21, D-26) |
 
 D-09 is counted as P2.
 
@@ -166,6 +166,34 @@ D-09 is counted as P2.
 - **Regression test:** `theme-shots.spec.ts` (44 page/viewport layout checks, 0 issues) and `crawl.spec.ts` layout scan.
 - **Verification:** Passed. `ui-audit-shots/theme-final/1366x768_handover.png` shows 5,000 / 0 / 5,000 / 0 / 36.1% / 0.
 
+### D-18 · P2 · LCP on the 5,000-cable list under a throttled mobile profile
+- **Reproduction:** `e2e/sit/perf-throttled.spec.ts`: 150 ms RTT, 1.6 Mbps down, 750 kbps up, 4× CPU slowdown, cold cache. Open `/app/projects/<scale>/cables`.
+- **Expected:** LCP ≤ 2.5 s.
+- **Actual (before fix):** LCP 3,648 ms. Unthrottled desktop LCP 944 ms.
+- **Root cause:** The page serialised all 5,000 rows, with every field including long text, into the RSC payload ahead of the table markup: 3.27 MB of HTML (166 kB gzipped), downloaded and parsed before the first row could paint.
+- **Fix:**
+  - The list payload carries only the fields the list, filters and topology use, dictionary-encoded (`src/lib/cable-list-codec.ts`).
+  - Notes, observed/expected, next action, evidence source, blocked reason, connector and rail load for the selected cable only, via `getCableDetails` (`src/app/actions/cables.ts`, guarded by `requireProjectAccess` and scoped to the active revision).
+  - KPIs, filter options and the first page (25 rows, honouring `?status=` / `?fabric=`) come from small queries. The full list is passed as an unawaited promise, so React streams it after the table markup. Filters, topology and validation tabs are disabled with "Loading all N cables…" until it arrives; filtering, bulk selection and counts then behave exactly as before.
+  - KPI figures are now database counts. They were checked against the previous row-derived values for all 15 SIT projects: 0 differences.
+- **Regression tests:** `tests/cable-list-codec.test.ts`; `security.spec.ts` "cable details are not readable across workspaces or anonymously" (lead control returns the text; cross-workspace lead HTTP 500 and anonymous HTTP 303 return nothing); `perf-throttled.spec.ts` (now also records `readyMs`, when the full list is usable); `perf.spec.ts`; `ui-audit.spec.ts`; the full SIT suite.
+- **Verification:** Passed.
+  - Throttled LCP: 1,764 / 1,312 / 1,464 / 1,448 ms over four runs (was 3,648 ms). The full list becomes usable at 3,273 ms (`readyMs`).
+  - HTML: 758 kB uncompressed (was 3.27 MB); the table body now starts at about 86 kB, before the streamed data.
+  - Desktop LCP: 368 ms (was 944 ms).
+  - Navigation Overview → Cable Plan: 196 ms on the 5,000-cable project and 192 ms on the 172-cable project (median of 3).
+  - Screenshots: `docs/qa/screenshots/d18-*.png`.
+- **Measurement correction:** The earlier "569 ms Overview → Cable Plan on 5,000 cables" was measured on the 172-cable project, in one run, clicked while the overview's link prefetches were still in flight. `perf.spec.ts` now measures both projects, as a median of 3 settled runs.
+
+### D-25 · P2 · Field photo upload accepted non-image files
+- **Reproduction:** On a cable's install page, choose a file named `malware.png` whose bytes are `MZ this is not an image` (declared `image/png`).
+- **Expected:** Rejected; nothing stored.
+- **Actual:** Stored as a 23-byte `image/png` field photo. The SIT database holds such rows from earlier runs too (2026-11-21 22:10, 22:58, 23:01).
+- **Root cause:** `decodePhoto` (`src/app/actions/field-evidence.ts`) checked only the client-declared MIME type and size. Workflow B previously reported this check as passed: it read the photo count immediately after the upload, before the insert landed, and its loose error-text match was satisfied by unrelated page text. That earlier "Passed" was a false pass.
+- **Fix:** `decodePhoto`, which both the online upload and offline sync use, now requires the file's leading bytes to match the declared type (PNG, JPEG or WebP signature; `src/lib/image-signature.ts`).
+- **Regression tests:** `tests/image-signature.test.ts` (4 tests). Workflow B now waits for the upload's own error banner and for the input to be re-enabled before reading the database, and allows only the single expected HTTP 500 console entry for the rejected action.
+- **Verification:** Passed. The stricter workflow B failed against the unfixed build ("no error shown") and passes on the fixed build. The resilience spec's 1.2 MB JPEG is still stored.
+
 ## Open defects
 
 ### D-12 · P3 · Session revocation delay
@@ -179,7 +207,7 @@ D-09 is counted as P2.
 - **Recommendation:** Lazy-load the NetBox and GitOps panels with `next/dynamic`.
 
 ### D-14 · P3 · Cable API latency at 5,000 cables
-- **Finding (final build):** `/api/v1/projects/:id/cables` at 5,000 cables: p50 376 ms, p95 538 ms (budget 500 ms). SQL takes 2–16 ms (`sit-explain.txt`); hydrating and serialising the rows dominates.
+- **Finding:** `/api/v1/projects/:id/cables` at 5,000 cables: p95 538 ms on the earlier final build and 663 ms in the latest run (p50 376–412 ms; budget 500 ms). SQL takes 2–16 ms (`sit-explain.txt`); hydrating and serialising the rows dominates. The D-18 fix changed the cable page, not this API, whose response format is a public contract.
 - **Recommendation:** Pagination and `select` projections before projects exceed about 10k cables.
 
 ### D-15 · P3 · Deployment: forwarded host trust
@@ -194,12 +222,9 @@ D-09 is counted as P2.
 - **Finding:** The residual issue from D-05. A specific thrown reason, such as "That cable end is already mapped to another port", reaches the user only as the contextual fallback.
 - **Recommendation:** Return `{ ok: false, error }` for expected validation failures instead of throwing. This changes the action contract and needs approval.
 
-### D-18 · P2 · LCP on the 5,000-cable list under a throttled mobile profile
-- **Reproduction:** `e2e/sit/perf-throttled.spec.ts`: 150 ms RTT, 1.6 Mbps down, 750 kbps up, 4× CPU slowdown, cold cache. Open `/app/projects/<scale>/cables`.
-- **Expected:** LCP ≤ 2.5 s.
-- **Actual (final build):** LCP 3,648 ms (4,392 ms on an earlier build). Other measured pages are 1,368–1,888 ms. Unthrottled desktop LCP for the same page is 944 ms. On desktop, client-side navigation Overview → Cable Plan for this project takes 569 ms, above the 500 ms target; every other navigation is 83–432 ms.
-- **Root cause:** The page serialises all 5,000 rows, with every field, into the RSC payload. That is 3.27 MB of HTML uncompressed (166 kB gzipped), parsed and hydrated on a slow CPU. The list paginates on the client only.
-- **Recommendation:** Server-side pagination and filtering for the cable list, with a trimmed per-row projection. This changes the cable-list data flow (filters, bulk selection, counts) and needs a design decision.
+### D-26 · P3 · Navigation to the overview of a 5,000-cable project
+- **Finding:** Found while re-measuring D-18. Client-side navigation to Overview on the 5,000-cable project takes 641–963 ms (median 671 ms) against the 500 ms target; Reports takes 426–750 ms (median 464 ms). On the 172-cable project these are 376 ms and 390 ms. The old measurement only covered the 172-cable project.
+- **Recommendation:** Profile the overview's server queries at scale (they aggregate every cable in the revision). Not changed in this fix.
 
 ### D-21 · P3 · Optimistic-lock check is not atomic
 - **Finding (code review):** `updateInstallStatus` (`src/app/actions/install.ts`) compares `runtime.version` with `expectedVersion` and then updates by `id` only. Two requests that arrive within the same few milliseconds with the same version could both write; the last write wins and two audit rows are recorded.

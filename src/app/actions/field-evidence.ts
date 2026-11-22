@@ -10,6 +10,7 @@ import { assertPaidOrThrow } from "@/lib/commercial-gate";
 import { recordAudit } from "@/lib/audit";
 import { trackEvent } from "@/lib/analytics";
 import { parseCableQr } from "@/lib/qr/parse-cable-qr";
+import { matchesImageSignature } from "@/lib/image-signature";
 import {
   MAX_PHOTO_BYTES,
   validateOfflineSyncPayload,
@@ -25,6 +26,9 @@ function decodePhoto(base64: string, mimeType: string) {
   const buf = Buffer.from(base64, "base64");
   if (buf.length === 0 || buf.length > MAX_PHOTO_BYTES) {
     throw new Error(`Photo must be between 1 and ${MAX_PHOTO_BYTES} bytes`);
+  }
+  if (!matchesImageSignature(buf, mimeType)) {
+    throw new Error("File is not a valid JPEG, PNG, or WebP image");
   }
   return {
     data: buf,

@@ -178,14 +178,24 @@ test("B. installation: open via QR link, record install, evidence photo, blocked
   const before = await db.fieldPhoto.count({ where: { plannedLinkId: link.id } });
   await page.getByLabel("Field photo").setInputFiles({ name: "evidence.png", mimeType: "image/png", buffer: png });
   await expect.poll(() => db.fieldPhoto.count({ where: { plannedLinkId: link.id } }), { timeout: 15_000 }).toBe(before + 1);
+  // Wait for the upload's own outcome (error banner, input re-enabled) before checking the DB,
+  // so a late insert cannot slip past the assertion.
+  const rejectStart = errs().length;
   await page.getByLabel("Field photo").setInputFiles({ name: "malware.png", mimeType: "image/png", buffer: Buffer.from("MZ this is not an image") });
-  await expect(page.getByText(/not a valid|invalid|unsupported|could not|failed|must be/i).first()).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByRole("alert").filter({ hasText: /upload failed|not a valid/i })).toBeVisible({ timeout: 15_000 });
+  await expect(page.getByLabel("Field photo")).toBeEnabled();
+  await expect(page.getByText("Photo saved")).toHaveCount(0);
   expect(await db.fieldPhoto.count({ where: { plannedLinkId: link.id } })).toBe(before + 1);
+  // The rejected server action is expected to log exactly one HTTP 500 in the console; nothing else is allowed.
+  const rejectErrs = errs().slice(rejectStart);
+  expect(rejectErrs.filter((e) => !/status of 500/.test(e)), "unexpected errors during rejected upload").toEqual([]);
+  expect(rejectErrs.length).toBeLessThanOrEqual(1);
+  const rejectEnd = errs().length;
 
   await page.reload();
   await expect(page.getByText("Installed").first()).toBeVisible();
   expect(await db.auditEvent.count({ where: { projectId: aiProjectId, actorId: tech.id, action: { startsWith: "install." } } })).toBeGreaterThan(0);
-  pageErrors.push(...errs());
+  pageErrors.push(...errs().filter((_, i) => i < rejectStart || i >= rejectEnd));
   await closeAll(context);
 });
 

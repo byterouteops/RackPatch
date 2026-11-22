@@ -127,5 +127,25 @@
     "check": "revoked session (5 rows) rejected once cache cookie expires",
     "status": "http://localhost:3100/sign-in",
     "pass": true
+  },
+  {
+    "check": "control: lead reads cable details",
+    "status": 200,
+    "pass": true
+  },
+  {
+    "check": "cable details as cross-workspace lead",
+    "status": 500,
+    "pass": true
+  },
+  {
+    "check": "cable details anonymous",
+    "status": 303,
+    "pass": true
+  },
+  {
+    "check": "revoked session (2 rows) rejected once cache cookie expires",
+    "status": "http://localhost:3100/sign-in",
+    "pass": true
   }
 ]

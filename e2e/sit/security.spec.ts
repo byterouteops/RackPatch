@@ -92,6 +92,43 @@ test("server-action replay: viewer, cross-workspace, anonymous and forged-origin
   await closeAll(viewer.context, other.context, lead.context);
 });
 
+test("server-action replay: cable details are not readable across workspaces or anonymously", async ({ browser }) => {
+  const rev = (await db.project.findUniqueOrThrow({ where: { id: aiProjectId } })).activeRevisionId!;
+  const target = await db.verificationFinding.findFirstOrThrow({
+    where: { revisionId: rev, nextAction: { not: null } },
+    select: { plannedLinkId: true, nextAction: true },
+  });
+  const marker = target.nextAction!;
+
+  const lead = await contextAs(browser, NS("lead"));
+  let cap: Captured | null = null;
+  lead.page.on("request", (r: Request) => {
+    if (r.method() === "POST" && r.headers()["next-action"] && (r.postData() ?? "").includes('"linkId"')) cap = { url: r.url(), headers: r.headers(), body: r.postData() ?? "" };
+  });
+  await lead.page.goto(`/app/projects/${aiProjectId}/cables`);
+  await expect.poll(() => cap !== null, { timeout: 15_000 }).toBe(true);
+  const captured = cap as unknown as Captured;
+  const args = [{ projectId: aiProjectId, linkId: target.plannedLinkId }];
+
+  async function read(label: string, ctx: APIRequestContext, expectLeak: boolean) {
+    const headers: Record<string, string> = { origin: baseURL.replace(/\/$/, "") };
+    for (const k of ["next-action", "next-router-state-tree", "accept", "content-type"]) if (captured.headers[k]) headers[k] = captured.headers[k];
+    const res = await ctx.post(captured.url, { headers, data: JSON.stringify(args), failOnStatusCode: false, maxRedirects: 0 });
+    const leaked = (await res.text()).includes(marker);
+    const pass = leaked === expectLeak;
+    results.push({ check: label, status: res.status(), pass });
+    expect(pass, `${label}: detail text ${leaked ? "returned" : "not returned"} (HTTP ${res.status()})`).toBe(true);
+  }
+
+  await read("control: lead reads cable details", lead.context.request, true);
+  const other = await contextAs(browser, "lead@demo.rackpatch.local");
+  await read("cable details as cross-workspace lead", other.context.request, false);
+  const anon = await pwRequest.newContext({ baseURL });
+  await read("cable details anonymous", anon, false);
+  await anon.dispose();
+  await closeAll(lead.context, other.context);
+});
+
 test("API authentication and authorization", async ({ browser }) => {
   const anon = await pwRequest.newContext({ baseURL });
   const photo = await db.fieldPhoto.findFirst({ where: { projectId: aiProjectId } });

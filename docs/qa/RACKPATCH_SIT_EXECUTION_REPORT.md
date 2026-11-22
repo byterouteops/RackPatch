@@ -11,33 +11,39 @@ development records were used for destructive tests. Each SIT spec refuses to ru
 | --- | --- |
 | Page routes discovered | 48 |
 | API route handlers | 10 |
-| Exported server actions | 68 (63 guarded, 5 reviewed as public or pure) |
+| Exported server actions | 69 (64 guarded, 5 reviewed as public or pure) |
 | Interactive controls rendered (48 routes, project lead) | 2,570 (2,005 links, 356 buttons, 209 form fields; 2,663 as owner). Both include the shared shell on each page |
 | Roles exercised | 10 (owner, lead, engineer, tech, QC, contractor, viewer, cross-workspace lead, anonymous, platform admin) |
-| **Test cases executed on the final build** | **309**: 267 unit/integration (vitest), 35 SIT browser specs, 7 existing e2e |
-| Passed | 309 |
+| **Test cases executed after the D-18 and D-25 fixes** | **318**: 274 unit/integration (vitest), 36 SIT browser specs, 8 existing e2e |
+| Passed | 318 (after the re-runs listed under "Run notes") |
 | Failed | 0 |
-| Blocked / not executed | 0 test cases. Items not covered by a test are listed below |
-| Assertion-level checks recorded in raw files | Security 25 checks, resilience 21 checks, layout 252 + 44 checks, axe on 48 routes |
+| Blocked / not executed | 0 test cases. The AI/HPC demo verifier was not re-run (no demo code changed). Items not covered by a test are listed below |
+| Assertion-level checks recorded in raw files | Security 28 checks, resilience 21 checks, layout 252 + 98 checks, axe on 48 routes |
 
 ### How the final numbers were produced
 
 | Suite | Command / log | Result |
 | --- | --- | --- |
-| Unit and integration | `npx vitest run` → `docs/qa/raw/vitest.log` | 35 files, 267 tests passed |
+| Unit and integration | `npx vitest run` → `docs/qa/raw/vitest.log` | 37 files, 274 tests passed |
 | Type check, lint, build | `tsc --noEmit`, `npm run lint`, `next build` → `sit-build.log` | Clean; build succeeded |
-| SIT crawl, controls, security | `sit-final-run.log` | Crawl 10/10, controls 1/1, security 5/5 |
-| SIT resilience and workflows | `sit-final-run-2.log` | 15/15 |
-| Fonts | `e2e/sit/fonts.spec.ts` → `sit-fonts.json` | 1/1 |
-| Screenshots and layout | `e2e/theme-shots.spec.ts` → `ui-audit-shots/theme-final/` | 1/1 (44 checks, 0 issues) |
-| Performance | `sit-perf-run.log` → `sit-perf.json`, `sit-perf-throttled.json` | 2/2 specs ran to completion; objectives partly missed (below) |
-| Existing e2e | `e2e-existing.log` | 7/7 |
-| AI/HPC demo verifier | `ai-hpc-verify.log` | 24/24 checks (run before the final UI-only fixes) |
+| SIT crawl, controls, fonts, resilience, workflows | `sit-d18-regression.log` (D-18 build) | Crawl 10/10, controls 1/1, fonts 1/1, resilience 8/8, workflows 6/7 (WF-B found D-25) |
+| SIT workflows, resilience, security | Final build (D-18 + D-25) | Workflows 7/7, resilience 8/8, security 6/6 |
+| Screenshots and layout | `e2e/theme-shots.spec.ts` → `ui-audit-shots/theme-final/` | 1/1 (98 checks, 0 issues) |
+| Performance | `sit-perf.json`, `sit-perf-throttled.json`, `sit-perf-throttled-d18-run*.json` (D-18 build) | 2/2; page-load objectives met, two scale objectives missed (below) |
+| Existing e2e | `e2e-d18.log` (final build) | 8/8 |
+| AI/HPC demo verifier | `ai-hpc-verify.log` | 24/24 checks (earlier build; not re-run) |
 
-**Run note.** In the first final run, one resilience test failed inside Playwright's own trace recorder
-("ENOENT … recording4.network"), not in an assertion, and the reporter marked 7 tests "did not run". The
-resilience and workflow specs were re-run on the same build with a clean `test-results` folder and passed 15/15.
-Both logs are kept.
+**Run notes.**
+- In the first SIT final run, one resilience test failed inside Playwright's own trace recorder
+  ("ENOENT … recording4.network"), not in an assertion. That run was repeated with a clean `test-results` folder.
+- During the D-18 regression run, Workflow B failed because a non-image photo was stored (D-25). That test had
+  passed before only because of a race in the test, so the earlier result was a false pass. After the fix, the
+  stricter test failed against the old build and passes on the fixed build. Its "no uncaught page errors"
+  companion then caught the rejected action's expected HTTP 500 console entry, and now allows exactly that one.
+- In `e2e-d18.log` the UI audit was refused at sign-in by the auth rate limiter ("Too many requests") after the
+  preceding suites. It passed when re-run alone after the window reset.
+- The crawl, controls and fonts specs ran on the D-18 build, one build before the D-25 change, which touches
+  only the field-photo action.
 
 ## Coverage by module
 
@@ -45,9 +51,9 @@ Both logs are kept.
 | --- | --- | --- |
 | Navigation and routing | All 48 routes × 9 roles; deny pages; anonymous redirect | Crawl (10) |
 | Authentication and sessions | Sign-in, rate-limit handling, revocation, cookie-cache window | Security, helpers |
-| Authorization and isolation | Server-action replay by 4 unauthorised actors; API tokens; cross-workspace reads; role-based UI | Security (5), vitest permission boundaries, guard test |
+| Authorization and isolation | Server-action replay by 4 unauthorised actors; cable-details replay (cross-workspace, anonymous); API tokens; cross-workspace reads; role-based UI | Security (6), vitest permission boundaries, guard test |
 | Cable planning | Create, hosted gate and activation, CSV validation (duplicates, missing columns), publish | WF-A, resilience, vitest CSV tests |
-| Installation and field | QR open, install, blocked reason, photo upload and validation, offline queue, double submit, stale-edit conflict | WF-B, resilience |
+| Installation and field | QR open, install, blocked reason, photo upload and content-signature validation, offline queue, double submit, stale-edit conflict | WF-B, resilience, vitest image signature |
 | LLDP/CDP evidence | Garbage and unsupported output, swapped cables, corrected capture, size limits, parsers (NX-OS, IOS, CDP, EOS, Junos, lldpd) | WF-CD, resilience, vitest |
 | Exceptions and QC | Assignee and due date; installer cannot QC own work; reject note; accept | WF-CD, WF-E |
 | Handover | Blocked owner sign-off, CSV package, snapshot, failure injection | WF-F, resilience, vitest approval and blocking |
@@ -67,8 +73,11 @@ From `RACKPATCH_SIT_DEFECTS.md`:
 | --- | --- | --- | --- |
 | P0 | 0 | 0 | 0 |
 | P1 | 3 | 3 | 0 |
-| P2 | 10 | 8 | 2 (D-13 Integrations bundle, D-18 large cable list) |
-| P3 | 11 | 5 | 6 (D-12, D-14, D-15, D-16, D-17, D-21) |
+| P2 | 11 | 10 | 1 (D-13 Integrations bundle) |
+| P3 | 12 | 5 | 7 (D-12, D-14, D-15, D-16, D-17, D-21, D-26) |
+
+After the final pass, D-18 (large cable list) was fixed on request. Re-testing it found D-25 (non-image field
+photos accepted; fixed) and D-26 (overview navigation at 5,000 cables; open).
 
 Six defects were found during this final pass and fixed on the final build:
 - **D-19** dashboard rack height.
@@ -82,13 +91,13 @@ Six defects were found during this final pass and fixed on the final build:
 
 | Measurement | Result |
 | --- | --- |
-| Desktop LCP | 104–332 ms; 944 ms on the 5,000-cable list |
+| Desktop LCP | 100–400 ms; 368 ms on the 5,000-cable list (was 944 ms) |
 | CLS | 0 |
-| INP | ≤ 64 ms |
-| Filtering on 5,000 rows | 81–146 ms |
-| Navigation | 80–408 ms; 569 ms Overview → Cable Plan on 5,000 cables |
-| Throttled LCP | 1,368–1,888 ms; **3,648 ms on the 5,000-cable list** |
-| API p95 | ≤ 35 ms on 172 cables; 306 ms (summary) and **538 ms** (cables) on 5,000 cables |
+| INP | 40 ms |
+| Filtering on 5,000 rows | 59–152 ms |
+| Navigation (median of 3, settled) | 86–464 ms; Cable Plan 192–196 ms; **671 ms to Overview on 5,000 cables** (D-26) |
+| Throttled LCP | 1,404–2,052 ms; 5,000-cable list 1,312–1,764 ms over 4 runs (was 3,648 ms); full list usable at 3.3 s |
+| API p95 | ≤ 42 ms on 172 cables; 259 ms (summary) and **664 ms** (cables) on 5,000 cables (D-14) |
 
 Details: `RACKPATCH_PERFORMANCE_REPORT.md`.
 
@@ -101,6 +110,7 @@ fixed during SIT (D-06).
 
 - Before: `ui-audit-shots/theme/`.
 - After: `ui-audit-shots/theme-final/`.
+- D-18 cable list while streaming, after loading, and with lazily loaded details: `docs/qa/screenshots/d18-*.png`.
 - Database-outage before/after: `docs/qa/raw/sit-db-outage-*.png`.
 
 Comparison: `RACKPATCH_UI_VISUAL_COMPARISON.md`.

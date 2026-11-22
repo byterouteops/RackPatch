@@ -49,14 +49,23 @@ test("throttled cold loads (slow 4G + 4x CPU)", async ({ browser, baseURL }) => 
       if (e.response.headers["content-encoding"] || e.response.headers["Content-Encoding"]) compressed++;
     });
     cdp.on("Network.loadingFinished", (e: { encodedDataLength: number }) => (bytes += e.encodedDataLength));
-    await page.goto(url, { waitUntil: "load", timeout: 120_000 });
+    await page.goto(url, { waitUntil: "domcontentloaded", timeout: 120_000 });
+    // Time until the page is usable: heading rendered and no streamed section still loading
+    // (the cable list streams all rows after the first page and disables filters until then).
+    const ready = await page.waitForFunction(
+      () => (document.querySelector("main h1") && !document.querySelector('[data-loading="true"]') ? performance.now() : false),
+      undefined,
+      { polling: 50, timeout: 60_000 },
+    );
+    const readyMs = (await ready.jsonValue()) as number;
+    await page.waitForLoadState("load", { timeout: 120_000 });
     await page.waitForTimeout(1500);
     const m = await page.evaluate(() => {
       const w = window as unknown as { __rp: { lcp: number; cls: number } };
       const nav = performance.getEntriesByType("navigation")[0] as PerformanceNavigationTiming;
       return { lcp: w.__rp.lcp, cls: w.__rp.cls, ttfb: nav.responseStart, load: nav.loadEventEnd };
     });
-    out.push({ name, lcpMs: Math.round(m.lcp), ttfbMs: Math.round(m.ttfb), loadMs: Math.round(m.load), cls: Math.round(m.cls * 1000) / 1000, transferKB: Math.round(bytes / 1024), compressedResponses: `${compressed}/${textual}` });
+    out.push({ name, lcpMs: Math.round(m.lcp), readyMs: Math.round(readyMs), ttfbMs: Math.round(m.ttfb), loadMs: Math.round(m.load), cls: Math.round(m.cls * 1000) / 1000, transferKB: Math.round(bytes / 1024), compressedResponses: `${compressed}/${textual}` });
     await closeAll(context);
   }
   writeResult("sit-perf-throttled", { measuredAt: new Date().toISOString(), profile: "150ms RTT, 1.6 Mbps down, 750 Kbps up, CPU 4x", pages: out });

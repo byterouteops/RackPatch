@@ -2,7 +2,8 @@
 
 import Link from "next/link";
 import { useEffect, useMemo, useState } from "react";
-import type { InstallStatus, VerificationState } from "@prisma/client";
+import { getCableDetails, type CableDetails } from "@/app/actions/cables";
+import { FIRST_PAGE, decodeCableList, type CableListRow, type EncodedCableList } from "@/lib/cable-list-codec";
 import {
   AlertTriangle,
   ArrowLeftRight,
@@ -22,31 +23,7 @@ import { InstallStatusBadge, VerificationBadge } from "@/components/status-badge
 import { Badge, Button, EmptyState, Select } from "@/components/ui";
 import { cn } from "@/lib/utils";
 
-export type CableRow = {
-  id: string;
-  cableId: string;
-  aRack: string;
-  aDevice: string;
-  aPort: string;
-  zRack: string;
-  zDevice: string;
-  zPort: string;
-  cableType: string | null;
-  fabric?: string | null;
-  speed?: string | null;
-  connector?: string | null;
-  rail?: string | null;
-  installStatus: InstallStatus;
-  verificationState: VerificationState;
-  retired: boolean;
-  lengthMeters: number | null;
-  notes: string | null;
-  blockedReason: string | null;
-  expected: string | null;
-  observed: string | null;
-  nextAction: string | null;
-  evidenceSource: string | null;
-};
+export type CableRow = CableListRow;
 
 export type CableHistoryEvent = {
   id: string;
@@ -59,7 +36,7 @@ export type CableHistoryEvent = {
 const DASH = "\u2014";
 
 type View = "all" | "issues" | "topology" | "history";
-const PAGE_SIZES = [25, 50, 100];
+const PAGE_SIZES = [FIRST_PAGE, 50, 100];
 
 function isIssue(r: CableRow) {
   return (
@@ -71,7 +48,9 @@ function isIssue(r: CableRow) {
 
 export function CableListClient({
   projectId,
-  rows,
+  firstPage,
+  data,
+  counts,
   racks,
   cableTypes,
   history,
@@ -80,7 +59,11 @@ export function CableListClient({
   fabrics = [],
 }: {
   projectId: string;
-  rows: CableRow[];
+  /** The first page for the initial filters, rendered while `data` streams in. */
+  firstPage: EncodedCableList;
+  data: Promise<EncodedCableList>;
+  /** Server counts shown until the full list has loaded. */
+  counts: { total: number; issues: number; matching: number };
   racks: string[];
   cableTypes: string[];
   history: CableHistoryEvent[];
@@ -88,6 +71,20 @@ export function CableListClient({
   initialFabric?: string;
   fabrics?: string[];
 }) {
+  const [full, setFull] = useState<EncodedCableList | null>(null);
+  const [loadFailed, setLoadFailed] = useState(false);
+  useEffect(() => {
+    let live = true;
+    data.then(
+      (d) => live && setFull(d),
+      () => live && setLoadFailed(true),
+    );
+    return () => {
+      live = false;
+    };
+  }, [data]);
+  const loading = full === null;
+  const rows = useMemo(() => decodeCableList(full ?? firstPage), [full, firstPage]);
   const [view, setView] = useState<View>("all");
   const [search, setSearch] = useState("");
   const [rack, setRack] = useState("");
@@ -95,13 +92,15 @@ export function CableListClient({
   const [install, setInstall] = useState(initialInstall);
   const [verification, setVerification] = useState("");
   const [cableType, setCableType] = useState("");
-  const [pageSize, setPageSize] = useState(25);
+  const [pageSize, setPageSize] = useState(FIRST_PAGE);
   const [page, setPage] = useState(0);
   const [selectedId, setSelectedId] = useState<string | null>(rows[0]?.id ?? null);
   const [checked, setChecked] = useState<Set<string>>(new Set());
   const [copied, setCopied] = useState(false);
 
-  const issueCount = useMemo(() => rows.filter(isIssue).length, [rows]);
+  const total = loading ? counts.total : rows.length;
+  const computedIssues = useMemo(() => rows.filter(isIssue).length, [rows]);
+  const issueCount = loading ? counts.issues : computedIssues;
 
   const filtered = useMemo(() => {
     const q = search.trim().toLowerCase();
@@ -119,7 +118,8 @@ export function CableListClient({
     });
   }, [rows, view, search, rack, fabric, install, verification, cableType]);
 
-  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const matchCount = loading ? counts.matching : filtered.length;
+  const pageCount = Math.max(1, Math.ceil(matchCount / pageSize));
   const safePage = Math.min(page, pageCount - 1);
   const pageRows = filtered.slice(safePage * pageSize, safePage * pageSize + pageSize);
   const selected = rows.find((r) => r.id === selectedId) ?? null;
@@ -173,11 +173,11 @@ export function CableListClient({
 
   return (
     <div className="grid items-start gap-4 xl:grid-cols-[minmax(0,1fr)_380px]">
-      <div className="rp-card overflow-hidden">
+      <div className="rp-card overflow-hidden" aria-busy={loading} data-loading={loading && !loadFailed ? "true" : undefined}>
         <div className="flex items-center gap-1 border-b border-[var(--border)] px-3 pt-2">
           {(
             [
-              { id: "all", label: `Cable List (${rows.length})`, Icon: Network },
+              { id: "all", label: `Cable List (${total})`, Icon: Network },
               { id: "topology", label: "Topology View", Icon: Share2 },
               { id: "issues", label: `Validation Results (${issueCount})`, Icon: AlertTriangle },
               { id: "history", label: "Change History", Icon: History },
@@ -186,12 +186,14 @@ export function CableListClient({
             <button
               key={id}
               type="button"
+              disabled={loading && (id === "topology" || id === "issues")}
               onClick={() => setView(id)}
               className={cn(
                 "-mb-px flex items-center gap-2 rounded-t-lg border-b-[3px] px-4 py-2.5 text-sm font-semibold",
                 view === id
                   ? "border-[var(--accent)] bg-[var(--accent-soft)] text-[var(--accent-ink)]"
                   : "border-transparent text-[var(--muted-fg)] hover:text-[var(--foreground)]",
+                "disabled:cursor-wait disabled:opacity-60",
               )}
             >
               <Icon className="h-4 w-4" aria-hidden />
@@ -204,7 +206,16 @@ export function CableListClient({
         {view !== "history" && (
         <>
 
-        <div className="flex flex-col gap-2 border-b border-[var(--border)] p-3 sm:flex-row sm:flex-wrap sm:items-center">
+        {loadFailed && (
+          <p role="alert" className="border-b border-[var(--border)] bg-[var(--danger-soft)] px-4 py-2 text-sm text-[var(--danger-ink)]">
+            Only the first {rows.length} cables could be loaded. Reload the page to search and filter all {total} cables.
+          </p>
+        )}
+        <fieldset
+          disabled={loading}
+          className="m-0 flex min-w-0 flex-col gap-2 border-0 border-b border-[var(--border)] p-3 sm:flex-row sm:flex-wrap sm:items-center"
+        >
+          <legend className="sr-only">Filter cables</legend>
           <label className="relative min-w-[220px] flex-1">
             <span className="sr-only">Search cables</span>
             <Search
@@ -279,7 +290,12 @@ export function CableListClient({
               Clear filters
             </button>
           )}
-        </div>
+          {loading && !loadFailed && (
+            <span role="status" className="text-xs text-[var(--muted-fg)]">
+              Loading all {total.toLocaleString("en-US")} cables{"\u2026"}
+            </span>
+          )}
+        </fieldset>
 
         {checked.size > 0 && (
           <div className="flex flex-wrap items-center gap-3 border-b border-[var(--border)] bg-[var(--accent-soft)] px-4 py-2 text-sm">
@@ -413,7 +429,7 @@ export function CableListClient({
           ))}
         </ul>
 
-        {filtered.length === 0 ? (
+        {matchCount === 0 ? (
           <div className="p-6">
             <EmptyState
               icon={<Search className="h-5 w-5" aria-hidden />}
@@ -422,10 +438,14 @@ export function CableListClient({
             />
           </div>
         ) : (
-          <div className="flex flex-wrap items-center justify-between gap-3 border-t border-[var(--border)] px-4 py-2.5 text-xs text-[var(--muted-fg)]">
+          <fieldset
+            disabled={loading}
+            className="m-0 flex min-w-0 flex-wrap items-center justify-between gap-3 border-0 border-t border-[var(--border)] px-4 py-2.5 text-xs text-[var(--muted-fg)]"
+          >
+            <legend className="sr-only">Pagination</legend>
             <span>
-              Showing {safePage * pageSize + 1}{"\u2013"}{Math.min(filtered.length, (safePage + 1) * pageSize)} of{" "}
-              {filtered.length.toLocaleString("en-US")} cables
+              Showing {safePage * pageSize + 1}{"\u2013"}{Math.min(matchCount, (safePage + 1) * pageSize)} of{" "}
+              {matchCount.toLocaleString("en-US")} cables
             </span>
             <div className="flex items-center gap-1">
               <button
@@ -478,7 +498,7 @@ export function CableListClient({
                 ))}
               </select>
             </label>
-          </div>
+          </fieldset>
         )}
         </>
         )}
@@ -500,6 +520,21 @@ function CableDetailsPanel({
   cable: CableRow | null;
   onClose: () => void;
 }) {
+  const cableId = cable?.id ?? null;
+  const [details, setDetails] = useState<{ id: string; data: CableDetails | null; error?: string } | null>(null);
+  useEffect(() => {
+    if (!cableId) return;
+    let live = true;
+    getCableDetails({ projectId, linkId: cableId })
+      .then((data) => live && setDetails({ id: cableId, data }))
+      .catch(() => live && setDetails({ id: cableId, data: null, error: "Could not load details" }));
+    return () => {
+      live = false;
+    };
+  }, [projectId, cableId]);
+  const d = details?.id === cableId ? details : null;
+  const info = d?.data ?? null;
+
   if (!cable) {
     return (
       <aside className="rp-card hidden p-6 text-center text-sm text-[var(--muted-fg)] xl:block">
@@ -520,9 +555,10 @@ function CableDetailsPanel({
     ["Length", cable.lengthMeters != null ? `${cable.lengthMeters} m` : DASH],
     ...(cable.fabric ? ([["Fabric", cable.fabric]] as Array<[string, string]>) : []),
     ...(cable.speed ? ([["Speed", cable.speed]] as Array<[string, string]>) : []),
-    ...(cable.connector ? ([["Connector", cable.connector]] as Array<[string, string]>) : []),
-    ...(cable.rail ? ([["Rail", cable.rail]] as Array<[string, string]>) : []),
+    ...(info?.connector ? ([["Connector", info.connector]] as Array<[string, string]>) : []),
+    ...(info?.rail ? ([["Rail", info.rail]] as Array<[string, string]>) : []),
   ];
+  const blocked = cable.installStatus === "BLOCKED";
 
   return (
     <aside className="rp-card sticky top-20 hidden overflow-hidden xl:block" aria-label="Cable details">
@@ -571,31 +607,33 @@ function CableDetailsPanel({
         </div>
       </div>
 
-      {(problem || cable.blockedReason) && (
+      {(problem || blocked || info?.blockedReason) && (
         <div className="mx-4 mb-4 rounded-lg border border-red-200 bg-[var(--danger-soft)] p-3 text-[13px]">
           <p className="flex items-center gap-1.5 font-bold text-[var(--danger-ink)]">
             <AlertTriangle className="h-4 w-4" aria-hidden />
-            {cable.blockedReason && !problem ? "Blocked" : "Exception Details"}
+            {(blocked || info?.blockedReason) && !problem ? "Blocked" : "Exception Details"}
           </p>
-          {cable.blockedReason && <p className="mt-1">{cable.blockedReason}</p>}
-          {cable.observed && (
+          {!d && <p className="mt-1 text-[var(--muted-fg)]">Loading details…</p>}
+          {info?.blockedReason && <p className="mt-1">{info.blockedReason}</p>}
+          {info?.observed && (
             <p className="mt-1">
-              <span className="font-semibold">Observed:</span> {cable.observed}
+              <span className="font-semibold">Observed:</span> {info.observed}
             </p>
           )}
-          {cable.expected && (
+          {info?.expected && (
             <p className="mt-0.5">
-              <span className="font-semibold">Expected:</span> {cable.expected}
+              <span className="font-semibold">Expected:</span> {info.expected}
             </p>
           )}
-          {cable.nextAction && <p className="mt-1 text-[var(--muted-fg)]">{cable.nextAction}</p>}
+          {info?.nextAction && <p className="mt-1 text-[var(--muted-fg)]">{info.nextAction}</p>}
         </div>
       )}
 
-      {!problem && cable.evidenceSource && (
-        <p className="mx-4 mb-4 text-xs text-[var(--muted-fg)]">Evidence: {cable.evidenceSource}</p>
+      {d?.error && <p className="mx-4 mb-4 text-xs text-[var(--danger-ink)]" role="alert">{d.error}</p>}
+      {!problem && info?.evidenceSource && (
+        <p className="mx-4 mb-4 text-xs text-[var(--muted-fg)]">Evidence: {info.evidenceSource}</p>
       )}
-      {cable.notes && <p className="mx-4 mb-4 text-xs text-[var(--muted-fg)]">Notes: {cable.notes}</p>}
+      {info?.notes && <p className="mx-4 mb-4 text-xs text-[var(--muted-fg)]">Notes: {info.notes}</p>}
 
       <div className="grid grid-cols-2 gap-2 border-t border-[var(--border)] p-3">
         <Button href={href} size="sm">

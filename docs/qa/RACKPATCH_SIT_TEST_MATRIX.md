@@ -1,10 +1,11 @@
 # RackPatch SIT test matrix
 
 Each row is an automated test that was executed. "Result" is the outcome on the **final production build**, from
-the run logged in `docs/qa/raw/sit-final-run.log` unless noted. Nothing was marked passed without running.
+the run logged in `docs/qa/raw/sit-final-run.log` unless noted. Rows touched by the D-18 and D-25 fixes were
+re-run on the build containing them (see the execution report). Nothing was marked passed without running.
 
 Inventory (`docs/qa/sit-inventory.json`, generated from the source tree by `scripts/sit-inventory.ts`):
-**48 page routes, 10 API route handlers, 68 exported server actions**. All 68 actions call an auth guard, except 5
+**48 page routes, 10 API route handlers, 69 exported server actions**. All 69 actions call an auth guard, except 5
 reviewed as intentionally public or pure (bootstrap ×2, `listCollectionProfiles`, `submitPilotRequest`, `hashCsv`).
 Rendered interactive controls (`docs/qa/raw/sit-controls.json`, all 48 routes): **2,570 as project lead**
 (2,005 links, 356 buttons, 209 form fields) and 2,663 as workspace owner. Both counts include the shared shell
@@ -28,7 +29,7 @@ workspace, anonymous, and platform admin. All are SIT demo accounts in `rackpatc
 | ID | Test | Spec | Result |
 | --- | --- | --- | --- |
 | WF-A | Create project; hosted gate blocks import until a platform admin records activation; duplicate-cable CSV rejected ("Line 7"), Publish disabled; valid CSV publishes 9 links; racks empty state | `e2e/sit/workflows.spec.ts` | Passed (clean re-run, `sit-final-run-2.log`) |
-| WF-B | Field tech opens a cable from a QR URL; "Mark blocked" without a reason is refused and nothing is written; "Mark installed" records the installer; photo stored; bogus file rejected; audit row written | `workflows.spec.ts` | Passed (clean re-run, `sit-final-run-2.log`) |
+| WF-B | Field tech opens a cable from a QR URL; "Mark blocked" without a reason is refused and nothing is written; "Mark installed" records the installer; photo stored; non-image file declared as PNG rejected and not stored (waits for the upload's own outcome); audit row written | `workflows.spec.ts` | Passed on the final build. The earlier "Passed" was a false pass caused by a race in the test; it hid D-25 |
 | WF-CD | Garbage LLDP refused; swapped capture → C-201/C-202 MISMATCH; exception assignee and due date saved; corrected capture → VERIFIED_LLDP | `workflows.spec.ts` | Passed (clean re-run, `sit-final-run-2.log`) |
 | WF-E | Installer cannot QC own work; reject needs a 5-character note; reject recorded with audit; accept recorded | `workflows.spec.ts` | Passed (clean re-run, `sit-final-run-2.log`) |
 | WF-F | Handover: owner sign-off blocked while exceptions are open; CSV package (>100 lines); snapshot created | `workflows.spec.ts` | Passed (clean re-run, `sit-final-run-2.log`) |
@@ -46,6 +47,8 @@ workspace, anonymous, and platform admin. All are SIT demo accounts in `rackpatc
 | SEC-05 | Security headers: CSP, nosniff, referrer-policy; no `x-powered-by` | `security.spec.ts` | Passed |
 | SEC-06 | Every exported server action is guarded or reviewed; internal helpers not exported | `tests/server-action-guards.test.ts` (vitest) | Passed (vitest) |
 | SEC-07 | Permission boundaries (capability matrix per role) | `tests/permission-boundaries.test.ts` (vitest) | Passed (vitest) |
+| SEC-08 | Captured `getCableDetails` action replayed for a cable with known detail text: lead receives it (control); cross-workspace lead and anonymous receive nothing | `security.spec.ts` | Passed |
+| SEC-09 | Field photo content must match its declared type (PNG, JPEG, WebP signatures; mismatched, truncated and non-image bytes refused) | `tests/image-signature.test.ts` (vitest); WF-B | Passed |
 
 ## Error handling and recovery
 
@@ -65,8 +68,8 @@ workspace, anonymous, and platform admin. All are SIT demo accounts in `rackpatc
 
 | ID | Test | Spec | Result |
 | --- | --- | --- | --- |
-| PERF-01 | Desktop: 13 pages × 3 cold loads (LCP, CLS, TTFB), navigation, filtering, INP, API p50/p95 | `e2e/sit/perf.spec.ts` | Executed, spec passed; objectives missed on 5,000 cables only (navigation 569 ms, cable API p95 538 ms), see performance report |
-| PERF-02 | Throttled (slow 4G, 4× CPU): 6 pages LCP/CLS | `e2e/sit/perf-throttled.spec.ts` | Executed, spec passed; LCP objective missed on the 5,000-cable list only (3,648 ms), see performance report |
+| PERF-01 | Desktop: 13 pages × 3 cold loads (LCP, CLS, TTFB), navigation, filtering, INP, API p50/p95 | `e2e/sit/perf.spec.ts` | Executed, spec passed. Navigation is now the median of 3 settled runs on both projects. Objectives missed on 5,000 cables only: Overview navigation 671 ms (D-26), cable API p95 664 ms (D-14); see performance report |
+| PERF-02 | Throttled (slow 4G, 4× CPU): 6 pages LCP/CLS and time until usable | `e2e/sit/perf-throttled.spec.ts` | Executed, spec passed. LCP met on every page; 5,000-cable list 1,312–1,764 ms over 4 runs (was 3,648 ms, D-18 fixed) |
 | RESP-01 | Layout scan at 1920/1440/1366/1024/768/390 px | `crawl.spec.ts` | Passed |
 | RESP-02 | Screenshots and layout scan, 11 routes × 4 viewports | `e2e/theme-shots.spec.ts` | Passed (44 checks, 0 issues, 0 console errors) |
 | A11Y-01 | axe serious/critical on all 48 routes | `crawl.spec.ts` | Passed |
@@ -76,7 +79,7 @@ workspace, anonymous, and platform admin. All are SIT demo accounts in `rackpatc
 
 | ID | Test | Result |
 | --- | --- | --- |
-| UNIT-01 | `npx vitest run` (35 files, including LLDP/CDP parsers, verification evaluation, handover blocking and approval, AI/HPC demo, CSV import, authz) | Passed: 35 files, 267 tests |
+| UNIT-01 | `npx vitest run` (37 files, including LLDP/CDP parsers, verification evaluation, handover blocking and approval, AI/HPC demo, CSV import, authz, cable-list codec, image signatures) | Passed: 37 files, 274 tests |
 | BUILD-01 | `tsc --noEmit`, `npm run lint`, `next build` | Passed |
 | E2E-01 | Pre-existing e2e: smoke, panels flow, spares flow, AI/HPC handover | Passed 7/7 |
 | DEMO-01 | `npm run demo:verify:ai-hpc` (synthetic CDP/LLDP fixtures, scenarios, idempotent reseed, isolation) | Passed 24/24 (`docs/qa/raw/ai-hpc-verify.log`; run before the final UI fixes, which did not touch the demo or evidence code) |

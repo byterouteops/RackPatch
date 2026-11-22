@@ -1,0 +1,60 @@
+{
+  "measuredAt": "2026-11-22T07:22:57.495Z",
+  "profile": "150ms RTT, 1.6 Mbps down, 750 Kbps up, CPU 4x",
+  "pages": [
+    {
+      "name": "Dashboard",
+      "lcpMs": 1576,
+      "ttfbMs": 151,
+      "loadMs": 1833,
+      "cls": 0.001,
+      "transferKB": 441,
+      "compressedResponses": "28/29"
+    },
+    {
+      "name": "Project overview",
+      "lcpMs": 1552,
+      "ttfbMs": 152,
+      "loadMs": 3667,
+      "cls": 0.003,
+      "transferKB": 632,
+      "compressedResponses": "48/50"
+    },
+    {
+      "name": "Cable list (172)",
+      "lcpMs": 1352,
+      "ttfbMs": 259,
+      "loadMs": 3371,
+      "cls": 0.004,
+      "transferKB": 709,
+      "compressedResponses": "48/50"
+    },
+    {
+      "name": "Cable list (5000)",
+      "lcpMs": 1764,
+      "ttfbMs": 294,
+      "loadMs": 4043,
+      "cls": 0.002,
+      "transferKB": 674,
+      "compressedResponses": "43/46"
+    },
+    {
+      "name": "Handover",
+      "lcpMs": 1356,
+      "ttfbMs": 151,
+      "loadMs": 1824,
+      "cls": 0.002,
+      "transferKB": 593,
+      "compressedResponses": "42/43"
+    },
+    {
+      "name": "Integrations",
+      "lcpMs": 1428,
+      "ttfbMs": 151,
+      "loadMs": 3906,
+      "cls": 0.001,
+      "transferKB": 719,
+      "compressedResponses": "49/51"
+    }
+  ]
+}

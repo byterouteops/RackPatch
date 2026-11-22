@@ -1,59 +1,65 @@
 {
-  "measuredAt": "2026-11-21T23:03:10.037Z",
+  "measuredAt": "2026-11-22T07:27:22.802Z",
   "profile": "150ms RTT, 1.6 Mbps down, 750 Kbps up, CPU 4x",
   "pages": [
     {
       "name": "Dashboard",
-      "lcpMs": 1888,
+      "lcpMs": 2052,
+      "readyMs": 2146,
       "ttfbMs": 151,
-      "loadMs": 2123,
-      "cls": 0.001,
-      "transferKB": 595,
-      "compressedResponses": "34/35"
+      "loadMs": 4345,
+      "cls": 0,
+      "transferKB": 691,
+      "compressedResponses": "40/42"
     },
     {
       "name": "Project overview",
-      "lcpMs": 1812,
+      "lcpMs": 1892,
+      "readyMs": 2179,
       "ttfbMs": 151,
-      "loadMs": 3890,
-      "cls": 0.003,
-      "transferKB": 635,
-      "compressedResponses": "48/50"
+      "loadMs": 2272,
+      "cls": 0.001,
+      "transferKB": 680,
+      "compressedResponses": "40/41"
     },
     {
       "name": "Cable list (172)",
-      "lcpMs": 1576,
+      "lcpMs": 1444,
+      "readyMs": 2673,
       "ttfbMs": 151,
-      "loadMs": 1930,
+      "loadMs": 1696,
       "cls": 0.004,
-      "transferKB": 491,
-      "compressedResponses": "42/43"
+      "transferKB": 576,
+      "compressedResponses": "45/47"
     },
     {
       "name": "Cable list (5000)",
-      "lcpMs": 3648,
-      "ttfbMs": 152,
-      "loadMs": 4164,
-      "cls": 0.001,
+      "lcpMs": 1448,
+      "readyMs": 3273,
+      "ttfbMs": 151,
+      "loadMs": 3710,
+      "cls": 0.002,
       "transferKB": 695,
-      "compressedResponses": "43/45"
+      "compressedResponses": "44/46"
     },
     {
       "name": "Handover",
-      "lcpMs": 1476,
+      "lcpMs": 1488,
+      "readyMs": 1880,
       "ttfbMs": 151,
-      "loadMs": 1821,
+      "loadMs": 1907,
       "cls": 0.002,
-      "transferKB": 678,
-      "compressedResponses": "43/44"
+      "transferKB": 481,
+      "compressedResponses": "39/40"
     },
     {
       "name": "Integrations",
-      "lcpMs": 1368,
+      "lcpMs": 1404,
+      "readyMs": 1366,
       "ttfbMs": 151,
-      "loadMs": 3797,
+      "loadMs": 3828,
       "cls": 0.001,
-      "transferKB": 715,
+      "transferKB": 721,
       "compressedResponses": "49/51"
     }
   ]

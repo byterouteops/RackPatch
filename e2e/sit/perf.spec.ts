@@ -80,23 +80,34 @@ test("production performance: vitals, navigation, filtering, API latency", async
   }
 
   // Client-side navigation through the project sub-navigation.
-  const navs: Array<{ to: string; ms: number }> = [];
-  await page.goto(`/app/projects/${ai.id}`);
-  for (const label of ["Cable Plan", "Verification", "Evidence", "Handover", "Reports", "Overview"]) {
-    const t0 = Date.now();
-    await page.getByRole("navigation", { name: "Project sections" }).getByRole("link", { name: label, exact: true }).click();
-    await page.waitForLoadState("domcontentloaded");
-    await expect(page.locator("main h1").first()).toBeVisible();
-    await page.waitForFunction(() => !document.querySelector('[role="status"][aria-busy="true"], [data-loading="true"]'));
-    navs.push({ to: label, ms: Date.now() - t0 });
+  // Median of 3 runs per project; each run starts once the overview's link prefetches have settled,
+  // so the timing reflects the destination page rather than contention with in-flight prefetches.
+  const navs: Array<{ project: string; to: string; ms: number; runs: number[] }> = [];
+  for (const [projectName, projectId] of [["172 cables", ai.id], ["5,000 cables", scale.id]] as const) {
+    const runs = new Map<string, number[]>();
+    for (let run = 0; run < 3; run++) {
+      await page.goto(`/app/projects/${projectId}`);
+      await page.waitForLoadState("networkidle");
+      for (const label of ["Cable Plan", "Verification", "Evidence", "Handover", "Reports", "Overview"]) {
+        const t0 = Date.now();
+        await page.getByRole("navigation", { name: "Project sections" }).getByRole("link", { name: label, exact: true }).click();
+        await page.waitForLoadState("domcontentloaded");
+        await expect(page.locator("main h1").first()).toBeVisible();
+        await page.waitForFunction(() => !document.querySelector('[role="status"][aria-busy="true"], [data-loading="true"]'));
+        runs.set(label, [...(runs.get(label) ?? []), Date.now() - t0]);
+        await page.waitForLoadState("networkidle");
+      }
+    }
+    for (const [to, r] of runs) navs.push({ project: projectName, to, ms: [...r].sort((a, b) => a - b)[1], runs: r });
   }
 
   // Filtering on the scale project (client-side filter over all rows).
   await page.goto(`/app/projects/${scale.id}/cables`);
+  const search = page.getByPlaceholder(/Search cables/);
+  await expect(search).toBeEnabled({ timeout: 30_000 });
   await page.evaluate(() => {
     (window as unknown as { __rp: { inp: number; events: unknown[] } }).__rp.inp = 0;
   });
-  const search = page.getByPlaceholder(/Search cables/);
   const filters: Array<{ action: string; ms: number }> = [];
   let t0 = Date.now();
   await search.fill("SC-04999");
@@ -120,6 +131,7 @@ test("production performance: vitals, navigation, filtering, API latency", async
 
   // INP on the 172-cable list.
   await page.goto(`/app/projects/${ai.id}/cables`);
+  await expect(page.getByPlaceholder(/Search cables/)).toBeEnabled({ timeout: 30_000 });
   await page.getByPlaceholder(/Search cables/).pressSequentially("CBL-BE", { delay: 30 });
   await page.getByLabel("Filter by fabric").selectOption("BE");
   const aiInp = await page.evaluate(() => (window as unknown as { __rp: { inp: number } }).__rp.inp);

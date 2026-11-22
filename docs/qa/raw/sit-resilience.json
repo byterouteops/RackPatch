@@ -54,7 +54,7 @@
   {
     "check": "1.9 MB LLDP paste (under 2,000,000-char limit) reaches the parser",
     "pass": true,
-    "detail": "input 76 ms; alert: Unrecognized neighbor evidence format. Supported: Cisco NX-OS LLDP (`show lldp neighbors detail`); Cisco IOS / IOS-XE LLDP (`show lldp neighbors detail`); Cisco CDP (NX-OS / IOS) (`show cdp neighbors detail`); Arista EOS LLDP (`show lldp neighbors detail`); Juniper Junos LLDP (`show lldp neighbors interface <if> detail / show lldp neighbors detail`); Linux / Cumulus lldpd (`lldpcli show neighbors -f keyvalue`).; preview shown: false"
+    "detail": "input 75 ms; alert: Unrecognized neighbor evidence format. Supported: Cisco NX-OS LLDP (`show lldp neighbors detail`); Cisco IOS / IOS-XE LLDP (`show lldp neighbors detail`); Cisco CDP (NX-OS / IOS) (`show cdp neighbors detail`); Arista EOS LLDP (`show lldp neighbors detail`); Juniper Junos LLDP (`show lldp neighbors interface <if> detail / show lldp neighbors detail`); Linux / Cumulus lldpd (`lldpcli show neighbors -f keyvalue`).; preview shown: false"
   },
   {
     "check": "2.1 MB LLDP paste (over limit) is refused with a message",

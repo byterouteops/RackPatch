@@ -1,5 +1,5 @@
 {
-  "generatedAt": "2026-11-21T21:24:04.767Z",
+  "generatedAt": "2026-11-22T07:45:05.873Z",
   "pages": [
     {
       "route": "/",
@@ -771,6 +771,14 @@
       "file": "src/app/actions/bootstrap.ts",
       "name": "getBootstrapStatus",
       "guards": []
+    },
+    {
+      "file": "src/app/actions/cables.ts",
+      "name": "getCableDetails",
+      "guards": [
+        "requireProjectAccess",
+        "requireSessionUser"
+      ]
     },
     {
       "file": "src/app/actions/collection.ts",
